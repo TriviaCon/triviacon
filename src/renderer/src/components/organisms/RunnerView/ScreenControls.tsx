@@ -4,7 +4,7 @@ import { useLocalStorage } from "../../../hooks/useLocalStorage";
 const ScreenControls = () => {
   const [currentView, setCurrentView] = useLocalStorage("currentView", "start");
   return (
-    <Alert variant="dark" className="d-inline-block">
+    <Alert variant="dark" className="d-inline-block p-1">
       <div className="d-flex align-items-center">
         <h2 className="me-3">Quiz Controls</h2>
         <div className="d-flex">

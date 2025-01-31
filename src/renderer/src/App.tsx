@@ -14,6 +14,7 @@ function App(): JSX.Element {
   )
 
   return (
+    localStorage.clear(),
     <Container fluid className="vh-100 vw-100 px-1 py-1 d-flex flex-column overflow-hidden">
       <CategoriesProvider>
         <Row>

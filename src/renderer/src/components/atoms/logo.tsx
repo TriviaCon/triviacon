@@ -3,7 +3,7 @@ import React from "react";
 const Logo: React.FC = () => {
   return (
     <div>
-      <h1 className="text-center mb-0">
+      <h4 className="text-center mb-0">
         <span className="text-white outline-white">Trivia</span>
         <span
           style={{
@@ -17,19 +17,7 @@ const Logo: React.FC = () => {
         >
           CON
         </span>
-        <span className="text-white outline-white">™</span>
-      </h1>
-      <div className="">
-        <span
-          style={{
-            fontSize: "10px",
-            fontFamily: "monospace",
-            color: "#00ff00",
-          }}
-        >
-          ver. 0.0.0.2137-pre_alpha1
-        </span>
-      </div>
+      </h4>
     </div>
   );
 };

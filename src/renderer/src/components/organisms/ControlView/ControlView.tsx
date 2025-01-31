@@ -3,6 +3,7 @@ import { Nav, Tab } from "react-bootstrap";
 import ActionBar from "../ActionBar/ActionBar";
 import { BuilderView } from "../BuilderView";
 import { RunnerView } from "../RunnerView";
+import { CollectionPlay, PencilSquare } from "react-bootstrap-icons";
 
 const ControlView: React.FC = () => {
   const [activeTab, setActiveTab] = React.useState<string>("builder");
@@ -15,12 +16,12 @@ const ControlView: React.FC = () => {
         <Nav variant="tabs" className="mb-2">
           <Nav.Item>
             <Nav.Link eventKey="builder">
-              <i className="bi bi-pencil-square me-2"></i>Builder
+              <PencilSquare className="me-1"/>Builder
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
             <Nav.Link eventKey="game-runner">
-              <i className="bi bi-collection-play me-2"></i>Game Runner
+              <CollectionPlay className="me-2"/>Game Runner
             </Nav.Link>
           </Nav.Item>
         </Nav>

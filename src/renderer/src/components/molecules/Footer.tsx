@@ -1,5 +1,6 @@
 import React from "react";
 import { Navbar, Container } from "react-bootstrap";
+import DebugMenu from "./DebugMenu";
 
 const Footer: React.FC = () => {
   return (
@@ -7,10 +8,11 @@ const Footer: React.FC = () => {
       <Navbar
         bg="dark"
         variant="dark"
-        className="border-top border-body justify-content-end"
-      >
-        <Navbar.Text className="justify-content-end me-2">
-          ©2024 by <a href="mailto:marcin.jedercki@gmail.com">Alucard</a>
+        className="border-top border-body d-flex justify-content-end"
+        >
+        <DebugMenu />
+        <Navbar.Text className="ms-2 me-2 p-0">
+          ©2024 by <a href="mailto:triviacon@a87.pl">Alucard</a>
         </Navbar.Text>
       </Navbar>
     </Container>

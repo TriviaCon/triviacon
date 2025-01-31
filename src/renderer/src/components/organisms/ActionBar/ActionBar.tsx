@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "react-bootstrap";
 import { useCategories } from "../../../hooks/useCategories";
+import { FileEarmarkPlus, Floppy, Play, PlayFill, Upload } from "react-bootstrap-icons";
 
 interface ActionBarProps {
   activeTab: string;
@@ -27,7 +28,7 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
               }
             }}
           >
-            <i className="bi bi-file-earmark-plus me-1"></i>New Quiz
+            <FileEarmarkPlus/> New Quiz
           </Button>
           <Button
             variant="warning"
@@ -36,7 +37,7 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
               confirm("Load a Quiz? \n\nUnsaved changes will be lost!")
             }
           >
-            <i className="bi bi-upload me-1"></i>Load Quiz
+            <Upload className="me-1"/>Load Quiz
           </Button>
           <Button
             variant="success"
@@ -44,7 +45,7 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
               alert("Quiz {quizName_quizDate} saved successfully!")
             }
           >
-            <i className="bi bi-floppy me-1"></i>Save Quiz
+            <Floppy className="me-1"/>Save Quiz
           </Button>
         </>
       ) : (
@@ -52,29 +53,14 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
           variant="danger"
           className="me-1"
           onClick={() => {
-            if (confirm("Run the quiz?") == true) {
-              if (window.QuizRunnerWindow && !window.QuizRunnerWindow.closed) {
-                alert("Quiz Runner is already open!");
-              } else {
-                const currentUrl = window.location.href;
-                const [baseUrl, hash] = currentUrl.split("#");
-                const separator = baseUrl.includes("?") ? "&" : "?";
-                const newWindowUrl = `${baseUrl}${separator}screen=true${
-                  hash ? `#${hash}` : ""
-                }`;
-
-                window.QuizRunnerWindow = window.open(
-                  newWindowUrl,
-                  "QuizRunner",
-                  "toolbar=no,scrollbars=no,resizable=yes,width=1280,height=720"
-                );
-              }
+            if (confirm("Run the quiz?")) {
+              window.electron.ipcRenderer.send('open-screen')
             } else {
               alert("Quiz {quizName_quizDate} cancelled!");
             }
           }}
         >
-          <i className="bi bi-play me-1"></i>
+          <PlayFill className="me-1"/>
           <strong>RUN QUIZ</strong>
         </Button>
       )}

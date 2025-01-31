@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Alert, Button, Form } from "react-bootstrap";
 import { Table } from "react-bootstrap";
 import { useLocalStorage } from "../../../hooks/useLocalStorage";
+import { PersonFillAdd, PersonXFill } from "react-bootstrap-icons";
 
 const TeamTable: React.FC = () => {
   const [teams, setTeams] = useLocalStorage("teams", []);
@@ -80,7 +81,7 @@ const TeamTable: React.FC = () => {
               required
             />
             <Button variant="primary" type="submit">
-              <i className="bi bi-person-fill-add me-2"></i>
+              <PersonFillAdd className="me-1" />
               Add Team
             </Button>
           </Form.Group>
@@ -151,7 +152,7 @@ const TeamTable: React.FC = () => {
                     size="sm"
                     onClick={() => handleRemoveTeam(team.id)}
                   >
-                    <i className="bi bi-person-x-fill"></i>
+                    <PersonXFill className="me-1" />
                   </Button>
                 </td>
               </tr>

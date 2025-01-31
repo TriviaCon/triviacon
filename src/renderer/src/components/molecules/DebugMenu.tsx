@@ -1,19 +1,17 @@
 import React from "react";
 import { useCategories } from "../../hooks/useCategories";
 import { Navbar, Nav, Dropdown } from "react-bootstrap";
+import { Bug, ExclamationTriangle, ExclamationTriangleFill, Github, QuestionOctagon, Trash } from "react-bootstrap-icons";
 
 const DebugMenu: React.FC = () => {
   const { loadQuizData } = useCategories();
   return (
     <>
-      <Navbar.Toggle aria-controls="navbarSupportedContent" />
-      <Navbar.Collapse id="navbarSupportedContent">
-        <Nav className="ms-auto">
-          <Dropdown align="end">
-            <Dropdown.Toggle id="debug-dropdown">
-              <i className="bi bi-bug"></i> Debug
+          <Dropdown align="end" drop="up">
+            <Dropdown.Toggle id="debug-dropdown" size="sm">
+              <Bug className="me-2"/> Debug
             </Dropdown.Toggle>
-            <Dropdown.Menu>
+            <Dropdown.Menu >
               <Dropdown.Item
                 href="#"
                 onClick={() => {
@@ -21,7 +19,7 @@ const DebugMenu: React.FC = () => {
                   window.location.reload();
                 }}
               >
-                <i className="bi bi-trash me-2"></i>Clear Local Storage
+                <Trash className="me-2"/> Clear Local Storage
               </Dropdown.Item>
               <Dropdown.Item
                 href="#"
@@ -31,7 +29,7 @@ const DebugMenu: React.FC = () => {
                   window.location.reload();
                 }}
               >
-                <i className="bi bi-question-octagon me-2"></i>Load Mock Quiz
+                <QuestionOctagon className="me-2"/>Load Mock Quiz
               </Dropdown.Item>
               <Dropdown.Item
                 href="#"
@@ -41,20 +39,15 @@ const DebugMenu: React.FC = () => {
                   window.location.reload();
                 }}
               >
-                <i
-                  className="bi bi-exclamation-triangle-fill me-2"
-                  style={{ color: "red" }}
-                ></i>
+              <ExclamationTriangleFill style={{ color: "red" }} className="me-2"/>
                 Load BIG Quiz
               </Dropdown.Item>
               <Dropdown.Divider />
               <Dropdown.Item href="#">
-                <i className="bi bi-github me-2"></i> Submit Bug Report
+                <Github/> Submit Bug Report
               </Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
-        </Nav>
-      </Navbar.Collapse>
     </>
   );
 };

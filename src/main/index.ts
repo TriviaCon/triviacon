@@ -1,14 +1,14 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 
 function createWindow(): void {
-  // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
+    width: 1920,
+    height: 1080,
     show: false,
+    frame: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
@@ -29,9 +29,11 @@ function createWindow(): void {
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+    const searchParam = process.env['SCREEN_PARAM'] ? `?screen=${encodeURIComponent(process.env['SCREEN_PARAM'])}` : ''
+    mainWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}${searchParam}`)
   } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+    const searchParam = process.env['SCREEN_PARAM'] ? `?screen=${encodeURIComponent(process.env['SCREEN_PARAM'])}` : ''
+    mainWindow.loadFile(join(__dirname, '../renderer/index.html'), { search: searchParam })
   }
 }
 
@@ -49,9 +51,29 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  // IPC test
   ipcMain.on('ping', () => console.log('pong'))
+  ipcMain.on('open-screen', () => {
+    createScreenWindow()
+  })
 
+  ipcMain.on('close-window', async (event) => {
+    const window = BrowserWindow.fromWebContents(event.sender)
+    if (!window) return
+
+    if (window.getParentWindow()) {
+      window.close()
+    } else {
+      const choice = await dialog.showMessageBox(window, {
+        type: 'question',
+        buttons: ['Yes', 'No'],
+        title: 'Confirm',
+        message: 'Are you sure you want to exist?'
+      })
+      if (choice.response === 0) {
+        window.close()
+      }
+    }
+  })
   createWindow()
 
   app.on('activate', function () {
@@ -72,3 +94,33 @@ app.on('window-all-closed', () => {
 
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
+
+function createScreenWindow(): void {
+  const mainWindow = new BrowserWindow({
+    width: 1920,
+    height: 1080,
+    show: false,
+    frame: false,
+    autoHideMenuBar: true,
+    ...(process.platform === 'linux' ? { icon } : {}),
+    webPreferences: {
+      preload: join(__dirname, '../preload/index.js'),
+      sandbox: false
+    }
+  })
+
+  mainWindow.on('ready-to-show', () => {
+    mainWindow.show()
+  })
+
+  mainWindow.webContents.setWindowOpenHandler((details) => {
+    shell.openExternal(details.url)
+    return { action: 'deny' }
+  })
+
+  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+    mainWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}?screen=true`)
+  } else {
+    mainWindow.loadFile(join(__dirname, '../renderer/index.html'), { search: '?screen=true' })
+  }
+}
