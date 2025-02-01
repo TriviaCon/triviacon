@@ -30,7 +30,7 @@ const Header: React.FC<{ isScreen: boolean }> = ({ isScreen }) => {
 
           <Button variant="outline-danger"
             size="sm"
-            onClick={() => { window.electron.ipcRenderer.send('close-window') }}
+            onClick={() => { window.electron.ipcRenderer.invoke('close-window') }}
             className="ms-2 nodrag">
             <XLg />
           </Button>

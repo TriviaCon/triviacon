@@ -6,6 +6,7 @@ import {
   Category,
   Question,
 } from "../../../context/categories";
+import { CameraFill, PlusLg, Trash } from "react-bootstrap-icons";
 
 interface QuizTreeProps extends CategoriesContextType {
   selectedCategory: Category | null;
@@ -74,7 +75,7 @@ const QuizTree: React.FC<QuizTreeProps> = ({
                       }
                     }}
                   >
-                    <i className="bi bi-trash"></i>
+                    <Trash />
                   </Button>
                 </div>
                 <div className="d-flex flex-wrap gap-2">
@@ -90,15 +91,12 @@ const QuizTree: React.FC<QuizTreeProps> = ({
                     >
                       {category.questions.indexOf(question) + 1}
                       <span className="ms-1">
-                        <i
-                          className={`bi bi-camera-fill ${
-                            !question.media ? "opacity-50" : ""
-                          }`}
-                        ></i>
+                        <CameraFill className={
+                          !question.media ? "opacity-50" : ""
+                        } />
                       </span>
                     </Button>
-                  ))}
-                  <Button
+                  ))}                  <Button
                     variant="primary"
                     size="sm"
                     onClick={() => {
@@ -117,7 +115,7 @@ const QuizTree: React.FC<QuizTreeProps> = ({
                       });
                     }}
                   >
-                    <i className="bi bi-plus-lg"></i>
+                    <PlusLg />
                   </Button>
                 </div>
               </Accordion.Body>

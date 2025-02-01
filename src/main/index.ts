@@ -1,8 +1,21 @@
 import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
-import { join } from 'path'
+import path, { join } from 'path'
+import fs from 'fs'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-
+// Helper function to apply CSP to any window
+const applyCSP = (window: BrowserWindow) => {
+  window.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+    callback({
+      responseHeaders: {
+        ...details.responseHeaders,
+        'Content-Security-Policy': [
+          "default-src * 'unsafe-inline' 'unsafe-eval'; img-src * 'self' 'unsafe-inline' data: blob: http: https:; script-src * 'self' 'unsafe-inline' 'unsafe-eval'; style-src * 'self' 'unsafe-inline';"
+        ]
+      }
+    })
+  })
+}
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
     width: 1920,
@@ -13,9 +26,11 @@ function createWindow(): void {
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
+      sandbox: false,
     }
   })
+
+  applyCSP(mainWindow)
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
@@ -29,10 +44,14 @@ function createWindow(): void {
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    const searchParam = process.env['SCREEN_PARAM'] ? `?screen=${encodeURIComponent(process.env['SCREEN_PARAM'])}` : ''
+    const searchParam = process.env['SCREEN_PARAM']
+      ? `?screen=${encodeURIComponent(process.env['SCREEN_PARAM'])}`
+      : ''
     mainWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}${searchParam}`)
   } else {
-    const searchParam = process.env['SCREEN_PARAM'] ? `?screen=${encodeURIComponent(process.env['SCREEN_PARAM'])}` : ''
+    const searchParam = process.env['SCREEN_PARAM']
+      ? `?screen=${encodeURIComponent(process.env['SCREEN_PARAM'])}`
+      : ''
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'), { search: searchParam })
   }
 }
@@ -51,18 +70,24 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  ipcMain.on('ping', () => console.log('pong'))
-  ipcMain.on('open-screen', () => {
-    createScreenWindow()
+  ipcMain.handle('read-mock-file', async (_event, filePath) => {
+    const fullPath = path.join(__dirname, '..', filePath)
+    const fileContent = await fs.promises.readFile(fullPath, 'utf8')
+    return fileContent
   })
 
-  ipcMain.on('close-window', async (event) => {
+  ipcMain.handle('open-screen', () => {
+    createScreenWindow()
+    return true
+  })
+
+  ipcMain.handle('close-window', async (event) => {
     const window = BrowserWindow.fromWebContents(event.sender)
     if (!window) return
 
-    if (window.getParentWindow()) {
-      window.close()
-    } else {
+    const isMainWindow = BrowserWindow.getAllWindows()[0] === window
+
+    if (isMainWindow) {
       const choice = await dialog.showMessageBox(window, {
         type: 'question',
         buttons: ['Yes', 'No'],
@@ -72,8 +97,11 @@ app.whenReady().then(() => {
       if (choice.response === 0) {
         window.close()
       }
+    } else {
+      window.close()
     }
   })
+
   createWindow()
 
   app.on('activate', function () {
@@ -96,7 +124,7 @@ app.on('window-all-closed', () => {
 // code. You can also put them in separate files and require them here.
 
 function createScreenWindow(): void {
-  const mainWindow = new BrowserWindow({
+  const screenWindow = new BrowserWindow({
     width: 1920,
     height: 1080,
     show: false,
@@ -105,22 +133,24 @@ function createScreenWindow(): void {
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
+      sandbox: false,
     }
   })
 
-  mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
+  applyCSP(screenWindow)
+
+  screenWindow.on('ready-to-show', () => {
+    screenWindow.show()
   })
 
-  mainWindow.webContents.setWindowOpenHandler((details) => {
+  screenWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
     return { action: 'deny' }
   })
 
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}?screen=true`)
+    screenWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}?screen=true`)
   } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'), { search: '?screen=true' })
+    screenWindow.loadFile(join(__dirname, '../renderer/index.html'), { search: '?screen=true' })
   }
 }

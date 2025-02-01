@@ -25,17 +25,20 @@ const DebugMenu: React.FC = () => {
                 href="#"
                 onClick={async () => {
                   localStorage.clear();
-                  await loadQuizData("/mockQuiz.json");
+                  console.log("Loading mock quiz");
+                  const mockData = await window.electron.ipcRenderer.invoke('read-mock-file', 'mocks/mockQuiz.json');
+                  await loadQuizData(mockData);
                   window.location.reload();
-                }}
-              >
+                }}              >
                 <QuestionOctagon className="me-2"/>Load Mock Quiz
               </Dropdown.Item>
               <Dropdown.Item
                 href="#"
                 onClick={async () => {
                   localStorage.clear();
-                  await loadQuizData("/big_mockQuiz.json");
+                  console.log("Loading mock quiz");
+                  const mockData = await window.electron.ipcRenderer.invoke('read-mock-file', 'mocks/big_mockQuiz.json');
+                  await loadQuizData(mockData);
                   window.location.reload();
                 }}
               >

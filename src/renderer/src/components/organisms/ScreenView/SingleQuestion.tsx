@@ -11,7 +11,10 @@ const SingleQuestionView: React.FC = () => {
     <Container fluid className="d-flex justify-content-space-between">
       <Col className="text-center justify-content-space-between">
         <h1 className="display-4 mb-4">{question?.text}</h1>
-        <Image src={question?.media} fluid className="mt-1 mb-1" />
+        {question?.media && 
+          <Image src={"https://via.assets.so/img.jpg?w=1280&h=720&tc=blue&bg=#cecece"} fluid className="mt-1 mb-1" />
+        }
+        
         <h1
           className="display-1"
           style={{

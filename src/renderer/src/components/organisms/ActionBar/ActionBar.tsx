@@ -54,7 +54,7 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
           className="me-1"
           onClick={() => {
             if (confirm("Run the quiz?")) {
-              window.electron.ipcRenderer.send('open-screen')
+              window.electron.ipcRenderer.invoke('open-screen')
             } else {
               alert("Quiz {quizName_quizDate} cancelled!");
             }

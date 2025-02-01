@@ -96,19 +96,25 @@ export const CategoriesProvider = ({
     );
   };
 
-  const loadQuizData = async (url: string) => {
-    const response = await fetch(url);
-    const data = await response.json();
-    localStorage.setItem("quizInfo", JSON.stringify(data.quizInfo));
-    data.categories.forEach((category) => {
-      category.cID = uuidv4();
-      category.questions.forEach((question) => {
-        question.qID = uuidv4();
-        question.used = false;
-        question.answerRevealed = false;
-      });
-    });
-    localStorage.setItem("categories", JSON.stringify(data.categories));
+  const loadQuizData = async (data: string) => {
+    const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
+    
+    localStorage.setItem("quizInfo", JSON.stringify(parsedData.quizInfo));
+    
+    const processedCategories = parsedData.categories.map(category => ({
+      ...category,
+      cID: uuidv4(),
+      questions: category.questions.map(question => ({
+        ...question,
+        qID: uuidv4(),
+        used: false,
+        answerRevealed: false,
+        hintsRevealed: false
+      }))
+    }));
+
+    localStorage.setItem("categories", JSON.stringify(processedCategories));
+    setCategories(processedCategories);
   };
 
   const updateCategory = (categoryId: string, updates: Partial<Category>) => {
