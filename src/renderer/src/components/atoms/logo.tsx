@@ -1,8 +1,8 @@
 import React from "react";
 
-const Logo: React.FC = () => {
+const Logo: React.FC<{ bg?: string }> = ({ bg = 'black' }) => {
   return (
-    <div>
+    <div style={{ backgroundColor: bg, borderRadius: "0.25rem" }} className="px-1">
       <h4 className="text-center mb-0">
         <span className="text-white outline-white">Trivia</span>
         <span
@@ -20,5 +20,4 @@ const Logo: React.FC = () => {
       </h4>
     </div>
   );
-};
-export default Logo;
+};export default Logo;
