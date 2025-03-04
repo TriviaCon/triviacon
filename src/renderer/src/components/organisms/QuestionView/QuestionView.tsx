@@ -1,6 +1,7 @@
 import { Button, Card, Form } from "react-bootstrap";
 import { Category, Question } from "../../../context/categories";
 import { useLocalStorage } from "../../../hooks/useLocalStorage";
+import { CloudUpload, Trash } from "react-bootstrap-icons";
 
 interface QuestionViewProps {
   selectedCategory: Category | null;
@@ -163,10 +164,7 @@ const QuestionView: React.FC<QuestionViewProps> = ({
                     cursor: "pointer",
                   }}
                 >
-                  <i
-                    className="bi bi-cloud-upload"
-                    style={{ fontSize: "2rem" }}
-                  ></i>
+                  <CloudUpload size={32} />
                   <p>Drag and drop your file here or click to select</p>
                   <input
                     type="file"
@@ -229,7 +227,7 @@ const QuestionView: React.FC<QuestionViewProps> = ({
                         className="ms-2"
                         onClick={() => handleRemoveHint(index)}
                       >
-                        <i className="bi bi-trash"></i>
+                        <Trash size={16} />
                       </Button>
                     </div>
                   ))

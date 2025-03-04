@@ -12,7 +12,7 @@ const SingleQuestionView: React.FC = () => {
       <Col className="text-center justify-content-space-between">
         <h1 className="display-4 mb-4">{question?.text}</h1>
         {question?.media && 
-          <Image src={"https://via.assets.so/img.jpg?w=1280&h=720&tc=blue&bg=#cecece"} fluid className="mt-1 mb-1" />
+          <Image src={"https://via.assets.so/img.jpg?w=1280&h=720&tc=blue"} fluid className="mt-1 mb-1" />
         }
         
         <h1
@@ -35,7 +35,7 @@ const SingleQuestionView: React.FC = () => {
               <Col key={index} xs={12} sm={6} className="mb-3">
                 <Card bg="light" text="dark">
                   <Card.Body>
-                    <Card.Text className="h1">{hint}</Card.Text>
+                    <Card.Text className="h1">{String.fromCharCode(65 + index)}. {hint}</Card.Text>
                   </Card.Body>
                 </Card>
               </Col>
