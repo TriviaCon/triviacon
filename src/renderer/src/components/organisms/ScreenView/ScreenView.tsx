@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocalStorage } from "../../../hooks/useLocalStorage";
-import { Card, Row } from "react-bootstrap";
+import { Card } from "react-bootstrap";
 import Categories from "./Categories";
 import SingleQuestionView from "./SingleQuestion";
 import RankingView from "./Ranking";

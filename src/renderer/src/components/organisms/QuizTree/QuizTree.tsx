@@ -45,14 +45,24 @@ const QuizTree: React.FC<QuizTreeProps> = ({
               <Accordion.Header
                 onClick={() => {
                   setSelectedCategory(category);
+                  setCurrentView("questions");
                   setSelectedQuestion(null);
                 }}
               >
                 <strong>
-                  {category.name} ({category.questions.length})
+                  {category.name} ({
+                      category.questions.filter(
+                        (question) => question.used === false
+                      ).length
+                    }
+                    /{category.questions.length})
                 </strong>
               </Accordion.Header>
-              <Accordion.Body>
+              <Accordion.Body
+              onExited={() => {
+                setCurrentView("categories");
+              }}
+              >
                 <div className="d-flex mb-2">
                   <Form.Control
                     className="me-2"

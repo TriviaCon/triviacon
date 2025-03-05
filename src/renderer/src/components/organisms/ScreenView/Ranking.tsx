@@ -1,7 +1,5 @@
 import React from "react";
 import { useLocalStorage } from "../../../hooks/useLocalStorage";
-import { useCategories } from "../../../hooks/useCategories";
-import { Card } from "react-bootstrap";
 
 const RankingView: React.FC = () => {
   const [teams] = useLocalStorage("teams", []);

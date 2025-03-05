@@ -24,7 +24,7 @@ const Categories: React.FC = () => {
         >
           {categories.map((category) => (
             <Col key={category.id} className="d-flex">
-              <Card className="w-100">
+              <Card className="w-100" style={{ backgroundColor: category.questions.filter(q => q.used === false).length === 0 ? '#ccc' : undefined }}>
                 <Card.Body className="d-flex flex-column">
                   <Card.Title className="h4 mb-1 text-center">
                     <strong>{category.name}</strong>
@@ -40,8 +40,8 @@ const Categories: React.FC = () => {
                 </Card.Body>
               </Card>
             </Col>
-          ))}
-        </Row>
+          ))}        
+          </Row>
       </Container>
     </>
   );

@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocalStorage } from "../../../hooks/useLocalStorage";
-import { Card, Col, Container, Row, Image } from "react-bootstrap";
+import { Col, Container, Row, Image } from "react-bootstrap";
 
 const StartScreen: React.FC = () => {
   const [quizInfo] = useLocalStorage("quizInfo", null);
