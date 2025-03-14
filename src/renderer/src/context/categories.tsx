@@ -25,15 +25,7 @@ export type CategoriesContextType = {
   deleteCategory: (cID: string) => Promise<unknown>
   updateCategory: (cID: uuidv4, event: FormEvent) => void
   addQuestion: (cID: uuidv4) => void
-  updateQuestion: (
-    category: string,
-    question: string,
-    answer: string,
-    hints: string[],
-    media: string,
-    used: boolean,
-    event: FormEvent
-  ) => void
+  updateQuestion: (cID: string, qID: string, question: Partial<Question>) => void
   deleteQuestion: (categoryId: number, questionId: number) => void
 
   categories: Category[]
@@ -116,32 +108,25 @@ export const CategoriesProvider = ({ children }: { children: React.ReactNode }) 
     setCategories(categories.filter((c) => c.cID !== cID))
   }
 
-  const updateQuestion = (cID: number, qID: number, event: FormEvent) => {
-    event.preventDefault()
-    const form = event.target as HTMLFormElement
-    const data = new FormData(form)
+  const updateQuestion = (cID: string, qID: string, updated: Partial<Question>) => {
     setCategories(
-      categories.map((c) =>
-        c.cID === cID
-          ? {
-              ...c,
-              questions: c.questions.map((q) =>
-                q.qID === qID
-                  ? {
-                      ...q,
-                      text: data.get('name') as string,
-                      answer: data.get('answer') as string,
-                      hints: data.get('hints') as string[],
-                      media: data.get('media') as string,
-                      used: data.get('used') as boolean
-                    }
-                  : q
-              )
+      categories.map((c) => {
+        if (c.cID !== cID) {
+          return c
+        }
+        return {
+          ...c,
+          questions: c.questions.map((q) => {
+            if (q.qID !== qID) {
+              return q
             }
-          : c
-      )
+            return Object.fromEntries(
+              Object.entries(q).map(([key, value]) => [key, updated[key] ?? value])
+            ) as Question
+          })
+        }
+      })
     )
-    form.reset()
   }
 
   const deleteQuestion = (categoryId: number, questionId: number) => {
