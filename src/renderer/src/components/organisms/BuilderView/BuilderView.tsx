@@ -1,21 +1,15 @@
-import { Card, Row, Col, Container } from "react-bootstrap";
-import QuestionView from "../QuestionView/QuestionView";
-import { QuizMeta } from "./QuizMeta";
-import QuizTree from "../QuizTree/QuizTree";
-import { useLocalStorage } from "../../../hooks/useLocalStorage";
-import { Category, Question } from "../../../context/categories";
-import { useCategories } from "../../../hooks/useCategories";
+import { Row, Col, Container } from 'react-bootstrap'
+import QuestionView from '../QuestionView/QuestionView'
+import { QuizMeta } from './QuizMeta'
+import QuizTree from '../QuizTree/QuizTree'
+import { useLocalStorage } from '../../../hooks/useLocalStorage'
+import { Category, Question } from '../../../context/categories'
+import { useCategories } from '../../../hooks/useCategories'
 
 export const BuilderView = () => {
-  const [category, setCategory] = useLocalStorage<Category | null>(
-    "selectedCategory",
-    null
-  );
-  const [question, setQuestion] = useLocalStorage<Question | null>(
-    "selectedQuestion",
-    null
-  );
-  const categories = useCategories();
+  const [category, setCategory] = useLocalStorage<Category | null>('selectedCategory', null)
+  const [question, setQuestion] = useLocalStorage<Question | null>('selectedQuestion', null)
+  const categories = useCategories()
 
   return (
     <Container fluid className="d-flex flex-column">
@@ -32,14 +26,9 @@ export const BuilderView = () => {
           />
         </Col>
         <Col md={8} className="border-start">
-          <QuestionView
-            isBuilder={true}
-            selectedQuestion={question}
-            selectedCategory={category}
-            categories={[]}
-          />
+          {category && question && <QuestionView category={category} qID={question.qID} />}
         </Col>
       </Row>
     </Container>
-  );
-};
+  )
+}
