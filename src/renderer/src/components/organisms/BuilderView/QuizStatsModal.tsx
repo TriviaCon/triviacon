@@ -1,13 +1,8 @@
-import { Modal, Table } from "react-bootstrap";
-import { useCategories } from "../../../hooks/useCategories";
+import { Modal, Table } from 'react-bootstrap'
+import { useCategories } from '../../../hooks/useCategories'
 
-interface QuizStatsModalProps {
-  show: boolean;
-  onHide: () => void;
-}
-
-export const QuizStatsModal: React.FC<QuizStatsModalProps> = ({ show, onHide }) => {
-  const { categories } = useCategories();
+export const QuizStatsModal = ({ show, onHide }: { show: boolean; onHide: VoidFunction }) => {
+  const { categories } = useCategories()
 
   return (
     <Modal show={show} onHide={onHide}>
@@ -20,32 +15,27 @@ export const QuizStatsModal: React.FC<QuizStatsModalProps> = ({ show, onHide }) 
         <Table size="sm" bordered>
           <tbody>
             <tr>
-              <td className="text-end" style={{ whiteSpace: "nowrap" }}>
+              <td className="text-end" style={{ whiteSpace: 'nowrap' }}>
                 <strong>Total Categories</strong>
               </td>
               <td className="text-start">{categories.length}</td>
             </tr>
             <tr>
-              <td className="text-end" style={{ whiteSpace: "nowrap" }}>
+              <td className="text-end" style={{ whiteSpace: 'nowrap' }}>
                 <strong>Total Questions</strong>
               </td>
               <td className="text-start">
-                {categories.reduce(
-                  (total, category) => total + category.questions.length,
-                  0
-                )}
+                {categories.reduce((total, category) => total + category.questions.length, 0)}
               </td>
             </tr>
             <tr>
-              <td className="text-end" style={{ whiteSpace: "nowrap" }}>
+              <td className="text-end" style={{ whiteSpace: 'nowrap' }}>
                 <strong>Media Questions</strong>
               </td>
               <td className="text-start">
                 {categories.reduce(
                   (total, category) =>
-                    total +
-                    category.questions.filter((question) => question.media)
-                      .length,
+                    total + category.questions.filter((question) => question.media).length,
                   0
                 )}
               </td>
@@ -54,5 +44,5 @@ export const QuizStatsModal: React.FC<QuizStatsModalProps> = ({ show, onHide }) 
         </Table>
       </Modal.Body>
     </Modal>
-  );
-};
+  )
+}
