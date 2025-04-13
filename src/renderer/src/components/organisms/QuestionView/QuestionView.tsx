@@ -1,5 +1,5 @@
 import { Button, Card, Form } from 'react-bootstrap'
-import { CloudUpload, Trash } from 'react-bootstrap-icons'
+import { CloudUpload } from 'react-bootstrap-icons'
 import useQuestion from '@renderer/hooks/useQuestion'
 import { Category } from '@renderer/types'
 

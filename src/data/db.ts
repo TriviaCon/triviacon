@@ -10,9 +10,9 @@ export const sqlite = async (): Promise<typeof import('sqlite3')> => {
 import { type Database, open } from 'sqlite'
 import { dbg } from '.'
 import { Category, Stats } from '@renderer/types'
-import { Question } from '@renderer/context/categories'
+import questions from './questions'
 
-let db: Database | null = null
+export let db: Database | null = null
 
 const _new = async (path: string) => {
   dbg('Creating new database', path)
@@ -104,18 +104,6 @@ const getCategories = async (): Promise<Category[]> => {
   return categories as Category[]
 }
 
-const getQuestions = async (categoryId: number): Promise<Question[]> => {
-  if (!db) {
-    throw new Error('Database not initialized')
-  }
-
-  const questions = await db.all(
-    'SELECT id, text, answer, media FROM Questions WHERE categoryId = ?',
-    categoryId
-  )
-  return questions
-}
-
 const getStats = async (): Promise<Stats> => {
   if (!db) {
     throw new Error('Database not initialized')
@@ -132,40 +120,11 @@ const getStats = async (): Promise<Stats> => {
   }
 }
 
-const getQuestion = async (id: number): Promise<Question | null> => {
-  if (!db) {
-    throw new Error('Database not initialized')
-  }
-
-  const question = await db.get('SELECT id, text, answer, media FROM Questions WHERE id = ?', id)
-  return question || null
-}
-
-const updateQuestion = async (id: number, updates: Partial<Question>): Promise<void> => {
-  if (!db) {
-    throw new Error('Database not initialized')
-  }
-
-  const fields = Object.keys(updates)
-  const values = Object.values(updates)
-
-  if (fields.length === 0) {
-    throw new Error('No fields to update')
-  }
-
-  const setClause = fields.map((field) => `${field} = ?`).join(', ')
-  const query = `UPDATE Questions SET ${setClause} WHERE id = ?`
-
-  await db.run(query, ...values, id)
-}
-
 export default {
   new: _new,
   open: _open,
   convertJson,
   getCategories,
-  getQuestions,
-  getQuestion,
   getStats,
-  updateQuestion
+  questions
 }

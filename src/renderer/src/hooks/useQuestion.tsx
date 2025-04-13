@@ -2,20 +2,20 @@ import { Question } from '@renderer/types'
 import { ipc } from '@renderer/main'
 import { useEffect, useState } from 'react'
 
-const useQuestion = ({ cID, qID }: { cID: number; qID: number }) => {
+const useQuestion = (id) => {
   const [question, setQuestion] = useState<Question>()
 
   useEffect(() => {
     const fetch = async () => {
-      setQuestion(await ipc.db.getQuestion(qID))
+      setQuestion(await ipc.db.questions.byId(id))
     }
     fetch()
-  }, [qID])
+  }, [id])
 
   const update = async (partial: Partial<Question>) => {
     if (!question) return
     try {
-      await ipc.db.updateQuestion(qID, partial)
+      await ipc.db.questions.update(id, partial)
       setQuestion({
         ...question,
         ...partial
