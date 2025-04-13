@@ -3,6 +3,7 @@ import { Accordion, Button, Form } from 'react-bootstrap'
 import { useLocalStorage } from '../../../hooks/useLocalStorage'
 import { CategoriesContextType, Category, Question } from '../../../context/categories'
 import CategoriesAccordionItem from '@renderer/components/molecules/QuizTreeItem'
+import { initRendererIpc } from '../../../../../data/'
 
 const AddCategoryForm = ({ onAdd }: { onAdd: (name: string) => Promise<unknown> }) => {
   const [pending, setPending] = useState(false)
@@ -41,6 +42,7 @@ const QuizTree: React.FC<QuizTreeProps> = ({
   setSelectedQuestion
 }) => {
   const [currentView, setCurrentView] = useLocalStorage<string>('currentView', 'start')
+
   return (
     <div className="d-flex flex-column">
       <h3>Categories ({categories.length})</h3>
@@ -65,9 +67,7 @@ const QuizTree: React.FC<QuizTreeProps> = ({
               }}
               onDelete={() => deleteCategory(category.cID)}
               onAddQuestion={() => {
-                addQuestion({
-                  cID: category.cID
-                })
+                addQuestion(category.cID)
               }}
             />
           ))}

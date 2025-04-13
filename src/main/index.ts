@@ -3,6 +3,8 @@ import path, { join } from 'path'
 import fs from 'fs'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { registerIpcHandlers } from '../data/index'
+
 // Helper function to apply CSP to any window
 const applyCSP = (window: BrowserWindow) => {
   window.webContents.session.webRequest.onHeadersReceived((details, callback) => {
@@ -26,7 +28,7 @@ function createWindow(): void {
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: false,
+      sandbox: false
     }
   })
 
@@ -101,7 +103,7 @@ app.whenReady().then(() => {
       window.close()
     }
   })
-  
+
   ipcMain.handle('open-file-dialog', async () => {
     const result = await dialog.showOpenDialog({
       properties: ['openFile'],
@@ -110,17 +112,18 @@ app.whenReady().then(() => {
         { name: 'All Files', extensions: ['*'] }
       ]
     })
-    
+
     return result.filePaths[0]
   })
-  
+
   // Add this alongside your other ipcMain handlers
   ipcMain.handle('read-file', async (_event, filePath) => {
     const fileContent = await fs.promises.readFile(filePath, 'utf8')
     return fileContent
   })
 
-  
+  registerIpcHandlers(ipcMain)
+
   createWindow()
 
   app.on('activate', function () {
@@ -152,7 +155,7 @@ function createScreenWindow(): void {
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: false,
+      sandbox: false
     }
   })
 
@@ -173,4 +176,3 @@ function createScreenWindow(): void {
     screenWindow.loadFile(join(__dirname, '../renderer/index.html'), { search: '?screen=true' })
   }
 }
-
