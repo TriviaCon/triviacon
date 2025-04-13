@@ -1,9 +1,7 @@
 import React, { FormEvent, useState } from 'react'
 import { Accordion, Button, Form } from 'react-bootstrap'
-import { useLocalStorage } from '../../../hooks/useLocalStorage'
-import { CategoriesContextType, Category, Question } from '../../../context/categories'
 import CategoriesAccordionItem from '@renderer/components/molecules/QuizTreeItem'
-import { initRendererIpc } from '../../../../../data/'
+import { Category } from '@renderer/types'
 
 const AddCategoryForm = ({ onAdd }: { onAdd: (name: string) => Promise<unknown> }) => {
   const [pending, setPending] = useState(false)
@@ -26,9 +24,13 @@ const AddCategoryForm = ({ onAdd }: { onAdd: (name: string) => Promise<unknown> 
   )
 }
 
-interface QuizTreeProps extends CategoriesContextType {
-  setSelectedCategory: (category: Category | null) => void
-  setSelectedQuestion: (question: Question | null) => void
+type QuizTreeProps = {
+  categories: Category[]
+  addCategory: (name: string) => Promise<void>
+  deleteCategory: (id: number) => Promise<void>
+  addQuestion: (categoryId: number) => Promise<void>
+  setSelectedCategory: (id: number | null) => void
+  setSelectedQuestion: (id: number | null) => void
 }
 
 const QuizTree: React.FC<QuizTreeProps> = ({
@@ -39,8 +41,6 @@ const QuizTree: React.FC<QuizTreeProps> = ({
   setSelectedCategory,
   setSelectedQuestion
 }) => {
-  const [currentView, setCurrentView] = useLocalStorage<string>('currentView', 'start')
-
   return (
     <div className="d-flex flex-column">
       <h3>Categories ({categories.length})</h3>
@@ -49,23 +49,16 @@ const QuizTree: React.FC<QuizTreeProps> = ({
         <Accordion flush className="me-1">
           {categories.map((category) => (
             <CategoriesAccordionItem
-              key={category.cID}
+              key={category.id}
               category={category}
               onOpen={() => {
-                setSelectedCategory(category)
-                setCurrentView('questions')
+                setSelectedCategory(category.id)
                 setSelectedQuestion(null)
               }}
-              onSelectQuestion={(id) => {
-                setSelectedQuestion(id)
-              }}
-              onClose={() => {
-                setCurrentView('categories')
-              }}
-              onDelete={() => deleteCategory(category.cID)}
-              onAddQuestion={() => {
-                addQuestion(category.cID)
-              }}
+              onSelectQuestion={(id) => setSelectedQuestion(id)}
+              onClose={console.log}
+              onDelete={() => deleteCategory(category.id)}
+              onAddQuestion={() => addQuestion(category.id)}
             />
           ))}
           {categories.length === 0 && (

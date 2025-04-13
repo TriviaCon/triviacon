@@ -11,6 +11,7 @@ import { type Database, open } from 'sqlite'
 import { dbg } from '.'
 import { Category, Stats } from '@renderer/types'
 import questions from './questions'
+import categories from './categories'
 
 export let db: Database | null = null
 
@@ -95,15 +96,6 @@ const convertJson = async () => {
   }
 }
 
-const getCategories = async (): Promise<Category[]> => {
-  if (!db) {
-    throw new Error('Database not initialized')
-  }
-
-  const categories = await db.all('SELECT id, name FROM Categories')
-  return categories as Category[]
-}
-
 const getStats = async (): Promise<Stats> => {
   if (!db) {
     throw new Error('Database not initialized')
@@ -124,7 +116,7 @@ export default {
   new: _new,
   open: _open,
   convertJson,
-  getCategories,
   getStats,
-  questions
+  questions,
+  categories
 }

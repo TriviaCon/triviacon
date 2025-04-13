@@ -40,8 +40,18 @@ const update = async (id: number, updates: Partial<Question>): Promise<void> => 
   await db.run(query, ...values, id)
 }
 
+const _delete = async (id: number): Promise<void> => {
+  if (!db) {
+    throw new Error('Database not initialized')
+  }
+
+  const deleteStmt = await db.prepare('DELETE FROM Questions WHERE id = ?')
+  await deleteStmt.run(id)
+  await deleteStmt.finalize()
+}
 export default {
   byId,
   allByCategoryId,
-  update
+  update,
+  delete: _delete
 }

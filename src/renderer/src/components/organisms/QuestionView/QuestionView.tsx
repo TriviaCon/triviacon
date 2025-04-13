@@ -1,10 +1,10 @@
 import { Button, Card, Form } from 'react-bootstrap'
 import { CloudUpload } from 'react-bootstrap-icons'
 import useQuestion from '@renderer/hooks/useQuestion'
+import toBase64 from '@renderer/utils/toBase64'
 
 const QuestionView = ({ id }: { id: number }) => {
-  const { question, updateText, updateAnswer, updateMedia, addHint, deleteHint, updateHint } =
-    useQuestion(id)
+  const { question, updateText, updateAnswer, updateMedia, addHint } = useQuestion(id)
 
   if (!question) {
     return 'loading...'
@@ -43,8 +43,8 @@ const QuestionView = ({ id }: { id: number }) => {
             <h6 className="mt-0">Media:</h6>
             <Card
               style={{
-                width: '320px',
-                height: '240px',
+                // width: '320px',
+                // height: '240px',
                 flexShrink: 0,
                 flexGrow: 0,
                 display: 'flex',
@@ -52,21 +52,16 @@ const QuestionView = ({ id }: { id: number }) => {
                 alignItems: 'center'
               }}
             >
+              {question.media && <img src={question.media} />}
               <Card.Body className="py-1 px-2 d-flex justify-content-center align-items-center">
                 <div
                   className="drag-upload-area"
                   onDragOver={(e) => e.preventDefault()}
-                  onDrop={(e) => {
+                  onDrop={async (e) => {
                     e.preventDefault()
                     const file = e.dataTransfer.files[0]
                     if (file && question) {
-                      const fileExtension = file.name.split('.').pop()
-                      const qIDLastSection = question.id.split('-').pop()
-                      const newFileName = `${qIDLastSection}.${fileExtension}`
-                      const relativePath = `media/${newFileName}`
-                      updateMedia(relativePath)
-                      console.log(`New file name: ${newFileName}`)
-                      console.log(`Relative path: ${relativePath}`)
+                      updateMedia(await toBase64(file))
                     }
                   }}
                   style={{
@@ -82,16 +77,10 @@ const QuestionView = ({ id }: { id: number }) => {
                   <input
                     type="file"
                     accept="image/*, video/*, audio/*"
-                    onChange={(e) => {
+                    onChange={async (e) => {
                       const file = e.target.files?.[0]
                       if (file && question) {
-                        const fileExtension = file.name.split('.').pop()
-                        const qIDLastSection = question.qID.split('-').pop()
-                        const newFileName = `${qIDLastSection}.${fileExtension}`
-                        const relativePath = `media/${newFileName}`
-                        updateMedia(relativePath)
-                        console.log(`New file name: ${newFileName}`)
-                        console.log(`Relative path: ${relativePath}`)
+                        updateMedia(await toBase64(file))
                       }
                     }}
                     style={{ display: 'none' }}

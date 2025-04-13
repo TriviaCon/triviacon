@@ -11,7 +11,7 @@ const useCategoryQuestions = (categoryId: number) => {
     const fetchQuestions = async () => {
       try {
         setLoading(true)
-        const fetchedQuestions: Question[] = await ipc.db.getQuestions(categoryId)
+        const fetchedQuestions: Question[] = await ipc.db.questions.allByCategoryId(categoryId)
         setQuestions(fetchedQuestions)
       } catch (err) {
         setError('Failed to fetch questions')

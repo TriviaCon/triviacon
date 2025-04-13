@@ -18,8 +18,8 @@ export const BuilderView = () => {
           <QuizMeta />
           <QuizTree
             {...categories}
-            setSelectedCategory={(id) => setView({ view: 'category', id })}
-            setSelectedQuestion={(id) => setView({ view: 'question', id })}
+            setSelectedCategory={(id) => (id ? setView({ view: 'category', id }) : setView(null))}
+            setSelectedQuestion={(id) => (id ? setView({ view: 'question', id }) : setView(null))}
           />
         </Col>
         <Col md={8} className="border-start">
