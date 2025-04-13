@@ -1,24 +1,18 @@
-import { createContext } from 'react'
-import { useLocalStorage } from '../hooks/useLocalStorage'
+import { createContext, useEffect, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
-import { Uuid } from '@renderer/types'
+import { Category, Uuid } from '@renderer/types'
+import { ipc } from '@renderer/main'
 
-export type Category = {
-  cID: Uuid
-  name: string
-  questions: Question[]
-}
-
-export type Question = {
-  qID: Uuid
-  text: string
-  answer: string
-  hints: string[]
-  media: string
-  used: boolean
-  answerRevealed: boolean
-  hintsRevealed: boolean
-}
+// export type Question= {
+//   qID: Uuid
+//   text: string
+//   answer: string
+//   hints: string[]
+//   media: string
+//   used: boolean
+//   answerRevealed: boolean
+//   hintsRevealed: boolean
+// }
 
 export type CategoriesContextType = {
   loadQuizData: (url: string) => Promise<void>
@@ -35,58 +29,45 @@ export type CategoriesContextType = {
 export const CATEGORIES_CONTEXT = createContext<CategoriesContextType>(null!)
 
 export const CategoriesProvider = ({ children }: { children: React.ReactNode }) => {
-  const [categories, setCategories] = useLocalStorage<Category[]>('categories', [])
+  const [categories, setCategories] = useState<Category[]>([])
+
+  useEffect(() => {
+    const query = async () => {
+      await ipc.db.open('mocks/mockQuiz.tcq')
+      setCategories(await ipc.db.getCategories())
+    }
+    query()
+  }, [])
 
   const addCategory = async (name: string) => {
-    setCategories([
-      ...categories,
-      {
-        cID: uuidv4(),
-        name,
-        questions: []
-      }
-    ])
+    // setCategories([
+    //   ...categories,
+    //   {
+    //     cID: uuidv4(),
+    //     name,
+    //     questions: []
+    //   }
+    // ])
   }
 
   const addQuestion = (cID: Uuid) => {
-    const category = categories.find((category) => category.cID === cID)
-    if (!category) {
-      return
-    }
-    const question: Question = {
-      qID: uuidv4(),
-      text: '',
-      answer: '',
-      hints: [],
-      media: '',
-      used: false,
-      answerRevealed: false,
-      hintsRevealed: false
-    }
-    setCategories(
-      categories.map((c) => (c.cID === cID ? { ...c, questions: [...c.questions, question] } : c))
-    )
-  }
-
-  const loadQuizData = async (data: string) => {
-    const parsedData = typeof data === 'string' ? JSON.parse(data) : data
-
-    localStorage.setItem('quizInfo', JSON.stringify(parsedData.quizInfo))
-
-    const processedCategories = parsedData.categories.map((category) => ({
-      ...category,
-      cID: uuidv4(),
-      questions: category.questions.map((question) => ({
-        ...question,
-        qID: uuidv4(),
-        used: false,
-        answerRevealed: false,
-        hintsRevealed: false
-      }))
-    }))
-
-    localStorage.setItem('categories', JSON.stringify(processedCategories))
-    setCategories(processedCategories)
+    // const category = categories.find((category) => category.cID === cID)
+    // if (!category) {
+    //   return
+    // }
+    // const question: Question = {
+    //   qID: uuidv4(),
+    //   text: '',
+    //   answer: '',
+    //   hints: [],
+    //   media: '',
+    //   used: false,
+    //   answerRevealed: false,
+    //   hintsRevealed: false
+    // }
+    // setCategories(
+    //   categories.map((c) => (c.cID === cID ? { ...c, questions: [...c.questions, question] } : c))
+    // )
   }
 
   const updateCategory = (categoryId: string, updates: Partial<Category>) => {
@@ -138,7 +119,7 @@ export const CategoriesProvider = ({ children }: { children: React.ReactNode }) 
   return (
     <CATEGORIES_CONTEXT.Provider
       value={{
-        loadQuizData: loadQuizData,
+        loadQuizData: console.log,
         addCategory: addCategory,
         deleteCategory: deleteCategory,
         updateCategory: updateCategory,

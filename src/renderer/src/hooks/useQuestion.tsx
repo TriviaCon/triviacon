@@ -1,19 +1,29 @@
-import { useMemo } from 'react'
-import { useCategories } from './useCategories'
-import { Question } from '@renderer/context/categories'
+import { Question } from '@renderer/types'
+import { ipc } from '@renderer/main'
+import { useEffect, useState } from 'react'
 
-const useQuestion = ({ cID, qID }: { cID: string; qID: string }) => {
-  const { categories, updateQuestion } = useCategories()
-  const category = useMemo(
-    () => categories.find((category) => category.cID === cID)!,
-    [categories, cID]
-  )
-  const question = useMemo(
-    () => category.questions.find((question) => question.qID === qID)!,
-    [category, qID]
-  )
+const useQuestion = ({ cID, qID }: { cID: number; qID: number }) => {
+  const [question, setQuestion] = useState<Question>()
 
-  const update = (question: Partial<Question>) => updateQuestion(cID, qID, question)
+  useEffect(() => {
+    const fetch = async () => {
+      setQuestion(await ipc.db.getQuestion(qID))
+    }
+    fetch()
+  }, [qID])
+
+  const update = async (partial: Partial<Question>) => {
+    if (!question) return
+    try {
+      await ipc.db.updateQuestion(qID, partial)
+      setQuestion({
+        ...question,
+        ...partial
+      })
+    } catch (e) {
+      console.error('Failed to update question', e)
+    }
+  }
 
   const updateText = (text: string) => {
     update({ text })
@@ -28,21 +38,21 @@ const useQuestion = ({ cID, qID }: { cID: string; qID: string }) => {
   }
 
   const addHint = () => {
-    update({
-      hints: [...question.hints, '']
-    })
+    // update({
+    //   hints: [...question.hints, '']
+    // })
   }
 
   const deleteHint = (idx: number) => {
-    const hints = [...question.hints]
-    hints.splice(idx, 1)
-    update({ hints })
+    // const hints = [...question.hints]
+    // hints.splice(idx, 1)
+    // update({ hints })
   }
 
   const updateHint = (idx: number, value: string) => {
-    const hints = [...question.hints]
-    hints[idx] = value
-    update({ hints })
+    // const hints = [...question.hints]
+    // hints[idx] = value
+    // update({ hints })
   }
 
   return { question, updateText, updateAnswer, updateMedia, addHint, deleteHint, updateHint }

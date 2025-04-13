@@ -1,18 +1,22 @@
 import { Button, Card, Form } from 'react-bootstrap'
 import { CloudUpload, Trash } from 'react-bootstrap-icons'
 import useQuestion from '@renderer/hooks/useQuestion'
-import { Category } from '@renderer/context/categories'
+import { Category } from '@renderer/types'
 
-const QuestionView = ({ category, qID }: { category: Category; qID: string }) => {
+const QuestionView = ({ category, qID }: { category: Category; qID: number }) => {
   const { question, updateText, updateAnswer, updateMedia, addHint, deleteHint, updateHint } =
-    useQuestion({ cID: category.cID, qID })
+    useQuestion({ cID: category.id, qID })
+
+  if (!question) {
+    return 'loading...'
+  }
 
   return (
     <div className="h-100 d-flex flex-column">
       <h2>
         Question ({category.name},{' '}
-        {category.questions.findIndex((question) => question.qID === qID) + 1}/
-        {category.questions.length})
+        {/* {category.questions.findIndex((question) => question.qID === qID) + 1}/ */}
+        {/* {category.questions.length}) */}
       </h2>
       <Form>
         <Form.Group className="mb-1">
@@ -58,7 +62,7 @@ const QuestionView = ({ category, qID }: { category: Category; qID: string }) =>
                     const file = e.dataTransfer.files[0]
                     if (file && question) {
                       const fileExtension = file.name.split('.').pop()
-                      const qIDLastSection = question.qID.split('-').pop()
+                      const qIDLastSection = question.id.split('-').pop()
                       const newFileName = `${qIDLastSection}.${fileExtension}`
                       const relativePath = `media/${newFileName}`
                       updateMedia(relativePath)
@@ -112,30 +116,30 @@ const QuestionView = ({ category, qID }: { category: Category; qID: string }) =>
                 Add
               </Button>
             </h6>
-            <Form.Group className="mb-3">
-              {question.hints.length > 0
-                ? question.hints.map((hint, index) => (
-                    <div key={index} className="d-flex align-items-center mb-2">
-                      <Form.Label htmlFor={`hint-${index}`} className="me-2 mb-0">
-                        <strong>#{index + 1}:</strong>
-                      </Form.Label>
-                      <Form.Control
-                        type="text"
-                        id={`hint-${index}`}
-                        value={hint}
-                        onChange={(e) => updateHint(index, e.target.value)}
-                      />
-                      <Button
-                        variant="outline-danger"
-                        className="ms-2"
-                        onClick={() => deleteHint(index)}
-                      >
-                        <Trash size={16} />
-                      </Button>
-                    </div>
-                  ))
-                : null}
-            </Form.Group>
+            {/* <Form.Group className="mb-3"> */}
+            {/*   {question.hints.length > 0 */}
+            {/*     ? question.hints.map((hint, index) => ( */}
+            {/*         <div key={index} className="d-flex align-items-center mb-2"> */}
+            {/*           <Form.Label htmlFor={`hint-${index}`} className="me-2 mb-0"> */}
+            {/*             <strong>#{index + 1}:</strong> */}
+            {/*           </Form.Label> */}
+            {/*           <Form.Control */}
+            {/*             type="text" */}
+            {/*             id={`hint-${index}`} */}
+            {/*             value={hint} */}
+            {/*             onChange={(e) => updateHint(index, e.target.value)} */}
+            {/*           /> */}
+            {/*           <Button */}
+            {/*             variant="outline-danger" */}
+            {/*             className="ms-2" */}
+            {/*             onClick={() => deleteHint(index)} */}
+            {/*           > */}
+            {/*             <Trash size={16} /> */}
+            {/*           </Button> */}
+            {/*         </div> */}
+            {/*       )) */}
+            {/*     : null} */}
+            {/* </Form.Group> */}
           </Card.Body>
         </Card>
       </Form>

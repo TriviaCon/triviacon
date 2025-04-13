@@ -59,8 +59,7 @@ const QuizTree: React.FC<QuizTreeProps> = ({
                 setSelectedQuestion(null)
               }}
               onSelectQuestion={(id) => {
-                setSelectedQuestion(category.questions.find((q) => q.qID === id)!)
-                setCurrentView('single')
+                setSelectedQuestion(id)
               }}
               onClose={() => {
                 setCurrentView('categories')

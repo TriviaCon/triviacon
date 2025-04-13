@@ -1,8 +1,10 @@
 import { Modal, Table } from 'react-bootstrap'
 import { useCategories } from '../../../hooks/useCategories'
+import useStats from '@renderer/hooks/useStats'
 
 export const QuizStatsModal = ({ show, onHide }: { show: boolean; onHide: VoidFunction }) => {
   const { categories } = useCategories()
+  const { stats } = useStats()
 
   return (
     <Modal show={show} onHide={onHide}>
@@ -24,21 +26,13 @@ export const QuizStatsModal = ({ show, onHide }: { show: boolean; onHide: VoidFu
               <td className="text-end" style={{ whiteSpace: 'nowrap' }}>
                 <strong>Total Questions</strong>
               </td>
-              <td className="text-start">
-                {categories.reduce((total, category) => total + category.questions.length, 0)}
-              </td>
+              <td className="text-start">{stats?.totalQuestions}</td>
             </tr>
             <tr>
               <td className="text-end" style={{ whiteSpace: 'nowrap' }}>
                 <strong>Media Questions</strong>
               </td>
-              <td className="text-start">
-                {categories.reduce(
-                  (total, category) =>
-                    total + category.questions.filter((question) => question.media).length,
-                  0
-                )}
-              </td>
+              <td className="text-start">{stats?.questionsWithMedia}</td>
             </tr>
           </tbody>
         </Table>

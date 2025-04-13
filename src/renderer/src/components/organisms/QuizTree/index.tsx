@@ -1,1 +1,1 @@
-export * from "./QuizTree";
+export * from './QuizTree'

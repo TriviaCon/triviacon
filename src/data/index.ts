@@ -1,6 +1,7 @@
 import { IpcMain, IpcRenderer } from 'electron'
+import db from './db'
 
-const dbg = console.log
+export const dbg = console.log
 
 const open = async (test: string): Promise<string> => {
   console.log('open called on main', test)
@@ -8,7 +9,8 @@ const open = async (test: string): Promise<string> => {
 }
 
 const handlers = {
-  open
+  open,
+  db
 } as const
 
 export const registerIpcHandlers = (ipc: IpcMain, handlersMap = handlers, base = '') => {
@@ -38,7 +40,7 @@ export const initRendererIpc = (
       }
     } else if (typeof handler === 'object') {
       // @ts-expect-error no time for types
-      _handlers = { ..._handlers, ...registerIpcHandlers(ipc, handler, ipcName) }
+      _handlers = { ..._handlers, [name]: initRendererIpc(ipc, handler, ipcName) }
     }
   }
   return _handlers as typeof handlers
