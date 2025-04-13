@@ -1,11 +1,10 @@
 import { Button, Card, Form } from 'react-bootstrap'
 import { CloudUpload } from 'react-bootstrap-icons'
 import useQuestion from '@renderer/hooks/useQuestion'
-import { Category } from '@renderer/types'
 
-const QuestionView = ({ category, qID }: { category: Category; qID: number }) => {
+const QuestionView = ({ id }: { id: number }) => {
   const { question, updateText, updateAnswer, updateMedia, addHint, deleteHint, updateHint } =
-    useQuestion({ cID: category.id, qID })
+    useQuestion(id)
 
   if (!question) {
     return 'loading...'
@@ -14,7 +13,7 @@ const QuestionView = ({ category, qID }: { category: Category; qID: number }) =>
   return (
     <div className="h-100 d-flex flex-column">
       <h2>
-        Question ({category.name},{' '}
+        {/* Question ({category.name},{' '} */}
         {/* {category.questions.findIndex((question) => question.qID === qID) + 1}/ */}
         {/* {category.questions.length}) */}
       </h2>

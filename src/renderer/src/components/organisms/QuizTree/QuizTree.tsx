@@ -27,9 +27,7 @@ const AddCategoryForm = ({ onAdd }: { onAdd: (name: string) => Promise<unknown> 
 }
 
 interface QuizTreeProps extends CategoriesContextType {
-  selectedCategory: Category | null
   setSelectedCategory: (category: Category | null) => void
-  selectedQuestion: Question | null
   setSelectedQuestion: (question: Question | null) => void
 }
 
