@@ -1,17 +1,25 @@
-import { Card, Form } from 'react-bootstrap'
-import { CloudUpload } from 'react-bootstrap-icons'
+import { Button, Card, Form } from 'react-bootstrap'
+import { CloudUpload, Trash } from 'react-bootstrap-icons'
 import toBase64 from '@renderer/utils/toBase64'
 import { useQuestion } from '@renderer/hooks/useQuestion'
 import { Question } from '@renderer/types'
 import { useUpdateQuestionMutation } from '@renderer/hooks/useUpdateQuestionMutation'
+import { useHints } from '@renderer/hooks/useHints'
+import { useUpdateHintMutation } from '@renderer/hooks/useUpdateHintMutation'
+import { useDeleteHintMutation } from '@renderer/hooks/useDeleteHintMutation'
+import { useAddHintMutation } from '@renderer/hooks/useAddHintMutation'
 
 const QuestionView = ({ id }: { id: number }) => {
   const question = useQuestion(id)
+  const hints = useHints(id)
+  const addHint = useAddHintMutation(id)
+  const updateHint = useUpdateHintMutation(id)
+  const deleteHint = useDeleteHintMutation(id)
   const updateQuestionMutation = useUpdateQuestionMutation(id)
 
   const update = (q: Partial<Question>) => updateQuestionMutation.mutate(q)
 
-  if (!question.data) {
+  if (!question.data || !hints.data) {
     return 'loading...'
   }
 
@@ -103,34 +111,34 @@ const QuestionView = ({ id }: { id: number }) => {
           <Card.Body className="py-1 px-2">
             <h6 className="mt-0 d-flex justify-content-between align-items-center">
               Hints
-              {/* <Button size="sm" className="ms-auto" onClick={addHint}> */}
-              {/*   Add */}
-              {/* </Button> */}
+              <Button size="sm" className="ms-auto" onClick={() => addHint.mutate()}>
+                Add
+              </Button>
             </h6>
-            {/* <Form.Group className="mb-3"> */}
-            {/*   {question.hints.length > 0 */}
-            {/*     ? question.hints.map((hint, index) => ( */}
-            {/*         <div key={index} className="d-flex align-items-center mb-2"> */}
-            {/*           <Form.Label htmlFor={`hint-${index}`} className="me-2 mb-0"> */}
-            {/*             <strong>#{index + 1}:</strong> */}
-            {/*           </Form.Label> */}
-            {/*           <Form.Control */}
-            {/*             type="text" */}
-            {/*             id={`hint-${index}`} */}
-            {/*             value={hint} */}
-            {/*             onChange={(e) => updateHint(index, e.target.value)} */}
-            {/*           /> */}
-            {/*           <Button */}
-            {/*             variant="outline-danger" */}
-            {/*             className="ms-2" */}
-            {/*             onClick={() => deleteHint(index)} */}
-            {/*           > */}
-            {/*             <Trash size={16} /> */}
-            {/*           </Button> */}
-            {/*         </div> */}
-            {/*       )) */}
-            {/*     : null} */}
-            {/* </Form.Group> */}
+            <Form.Group className="mb-3">
+              {hints.data.map((hint, index) => (
+                <div key={index} className="d-flex align-items-center mb-2">
+                  <Form.Label htmlFor={`hint-${index}`} className="me-2 mb-0">
+                    <strong>#{index + 1}:</strong>
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    id={`hint-${index}`}
+                    value={hint.hint}
+                    onChange={(e) => {
+                      updateHint.mutate({ id: hint.id, hint: e.target.value })
+                    }}
+                  />
+                  <Button
+                    variant="outline-danger"
+                    className="ms-2"
+                    onClick={() => deleteHint.mutate(hint.id)}
+                  >
+                    <Trash size={16} />
+                  </Button>
+                </div>
+              ))}
+            </Form.Group>
           </Card.Body>
         </Card>
       </Form>

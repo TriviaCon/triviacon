@@ -16,3 +16,9 @@ export type Stats = {
   totalQuestions: number
   questionsWithMedia: number
 }
+
+export interface Hint {
+  id: number
+  questionId: number
+  hint: string
+}

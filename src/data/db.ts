@@ -12,6 +12,7 @@ import { dbg } from '.'
 import { Stats } from '@renderer/types'
 import questions from './questions'
 import categories from './categories'
+import hints from './hints'
 
 export let db: Database | null = null
 
@@ -118,5 +119,6 @@ export default {
   convertJson,
   getStats,
   questions,
-  categories
+  categories,
+  hints
 }
