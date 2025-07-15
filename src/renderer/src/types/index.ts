@@ -10,6 +10,7 @@ export type Question = {
   text: string
   answer: string
   media: string | null
+  categoryId: number
 }
 
 export type Stats = {

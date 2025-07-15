@@ -1,4 +1,4 @@
-import { Question } from '@renderer/context/categories'
+import { Question } from '@renderer/types'
 import { db } from './db'
 
 const allByCategoryId = async (categoryId: number): Promise<Question[]> => {
