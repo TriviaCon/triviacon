@@ -88,12 +88,12 @@ export const RunnerView = () => {
   }
 
   return (
-    <Container fluid>
+    <Container fluid className="h-100">
       <Row>
         <ScreenControls />
       </Row>
       <Row>
-        <Col lg={12} xl={4} className="border-end">
+        <Col sm={4} md={3} className="border-end">
           <TeamTable />
         </Col>
         <Col className="border-start d-flex flex-column">

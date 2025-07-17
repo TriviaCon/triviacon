@@ -16,9 +16,9 @@ export const BuilderView = () => {
   }
 
   return (
-    <Container fluid className="d-flex flex-column">
-      <Row>
-        <Col>
+    <Container fluid className="d-flex flex-column h-100">
+      <Row className="flex-grow-1">
+        <Col className="d-flex flex-column h-100" md={4}>
           <QuizMeta />
           <QuizTree
             categories={categories.data ?? []}
@@ -27,7 +27,7 @@ export const BuilderView = () => {
             editable={true}
           />
         </Col>
-        <Col md={8} className="border-start">
+        <Col className="border-start">
           {view?.view === 'question' && <QuestionView id={view.id} />}
         </Col>
       </Row>
