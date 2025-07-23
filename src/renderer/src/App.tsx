@@ -17,7 +17,7 @@ function App(): JSX.Element {
   )
 
   return (
-    <Container fluid className="vh-100 vw-100 px-1 py-1 d-flex flex-column">
+    <Container fluid className="px-1 py-1 d-flex flex-column">
       <QueryClientProvider client={queryClient}>
         <CategoriesProvider>
           <Row>

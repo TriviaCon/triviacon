@@ -4,6 +4,7 @@ import fs from 'fs'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { registerIpcHandlers } from '../data/index'
+import { installExtension, REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 
 let mainWindow: BrowserWindow | null = null;
 let quizViewWindow: BrowserWindow | null = null;
@@ -89,6 +90,9 @@ function createWindow(): void {
 app.whenReady().then(() => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
+  installExtension(REACT_DEVELOPER_TOOLS)
+    .then((ext) => console.log(`Added Extension:  ${ext.name}`))
+    .catch((err) => console.log('An error occurred: ', err));
 
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.

@@ -41,7 +41,7 @@ const BasicQuestionViewer = ({
             <Card.Body>
               <Row>
                 <Col>
-                  <img src={question.media} className="w-100" />
+                  <img src={question.media} />
                 </Col>
                 <Col className="border-start">
                   Controls

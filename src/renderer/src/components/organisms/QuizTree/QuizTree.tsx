@@ -45,33 +45,33 @@ const QuizTree: React.FC<QuizTreeProps> = ({
     <div className="d-flex flex-column">
       <h3>Categories ({categories.length})</h3>
       {editable && <AddCategoryForm />}
-      <div style={{ flex: 'grow' }}>
-        <Accordion flush className="me-1">
-          {categories.map((category) => (
-            <CategoriesAccordionItem
-              key={category.id}
-              category={category}
-              onOpen={() => {
-                setSelectedCategory(category.id)
-                setSelectedQuestion(null)
-                window.electron.ipcRenderer.invoke('set-quiz-view', 'questions');
-              }}
-              onSelectQuestion={(id) => setSelectedQuestion(id)}
-              onClose={() => {
-                setSelectedCategory(null);
-                setSelectedQuestion(null);
-                window.electron.ipcRenderer.invoke('set-quiz-view', 'categories');
-              }}
-              editable={editable}
-            />
-          ))}
-          {categories.length === 0 && (
-            <Accordion.Item eventKey="0">
-              <Accordion.Body>No categories</Accordion.Body>
-            </Accordion.Item>
-          )}
-        </Accordion>
-      </div>
+      {/* <div style={{ flex: 'grow' }}> */}
+      <Accordion flush className="me-1 overflow-scroll">
+        {categories.map((category) => (
+          <CategoriesAccordionItem
+            key={category.id}
+            category={category}
+            onOpen={() => {
+              setSelectedCategory(category.id)
+              setSelectedQuestion(null)
+              window.electron.ipcRenderer.invoke('set-quiz-view', 'questions')
+            }}
+            onSelectQuestion={(id) => setSelectedQuestion(id)}
+            onClose={() => {
+              setSelectedCategory(null)
+              setSelectedQuestion(null)
+              window.electron.ipcRenderer.invoke('set-quiz-view', 'categories')
+            }}
+            editable={editable}
+          />
+        ))}
+        {categories.length === 0 && (
+          <Accordion.Item eventKey="0">
+            <Accordion.Body>No categories</Accordion.Body>
+          </Accordion.Item>
+        )}
+      </Accordion>
+      {/* </div> */}
     </div>
   )
 }

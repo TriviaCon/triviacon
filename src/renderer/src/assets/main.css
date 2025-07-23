@@ -1,25 +1,15 @@
 @import './base.css';
 
-body, #root {
+#root {
   height: 100vh;
   width: 100vw;
-  overflow: hidden !important;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  justify-content: stretch;
   margin: 0;
   padding: 0;
-}
-
-body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* overflow: hidden; */
-  /* background-image: url('./wavy-lines.svg'); */
-  background-size: cover;
   user-select: none;
+  overflow-x: hidden;
 }
 
 code {
@@ -36,14 +26,6 @@ code {
     Liberation Mono,
     monospace;
   font-size: 85%;
-}
-
-#root {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  /* margin-bottom: 80px; */
 }
 
 .logo {

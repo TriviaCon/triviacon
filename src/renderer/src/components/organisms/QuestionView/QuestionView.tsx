@@ -63,7 +63,7 @@ const QuestionView = ({ id }: { id: number }) => {
                 alignItems: 'center'
               }}
             >
-              {question.data.media && <img style={{ width: '100%' }} src={question.data.media} />}
+              {question.data.media && <img src={question.data.media} className="w-50" />}
               <Card.Body className="py-1 px-2 d-flex justify-content-center align-items-center">
                 <div
                   className="drag-upload-area"

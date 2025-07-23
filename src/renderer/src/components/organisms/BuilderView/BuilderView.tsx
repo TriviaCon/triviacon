@@ -16,7 +16,7 @@ export const BuilderView = () => {
   }
 
   return (
-    <Container fluid className="d-flex flex-column h-100">
+    <Container fluid className="h-100">
       <Row className="flex-grow-1">
         <Col className="d-flex flex-column h-100" md={4}>
           <QuizMeta />
