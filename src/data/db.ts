@@ -65,7 +65,7 @@ const _open = async (path: string) => {
 
 const convertJson = async () => {
   const fs = await import('fs')
-  const fileContent = JSON.parse(await fs.promises.readFile('mocks/mockQuiz.json', 'utf8'))
+  const fileContent = JSON.parse(await fs.promises.readFile('mocks/big_mockQuiz.json', 'utf8'))
 
   if (!db) {
     throw new Error('Database not initialized')

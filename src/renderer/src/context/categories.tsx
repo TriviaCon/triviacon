@@ -19,7 +19,9 @@ export const CategoriesProvider = ({ children }: { children: React.ReactNode }) 
 
   useEffect(() => {
     const query = async () => {
-      await ipc.db.open('mocks/mockQuiz.tcq')
+      // await ipc.db.new('mocks/big_mockQuiz.tcq')
+      // await ipc.db.convertJson()
+      await ipc.db.open('mocks/big_mockQuiz.tcq')
       setLoading(false)
     }
     query()
