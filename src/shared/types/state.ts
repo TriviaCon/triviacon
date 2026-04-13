@@ -28,3 +28,17 @@ export interface GameState {
   quizFilePath: string | null
   categories: Category[]
 }
+
+export const INITIAL_GAME_STATE: GameState = {
+  phase: GamePhase.Idle,
+  teams: [],
+  currentTeamId: null,
+  currentCategoryId: null,
+  categoryQuestions: [],
+  activeQuestion: null,
+  revealedAnswers: [],
+  usedQuestions: [],
+  quizMeta: null,
+  quizFilePath: null,
+  categories: []
+}

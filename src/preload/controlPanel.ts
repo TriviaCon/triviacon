@@ -1,7 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { IPC } from '@shared/types/ipc'
 import type { GameState } from '@shared/types/state'
-import type { Question, AnswerOption } from '@shared/types/quiz'
+import type { Category, Question, AnswerOption, QuizMeta, Stats } from '@shared/types/quiz'
 
 const api = {
   // ── State subscription ─────────────────────────────────────────
@@ -18,8 +18,9 @@ const api = {
   fileSaveAs: (): Promise<string | null> => ipcRenderer.invoke(IPC.FILE_SAVE_AS),
 
   // ── Categories ─────────────────────────────────────────────────
-  categoriesAll: (): Promise<unknown> => ipcRenderer.invoke(IPC.QUIZ_CATEGORIES_ALL),
-  categoryById: (id: number): Promise<unknown> => ipcRenderer.invoke(IPC.QUIZ_CATEGORY_BY_ID, id),
+  categoriesAll: (): Promise<Category[]> => ipcRenderer.invoke(IPC.QUIZ_CATEGORIES_ALL),
+  categoryById: (id: number): Promise<Category | null> =>
+    ipcRenderer.invoke(IPC.QUIZ_CATEGORY_BY_ID, id),
   categoryCreate: (name: string): Promise<number> =>
     ipcRenderer.invoke(IPC.QUIZ_CATEGORY_CREATE, name),
   categoryUpdate: (id: number, name: string): Promise<void> =>
@@ -28,9 +29,9 @@ const api = {
     ipcRenderer.invoke(IPC.QUIZ_CATEGORY_REMOVE, id),
 
   // ── Questions ──────────────────────────────────────────────────
-  questionsByCategory: (categoryId: number): Promise<unknown> =>
+  questionsByCategory: (categoryId: number): Promise<Question[]> =>
     ipcRenderer.invoke(IPC.QUIZ_QUESTIONS_BY_CATEGORY, categoryId),
-  questionById: (id: number): Promise<unknown> =>
+  questionById: (id: number): Promise<Question | null> =>
     ipcRenderer.invoke(IPC.QUIZ_QUESTION_BY_ID, id),
   questionCreate: (question: Omit<Question, 'id'>): Promise<number> =>
     ipcRenderer.invoke(IPC.QUIZ_QUESTION_CREATE, question),
@@ -40,7 +41,7 @@ const api = {
     ipcRenderer.invoke(IPC.QUIZ_QUESTION_DELETE, id),
 
   // ── Answer Options ─────────────────────────────────────────────
-  answerOptionsByQuestion: (questionId: number): Promise<unknown> =>
+  answerOptionsByQuestion: (questionId: number): Promise<AnswerOption[]> =>
     ipcRenderer.invoke(IPC.QUIZ_ANSWER_OPTIONS_BY_QUESTION, questionId),
   answerOptionCreate: (
     questionId: number,
@@ -57,7 +58,7 @@ const api = {
     ipcRenderer.invoke(IPC.QUIZ_ANSWER_OPTION_REMOVE, id),
 
   // ── Meta ───────────────────────────────────────────────────────
-  quizMetaGet: (): Promise<unknown> => ipcRenderer.invoke(IPC.QUIZ_META_GET),
+  quizMetaGet: (): Promise<QuizMeta> => ipcRenderer.invoke(IPC.QUIZ_META_GET),
   quizMetaUpdateName: (name: string): Promise<void> =>
     ipcRenderer.invoke(IPC.QUIZ_META_UPDATE_NAME, name),
   quizMetaUpdateAuthor: (author: string): Promise<void> =>
@@ -68,7 +69,7 @@ const api = {
     ipcRenderer.invoke(IPC.QUIZ_META_UPDATE_LOCATION, location),
 
   // ── Stats ──────────────────────────────────────────────────────
-  quizStats: (): Promise<unknown> => ipcRenderer.invoke(IPC.QUIZ_STATS),
+  quizStats: (): Promise<Stats> => ipcRenderer.invoke(IPC.QUIZ_STATS),
 
   // ── Team management ─────────────────────────────────────────────
   addTeam: (name: string): Promise<void> => ipcRenderer.invoke(IPC.GAME_ADD_TEAM, name),

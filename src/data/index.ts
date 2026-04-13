@@ -1,5 +1,0 @@
-export { default as db } from './db'
-export { default as categories } from './categories'
-export { default as questions } from './questions'
-export { default as answerOptions } from './answerOptions'
-export { default as meta } from './meta'

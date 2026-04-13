@@ -1,23 +1,9 @@
 import { useState, useEffect } from 'react'
 import type { GameState } from '@shared/types/state'
-import { GamePhase } from '@shared/types/state'
-
-const initialState: GameState = {
-  phase: GamePhase.Idle,
-  teams: [],
-  currentTeamId: null,
-  currentCategoryId: null,
-  categoryQuestions: [],
-  activeQuestion: null,
-  revealedAnswers: [],
-  usedQuestions: [],
-  quizMeta: null,
-  quizFilePath: null,
-  categories: []
-}
+import { INITIAL_GAME_STATE } from '@shared/types/state'
 
 export function useGameState(): GameState {
-  const [state, setState] = useState<GameState>(initialState)
+  const [state, setState] = useState<GameState>(INITIAL_GAME_STATE)
 
   useEffect(() => {
     const cleanup = window.api.onStateUpdate((newState) => {

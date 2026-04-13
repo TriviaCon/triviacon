@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Camera, Plus, Trash2 } from 'lucide-react'
 import { Button } from '@renderer/components/ui/button'
 import { Input } from '@renderer/components/ui/input'
@@ -43,16 +43,26 @@ const QuizTreeItem = ({
   editable
 }: {
   category: Category
-  onOpen: VoidFunction
+  onOpen: () => void
   onSelectQuestion: (id: number) => void
-  onClose: VoidFunction
+  onClose: () => void
   editable: boolean
 }) => {
   const { data: questions } = useCategoryQuestions(category.id)
   const deleteCategoryMutation = useDeleteCategoryMutation(category.id)
   const addQuestionMutation = useAddQuestionMutation(category.id)
+  const renameTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   if (!questions) return null
+
+  const handleRename = (value: string) => {
+    clearTimeout(renameTimeout.current)
+    renameTimeout.current = setTimeout(() => {
+      if (value.trim() && value !== category.name) {
+        window.api.categoryUpdate(category.id, value.trim())
+      }
+    }, 500)
+  }
 
   return (
     <AccordionItem value={`${category.id}`}>
@@ -68,7 +78,7 @@ const QuizTreeItem = ({
             name="name"
             type="text"
             defaultValue={category.name || ''}
-            onChange={() => alert('todo')}
+            onChange={(e) => handleRename(e.target.value)}
           />
           {editable && (
             <DeleteCategoryButton
@@ -92,12 +102,7 @@ const QuizTreeItem = ({
           {editable && (
             <Button
               size="sm"
-              onClick={() => {
-                alert(
-                  `Not implemented yet!\nThis will add a new question to \ncategory: ${category.name}\ncID: ${category.id}\n`
-                )
-                addQuestionMutation.mutate()
-              }}
+              onClick={() => addQuestionMutation.mutate()}
             >
               <Plus className="h-4 w-4" />
             </Button>

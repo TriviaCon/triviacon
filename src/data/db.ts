@@ -1,25 +1,14 @@
-export const sqlite = async (): Promise<typeof import('sqlite3')> => {
-  if (typeof window !== 'undefined') {
-    return undefined!
-  }
-
-  const sqlite3 = await import('sqlite3')
-  return sqlite3.default
-}
-
+import sqlite3 from 'sqlite3'
 import { type Database, open } from 'sqlite'
-const dbg = console.log
 import type { Stats } from '@shared/types/quiz'
-import questions from './questions'
-import categories from './categories'
-import answerOptions from './answerOptions'
-import meta from './meta'
+
+const dbg = console.log
 
 export let db: Database | null = null
 
 const _new = async (path: string) => {
   dbg('Creating new database', path)
-  db = await open({ filename: path, driver: (await sqlite()).Database })
+  db = await open({ filename: path, driver: sqlite3.Database })
   db.on('trace', dbg)
   db.exec(`CREATE TABLE IF NOT EXISTS meta(
           key TEXT not null constraint meta_pk primary key,
@@ -61,56 +50,8 @@ const _new = async (path: string) => {
 
 const _open = async (path: string) => {
   dbg('Opening new database', path)
-  db = await open({ filename: path, driver: (await sqlite()).Database })
+  db = await open({ filename: path, driver: sqlite3.Database })
   db.on('trace', dbg)
-}
-
-const convertJson = async () => {
-  const fs = await import('fs')
-  const fileContent = JSON.parse(await fs.promises.readFile('mocks/big_mockQuiz.json', 'utf8'))
-
-  if (!db) {
-    throw new Error('Database not initialized')
-  }
-
-  const { categories } = fileContent
-
-  for (const category of categories) {
-    // Insert category
-    const categoryStmt = await db.prepare('INSERT INTO Categories (name) VALUES (?)')
-    const categoryResult = await categoryStmt.run(category.name)
-    const categoryId = categoryResult.lastID
-
-    for (const question of category.questions) {
-      // Insert question
-      const questionStmt = await db.prepare(
-        'INSERT INTO Questions (categoryId, type, text, media) VALUES (?, ?, ?, ?)'
-      )
-      const questionResult = await questionStmt.run(
-        categoryId,
-        question.type || 'single-answer',
-        question.text,
-        question.media || null
-      )
-      const questionId = questionResult.lastID
-
-      // Legacy: convert old answer+hints format to answerOptions
-      if (question.answer) {
-        const answerStmt = await db.prepare(
-          'INSERT INTO AnswerOptions (questionId, text, correct, sortOrder) VALUES (?, ?, 1, 0)'
-        )
-        await answerStmt.run(questionId, question.answer)
-      }
-      if (question.hints) {
-        for (let i = 0; i < question.hints.length; i++) {
-          const optStmt = await db.prepare(
-            'INSERT INTO AnswerOptions (questionId, text, correct, sortOrder) VALUES (?, ?, 0, ?)'
-          )
-          await optStmt.run(questionId, question.hints[i], i + 1)
-        }
-      }
-    }
-  }
 }
 
 const getFilePath = (): string | null => {
@@ -143,10 +84,5 @@ export default {
   open: _open,
   copyTo,
   getFilePath,
-  convertJson,
-  getStats,
-  questions,
-  categories,
-  answerOptions,
-  meta
+  getStats
 }

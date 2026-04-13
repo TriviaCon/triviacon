@@ -12,8 +12,12 @@ import { getControlPanelWindow, getGameScreenWindow } from '../windows'
 const engine = new GameEngine()
 
 function safeSend(win: BrowserWindow | null, channel: string, ...args: unknown[]): void {
-  if (win && !win.isDestroyed()) {
-    win.webContents.send(channel, ...args)
+  try {
+    if (win && !win.isDestroyed()) {
+      win.webContents.send(channel, ...args)
+    }
+  } catch {
+    /* window closing */
   }
 }
 
@@ -31,12 +35,17 @@ export function registerIpcHandlers(): void {
       filters: [QUIZ_FILE_FILTER]
     })
     if (result.canceled || !result.filePath) return null
-    await db.new(result.filePath)
-    const quizMeta = await meta.get()
-    const cats = await categories.all()
-    engine.loadQuiz(result.filePath, quizMeta, cats)
-    broadcastState()
-    return result.filePath
+    try {
+      await db.new(result.filePath)
+      const quizMeta = await meta.get()
+      const cats = await categories.all()
+      engine.loadQuiz(result.filePath, quizMeta, cats)
+      broadcastState()
+      return result.filePath
+    } catch (err) {
+      console.error('FILE_NEW failed:', err)
+      throw err
+    }
   })
 
   ipcMain.handle(IPC.FILE_OPEN, async () => {
@@ -46,15 +55,20 @@ export function registerIpcHandlers(): void {
     })
     if (result.canceled || result.filePaths.length === 0) return null
     const filePath = result.filePaths[0]
-    await db.open(filePath)
-    const quizMeta = await meta.get()
-    const cats = await categories.all()
-    engine.loadQuiz(filePath, quizMeta, cats)
-    broadcastState()
-    return filePath
+    try {
+      await db.open(filePath)
+      const quizMeta = await meta.get()
+      const cats = await categories.all()
+      engine.loadQuiz(filePath, quizMeta, cats)
+      broadcastState()
+      return filePath
+    } catch (err) {
+      console.error('FILE_OPEN failed:', err)
+      throw err
+    }
   })
 
-  ipcMain.handle(IPC.FILE_SAVE, async () => {
+  ipcMain.handle(IPC.FILE_SAVE, () => {
     // Current file is already being written to in-place via SQLite
     return true
   })
@@ -64,13 +78,18 @@ export function registerIpcHandlers(): void {
       filters: [QUIZ_FILE_FILTER]
     })
     if (result.canceled || !result.filePath) return null
-    await db.copyTo(result.filePath)
-    await db.open(result.filePath)
-    const quizMeta = await meta.get()
-    const cats = await categories.all()
-    engine.loadQuiz(result.filePath, quizMeta, cats)
-    broadcastState()
-    return result.filePath
+    try {
+      await db.copyTo(result.filePath)
+      await db.open(result.filePath)
+      const quizMeta = await meta.get()
+      const cats = await categories.all()
+      engine.loadQuiz(result.filePath, quizMeta, cats)
+      broadcastState()
+      return result.filePath
+    } catch (err) {
+      console.error('FILE_SAVE_AS failed:', err)
+      throw err
+    }
   })
 
   // ── Categories ───────────────────────────────────────────────────

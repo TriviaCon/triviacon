@@ -1,23 +1,12 @@
 import {
   GamePhase,
+  INITIAL_GAME_STATE,
   type GameState
 } from '@shared/types/state'
 import type { AnswerOption, Category, Question, QuizMeta } from '@shared/types/quiz'
 
 function createInitialState(): GameState {
-  return {
-    phase: GamePhase.Idle,
-    teams: [],
-    currentTeamId: null,
-    currentCategoryId: null,
-    categoryQuestions: [],
-    activeQuestion: null,
-    revealedAnswers: [],
-    usedQuestions: [],
-    quizMeta: null,
-    quizFilePath: null,
-    categories: []
-  }
+  return { ...INITIAL_GAME_STATE }
 }
 
 let nextTeamId = 1

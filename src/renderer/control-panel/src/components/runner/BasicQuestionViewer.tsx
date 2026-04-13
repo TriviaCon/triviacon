@@ -14,9 +14,9 @@ const BasicQuestionViewer = ({
   question: Question
   answerOptions: AnswerOption[]
   answerRevealed: boolean
-  onRevealAnswer: VoidFunction
+  onRevealAnswer: () => void
   used: boolean
-  onUse: VoidFunction
+  onUse: () => void
 }) => {
   return (
     <div className="space-y-4">

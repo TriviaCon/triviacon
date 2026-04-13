@@ -13,7 +13,7 @@ import {
   TableRow
 } from '@renderer/components/ui/table'
 
-export const QuizStatsModal = ({ show, onHide }: { show: boolean; onHide: VoidFunction }) => {
+export const QuizStatsModal = ({ show, onHide }: { show: boolean; onHide: () => void }) => {
   const { categories } = useGameState()
   const stats = useStats()
 
