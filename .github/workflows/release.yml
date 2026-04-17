@@ -40,3 +40,14 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run ${{ matrix.build_script }}
+
+      - name: Remove updater artifacts
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          TAG="${{ github.ref_name }}"
+          gh release view "$TAG" --repo ${{ github.repository }} --json assets --jq '.assets[].name' \
+            | grep -E '\.(blockmap|yml)$' \
+            | xargs -I{} gh release delete-asset "$TAG" {} --repo ${{ github.repository }} --yes \
+            || true
