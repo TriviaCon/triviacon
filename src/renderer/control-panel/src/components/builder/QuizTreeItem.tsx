@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Camera, Plus, Trash2 } from 'lucide-react'
 import { Button } from '@renderer/components/ui/button'
 import { Input } from '@renderer/components/ui/input'
@@ -19,11 +20,10 @@ const DeleteCategoryButton = ({
   name: string
   onDelete: () => Promise<unknown>
 }) => {
+  const { t } = useTranslation()
   const [pending, setPending] = useState(false)
   const handleClick = async () => {
-    if (
-      !window.confirm(`Are you sure you want to delete category "${name}" and all its questions?`)
-    ) {
+    if (!window.confirm(t('confirm.deleteCategory', { name }))) {
       return
     }
     setPending(true)
@@ -48,13 +48,15 @@ const QuizTreeItem = ({
   onOpen,
   onSelectQuestion,
   onClose,
-  editable
+  editable,
+  usedQuestions
 }: {
   category: Category
   onOpen: () => void
   onSelectQuestion: (id: number) => void
   onClose: () => void
   editable: boolean
+  usedQuestions?: number[]
 }) => {
   const { data: questions } = useCategoryQuestions(category.id)
   const deleteCategoryMutation = useDeleteCategoryMutation(category.id)
@@ -62,6 +64,10 @@ const QuizTreeItem = ({
   const renameTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   if (!questions) return null
+
+  const usedSet = usedQuestions ? new Set(usedQuestions) : null
+  const usedCount = usedSet ? questions.filter((q) => usedSet.has(q.id)).length : 0
+  const remaining = questions.length - usedCount
 
   const handleRename = (value: string) => {
     clearTimeout(renameTimeout.current)
@@ -74,8 +80,11 @@ const QuizTreeItem = ({
 
   return (
     <AccordionItem value={`${category.id}`}>
-      <AccordionTrigger onClick={onOpen} className="text-sm font-semibold">
-        {category.name} ({questions.length})
+      <AccordionTrigger
+        onClick={onOpen}
+        className={`text-sm font-semibold ${usedSet && remaining === 0 ? 'opacity-40 line-through' : ''}`}
+      >
+        {category.name} ({usedSet ? `${remaining}/${questions.length}` : questions.length})
       </AccordionTrigger>
       <AccordionContent
         onAnimationEnd={(e) => {
@@ -98,17 +107,21 @@ const QuizTreeItem = ({
           )}
         </div>
         <div className="flex flex-wrap gap-1">
-          {questions.map((question, index) => (
-            <Button
-              key={question.id}
-              variant="outline"
-              size="sm"
-              onClick={() => onSelectQuestion(question.id)}
-            >
-              {index + 1}
-              <Camera className={`ml-1 h-3 w-3 ${!question.media ? 'opacity-30' : ''}`} />
-            </Button>
-          ))}
+          {questions.map((question, index) => {
+            const isUsed = usedSet?.has(question.id)
+            return (
+              <Button
+                key={question.id}
+                variant="outline"
+                size="sm"
+                onClick={() => onSelectQuestion(question.id)}
+                className={isUsed ? 'opacity-40 line-through' : ''}
+              >
+                {index + 1}
+                <Camera className={`ml-1 h-3 w-3 ${!question.media ? 'opacity-30' : ''}`} />
+              </Button>
+            )
+          })}
           {editable && (
             <Button size="sm" onClick={() => addQuestionMutation.mutate()}>
               <Plus className="h-4 w-4" />

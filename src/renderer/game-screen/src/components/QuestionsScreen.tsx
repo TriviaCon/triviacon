@@ -1,4 +1,6 @@
+import { useTranslation } from 'react-i18next'
 import type { Category, Question } from '@shared/types/quiz'
+import { useSquareGrid } from '../hooks/useSquareGrid'
 
 const QuestionsScreen = ({
   categories,
@@ -11,33 +13,52 @@ const QuestionsScreen = ({
   questions: Question[]
   usedQuestions: number[]
 }) => {
+  const { t } = useTranslation()
   const category = categories.find((c) => c.id === currentCategoryId)
+  const { containerRef, cols, tileSize } = useSquareGrid(questions.length)
 
   return (
-    <div className="w-full py-8 px-6">
-      <div className="text-center mb-6">
-        <h1 className="text-6xl font-bold">{category?.name ?? 'Questions'}</h1>
-        <hr className="border-border mt-4" />
+    <div className="flex flex-col h-screen bg-background text-foreground">
+      <div className="text-center py-4 shrink-0">
+        <h1 className="text-5xl font-bold">{category?.name ?? t('gameScreen.questions')}</h1>
+        <hr className="border-border mt-3 mx-6" />
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 justify-items-center">
-        {questions.map((q, index) => {
-          const used = usedQuestions.includes(q.id)
-          return (
-            <div
-              key={q.id}
-              className={`w-full rounded-lg border p-4 text-center text-2xl font-bold transition-colors ${
-                used
-                  ? 'border-border/50 bg-muted/30 text-muted-foreground line-through'
-                  : 'border-border bg-card text-card-foreground'
-              }`}
-            >
-              {index + 1}
-            </div>
-          )
-        })}
-        {questions.length === 0 && (
-          <div className="col-span-full text-center text-muted-foreground">
-            No questions in this category.
+      <div
+        ref={containerRef}
+        className="flex-1 min-h-0 overflow-hidden flex items-center justify-center px-6 pb-6"
+      >
+        {questions.length === 0 ? (
+          <div className="text-center text-muted-foreground">
+            {t('gameScreen.noQuestions')}
+          </div>
+        ) : (
+          <div
+            className="grid justify-center content-center"
+            style={{
+              gridTemplateColumns: `repeat(${cols}, ${tileSize}px)`,
+              gap: '12px'
+            }}
+          >
+            {questions.map((q, index) => {
+              const used = usedQuestions.includes(q.id)
+              return (
+                <div
+                  key={q.id}
+                  className={`rounded-lg border font-bold flex items-center justify-center transition-colors ${
+                    used
+                      ? 'border-border/30 bg-muted/20 text-muted-foreground/30 line-through opacity-40'
+                      : 'border-primary/50 bg-card text-card-foreground shadow-sm'
+                  }`}
+                  style={{
+                    width: tileSize,
+                    height: tileSize,
+                    fontSize: tileSize * 0.35
+                  }}
+                >
+                  {index + 1}
+                </div>
+              )
+            })}
           </div>
         )}
       </div>

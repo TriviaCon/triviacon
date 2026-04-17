@@ -19,3 +19,4 @@ export const useUpdateName = () => createMetaMutation(window.api.quizMetaUpdateN
 export const useUpdateAuthor = () => createMetaMutation(window.api.quizMetaUpdateAuthor)
 export const useUpdateDate = () => createMetaMutation(window.api.quizMetaUpdateDate)
 export const useUpdateLocation = () => createMetaMutation(window.api.quizMetaUpdateLocation)
+export const useUpdateSplash = () => createMetaMutation(window.api.quizMetaUpdateSplash)

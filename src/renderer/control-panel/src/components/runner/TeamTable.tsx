@@ -1,4 +1,5 @@
 import { FormEvent, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ChevronLeft, ChevronRight, UserPlus, UserX } from 'lucide-react'
 import { Button } from '@renderer/components/ui/button'
 import { Input } from '@renderer/components/ui/input'
@@ -13,9 +14,10 @@ import {
 import { useGameState } from '@renderer/hooks/useGameState'
 
 const TeamTable = () => {
+  const { t } = useTranslation()
   const gameState = useGameState()
   const { teams, currentTeamId } = gameState
-  const currentTeam = teams.find((t) => t.id === currentTeamId) ?? null
+  const currentTeam = teams.find((tm) => tm.id === currentTeamId) ?? null
 
   const [editingTeamId, setEditingTeamId] = useState<string | null>(null)
   const [editingTeamName, setEditingTeamName] = useState('')
@@ -25,8 +27,8 @@ const TeamTable = () => {
     const form = event.target as HTMLFormElement
     const data = new FormData(form)
     const name = data.get('teamName') as string
-    if (teams.some((t) => t.name.toLowerCase() === name.toLowerCase())) {
-      alert('A team with this name already exists!')
+    if (teams.some((tm) => tm.name.toLowerCase() === name.toLowerCase())) {
+      alert(t('runner.teamExists'))
       return
     }
     window.api.addTeam(name)
@@ -46,31 +48,31 @@ const TeamTable = () => {
   return (
     <div className="flex flex-col">
       <div className="flex justify-between items-center mb-2">
-        <h2 className="text-lg font-semibold">Teams</h2>
+        <h2 className="text-lg font-semibold">{t('runner.teams')}</h2>
         <form className="flex items-center gap-1" onSubmit={handleAddTeam}>
           <Input
             type="text"
             name="teamName"
-            placeholder="Team Name"
-            aria-label="Team Name"
+            placeholder={t('runner.teamName')}
+            aria-label={t('runner.teamName')}
             required
             className="h-8 w-32"
           />
           <Button type="submit" size="sm">
-            <UserPlus className="mr-1 h-4 w-4" /> Add
+            <UserPlus className="mr-1 h-4 w-4" /> {t('actions.add')}
           </Button>
         </form>
       </div>
 
       <div className="flex items-center justify-between rounded-md bg-muted/50 px-3 py-2 mb-2 border border-border">
-        <span className="text-sm">Current Team:</span>
-        <span className="font-semibold text-sm">{currentTeam?.name || 'No team selected'}</span>
+        <span className="text-sm">{t('runner.currentTeam')}</span>
+        <span className="font-semibold text-sm">{currentTeam?.name || t('runner.noTeamSelected')}</span>
         <div className="flex gap-1">
           <Button variant="outline" size="sm" onClick={() => window.api.prevTeam()}>
-            <ChevronLeft className="h-4 w-4" /> Prev
+            <ChevronLeft className="h-4 w-4" /> {t('actions.prev')}
           </Button>
           <Button variant="outline" size="sm" onClick={() => window.api.nextTeam()}>
-            Next <ChevronRight className="h-4 w-4" />
+            {t('actions.next')} <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
       </div>
@@ -79,9 +81,9 @@ const TeamTable = () => {
         <TableHeader>
           <TableRow>
             <TableHead className="w-8">#</TableHead>
-            <TableHead>Team Name</TableHead>
-            <TableHead className="text-center">Score</TableHead>
-            <TableHead className="text-center w-12">Del</TableHead>
+            <TableHead>{t('runner.teamName')}</TableHead>
+            <TableHead className="text-center">{t('runner.score')}</TableHead>
+            <TableHead className="text-center w-12">{t('actions.delete')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -143,7 +145,7 @@ const TeamTable = () => {
                   size="icon"
                   className="h-7 w-7 text-destructive border-destructive/50 hover:bg-destructive/10"
                   onClick={() => {
-                    if (window.confirm(`Are you sure you want to delete team '${team.name}'?`)) {
+                    if (window.confirm(t('confirm.deleteTeam', { name: team.name }))) {
                       window.api.removeTeam(team.id)
                     }
                   }}
@@ -156,7 +158,7 @@ const TeamTable = () => {
           {teams.length === 0 && (
             <TableRow>
               <TableCell colSpan={4} className="text-center text-muted-foreground">
-                No teams added yet.
+                {t('runner.noTeams')}
               </TableCell>
             </TableRow>
           )}

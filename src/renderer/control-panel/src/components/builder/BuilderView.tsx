@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import QuestionView from './QuestionView'
 import { QuizMeta } from './QuizMeta'
 import QuizTree from './QuizTree'
@@ -7,11 +8,12 @@ import { useGameState } from '@renderer/hooks/useGameState'
 type View = { view: 'question'; id: number } | { view: 'category'; id: number } | null
 
 export const BuilderView = () => {
+  const { t } = useTranslation()
   const [view, setView] = useState<View>(null)
   const { categories } = useGameState()
 
   if (!categories.length) {
-    return <span className="text-muted-foreground">No quiz loaded.</span>
+    return <span className="text-muted-foreground">{t('builder.noQuizLoaded')}</span>
   }
 
   return (

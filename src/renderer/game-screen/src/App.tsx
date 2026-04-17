@@ -17,7 +17,13 @@ function App() {
 
   switch (gameState.phase) {
     case GamePhase.Categories:
-      return <CategoriesScreen categories={gameState.categories} />
+      return (
+        <CategoriesScreen
+          categories={gameState.categories}
+          usedQuestions={gameState.usedQuestions}
+          questionCategoryMap={gameState.questionCategoryMap}
+        />
+      )
     case GamePhase.Questions:
       return (
         <QuestionsScreen
@@ -31,6 +37,7 @@ function App() {
       return <QuestionScreen activeQuestion={gameState.activeQuestion} />
     case GamePhase.Ranking:
       return <RankingScreen teams={gameState.teams} />
+    case GamePhase.Splash:
     default:
       return <IdleScreen quizMeta={gameState.quizMeta} />
   }

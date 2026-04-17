@@ -1,0 +1,127 @@
+{
+  "app": {
+    "name": "TriviaCON",
+    "waitingForData": "Waiting for game data..."
+  },
+
+  "tabs": {
+    "builder": "Builder",
+    "runner": "Game Runner",
+    "settings": "Settings"
+  },
+
+  "actions": {
+    "newQuiz": "New Quiz",
+    "loadQuiz": "Load Quiz",
+    "saveQuiz": "Save Quiz",
+    "save": "Save",
+    "saveAs": "Save as...",
+    "runQuiz": "RUN QUIZ",
+    "splash": "Splash",
+    "categories": "Categories",
+    "ranking": "Ranking",
+    "fullscreen": "Fullscreen",
+    "light": "Light",
+    "dark": "Dark",
+    "add": "Add",
+    "change": "Change",
+    "delete": "Delete",
+    "prev": "Prev",
+    "next": "Next",
+    "backCategories": "\u2190 Categories",
+    "backQuestions": "\u2190 Questions"
+  },
+
+  "confirm": {
+    "newQuiz": "Create a new, empty Quiz?\n\nUnsaved changes will be lost!",
+    "loadQuiz": "Load a Quiz?\n\nUnsaved changes will be lost!",
+    "deleteCategory": "Are you sure you want to delete category \"{{name}}\" and all its questions?",
+    "deleteTeam": "Are you sure you want to delete team '{{name}}'?"
+  },
+
+  "builder": {
+    "quiz": "Quiz",
+    "noQuizLoaded": "No quiz loaded.",
+    "quizInfo": "Quiz Info",
+    "stats": "Stats",
+    "loadingMeta": "Loading quiz metadata...",
+    "name": "Name",
+    "namePlaceholder": "Quiz Name",
+    "author": "Author",
+    "authorPlaceholder": "Quiz Author",
+    "date": "Date",
+    "location": "Location",
+    "locationPlaceholder": "Quiz Location",
+    "splashImage": "Splash Image",
+    "noImage": "No image",
+    "addCategory": "Add new category",
+    "noCategories": "No categories",
+    "noCategoriesHint": "Add a category above to get started.",
+    "question": "Question:",
+    "type": "Type:",
+    "typeSingle": "Single Answer",
+    "typeMultiple": "Multiple Choice",
+    "typeList": "List",
+    "media": "Media:",
+    "attachMedia": "Attach Media",
+    "answerOptions": "Answer Options",
+    "correctAnswer": "Correct answer",
+    "loadingQuestion": "Loading question..."
+  },
+
+  "runner": {
+    "teams": "Teams",
+    "teamName": "Team Name",
+    "currentTeam": "Current Team:",
+    "noTeamSelected": "No team selected",
+    "noTeams": "No teams added yet.",
+    "teamExists": "A team with this name already exists!",
+    "score": "Score",
+    "media": "Media",
+    "noMedia": "No media",
+    "audioControls": "Audio Controls",
+    "videoControls": "Video Controls",
+    "answers": "Answers",
+    "noAnswerOptions": "No answer options",
+    "used": "Used",
+    "reveal": "Reveal",
+    "yes": "Yes",
+    "no": "No"
+  },
+
+  "gameScreen": {
+    "categories": "CATEGORIES",
+    "noCategories": "No categories available.",
+    "questions": "Questions",
+    "noQuestions": "No questions in this category.",
+    "noQuestionSelected": "No question selected",
+    "ranking": "RANKING",
+    "noTeams": "No teams in ranking.",
+    "points": "points",
+    "byAuthor": "by {{author}}"
+  },
+
+  "debug": {
+    "title": "Debug",
+    "clearStorage": "Clear Local Storage",
+    "submitBug": "Submit Bug Report"
+  },
+
+  "stats": {
+    "title": "Quiz Statistics",
+    "totalCategories": "Total Categories",
+    "totalQuestions": "Total Questions",
+    "mediaQuestions": "Media Questions"
+  },
+
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "languageDescription": "Choose the interface language."
+  },
+
+  "languages": {
+    "en": "English",
+    "pl": "Polski"
+  }
+}

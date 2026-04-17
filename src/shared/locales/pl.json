@@ -1,0 +1,127 @@
+{
+  "app": {
+    "name": "TriviaCON",
+    "waitingForData": "Oczekiwanie na dane gry..."
+  },
+
+  "tabs": {
+    "builder": "Kreator",
+    "runner": "Rozgrywka",
+    "settings": "Ustawienia"
+  },
+
+  "actions": {
+    "newQuiz": "Nowy Quiz",
+    "loadQuiz": "Wczytaj Quiz",
+    "saveQuiz": "Zapisz Quiz",
+    "save": "Zapisz",
+    "saveAs": "Zapisz jako...",
+    "runQuiz": "START",
+    "splash": "Ekran powitalny",
+    "categories": "Kategorie",
+    "ranking": "Ranking",
+    "fullscreen": "Pełny ekran",
+    "light": "Jasny",
+    "dark": "Ciemny",
+    "add": "Dodaj",
+    "change": "Zmień",
+    "delete": "Usuń",
+    "prev": "Poprz.",
+    "next": "Nast.",
+    "backCategories": "\u2190 Kategorie",
+    "backQuestions": "\u2190 Pytania"
+  },
+
+  "confirm": {
+    "newQuiz": "Utworzyć nowy, pusty Quiz?\n\nNiezapisane zmiany zostaną utracone!",
+    "loadQuiz": "Wczytać Quiz?\n\nNiezapisane zmiany zostaną utracone!",
+    "deleteCategory": "Czy na pewno chcesz usunąć kategorię \"{{name}}\" i wszystkie jej pytania?",
+    "deleteTeam": "Czy na pewno chcesz usunąć drużynę '{{name}}'?"
+  },
+
+  "builder": {
+    "quiz": "Quiz",
+    "noQuizLoaded": "Nie wczytano quizu.",
+    "quizInfo": "Informacje o quizie",
+    "stats": "Statystyki",
+    "loadingMeta": "Wczytywanie metadanych quizu...",
+    "name": "Nazwa",
+    "namePlaceholder": "Nazwa quizu",
+    "author": "Autor",
+    "authorPlaceholder": "Autor quizu",
+    "date": "Data",
+    "location": "Lokalizacja",
+    "locationPlaceholder": "Lokalizacja quizu",
+    "splashImage": "Obraz powitalny",
+    "noImage": "Brak obrazu",
+    "addCategory": "Dodaj nową kategorię",
+    "noCategories": "Brak kategorii",
+    "noCategoriesHint": "Dodaj kategorię powyżej, aby rozpocząć.",
+    "question": "Pytanie:",
+    "type": "Typ:",
+    "typeSingle": "Jedna odpowiedź",
+    "typeMultiple": "Wielokrotny wybór",
+    "typeList": "Lista",
+    "media": "Media:",
+    "attachMedia": "Dodaj media",
+    "answerOptions": "Opcje odpowiedzi",
+    "correctAnswer": "Poprawna odpowiedź",
+    "loadingQuestion": "Wczytywanie pytania..."
+  },
+
+  "runner": {
+    "teams": "Drużyny",
+    "teamName": "Nazwa drużyny",
+    "currentTeam": "Aktywna drużyna:",
+    "noTeamSelected": "Nie wybrano drużyny",
+    "noTeams": "Nie dodano jeszcze drużyn.",
+    "teamExists": "Drużyna o tej nazwie już istnieje!",
+    "score": "Wynik",
+    "media": "Media",
+    "noMedia": "Brak mediów",
+    "audioControls": "Sterowanie audio",
+    "videoControls": "Sterowanie wideo",
+    "answers": "Odpowiedzi",
+    "noAnswerOptions": "Brak opcji odpowiedzi",
+    "used": "Użyte",
+    "reveal": "Pokaż",
+    "yes": "Tak",
+    "no": "Nie"
+  },
+
+  "gameScreen": {
+    "categories": "KATEGORIE",
+    "noCategories": "Brak dostępnych kategorii.",
+    "questions": "Pytania",
+    "noQuestions": "Brak pytań w tej kategorii.",
+    "noQuestionSelected": "Nie wybrano pytania",
+    "ranking": "RANKING",
+    "noTeams": "Brak drużyn w rankingu.",
+    "points": "pkt",
+    "byAuthor": "autorstwa {{author}}"
+  },
+
+  "debug": {
+    "title": "Debug",
+    "clearStorage": "Wyczyść pamięć lokalną",
+    "submitBug": "Zgłoś błąd"
+  },
+
+  "stats": {
+    "title": "Statystyki quizu",
+    "totalCategories": "Liczba kategorii",
+    "totalQuestions": "Liczba pytań",
+    "mediaQuestions": "Pytania z mediami"
+  },
+
+  "settings": {
+    "title": "Ustawienia",
+    "language": "Język",
+    "languageDescription": "Wybierz język interfejsu."
+  },
+
+  "languages": {
+    "en": "English",
+    "pl": "Polski"
+  }
+}

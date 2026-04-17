@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import {
   FilePlus,
   Upload,
@@ -8,7 +9,8 @@ import {
   Maximize,
   ChevronLeft,
   Sun,
-  Moon
+  Moon,
+  Image
 } from 'lucide-react'
 import { Button } from '@renderer/components/ui/button'
 import { Separator } from '@renderer/components/ui/separator'
@@ -26,6 +28,7 @@ interface ActionBarProps {
 }
 
 const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
+  const { t } = useTranslation()
   const { phase, currentCategoryId, gameScreenDarkMode } = useGameState()
 
   const handleBack = () => {
@@ -38,9 +41,9 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
 
   const backLabel =
     phase === GamePhase.Question
-      ? '← Questions'
+      ? t('actions.backQuestions')
       : phase === GamePhase.Questions
-        ? '← Categories'
+        ? t('actions.backCategories')
         : null
 
   return (
@@ -49,22 +52,22 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
         <>
           <Button
             onClick={async () => {
-              if (confirm('Create a new, empty Quiz? \n\nUnsaved changes will be lost!')) {
+              if (confirm(t('confirm.newQuiz'))) {
                 await window.api.fileNew()
               }
             }}
           >
-            <FilePlus className="mr-1 h-4 w-4" /> New Quiz
+            <FilePlus className="mr-1 h-4 w-4" /> {t('actions.newQuiz')}
           </Button>
           <Button
             variant="secondary"
             onClick={async () => {
-              if (confirm('Load a Quiz? \n\nUnsaved changes will be lost!')) {
+              if (confirm(t('confirm.loadQuiz'))) {
                 await window.api.fileOpen()
               }
             }}
           >
-            <Upload className="mr-1 h-4 w-4" /> Load Quiz
+            <Upload className="mr-1 h-4 w-4" /> {t('actions.loadQuiz')}
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -72,15 +75,15 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
                 variant="outline"
                 className="text-green-600 border-green-600/50 hover:bg-green-600/10"
               >
-                <Save className="mr-1 h-4 w-4" /> Save Quiz
+                <Save className="mr-1 h-4 w-4" /> {t('actions.saveQuiz')}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem onClick={() => window.api.fileSave()}>
-                <Save className="mr-2 h-4 w-4" /> Save
+                <Save className="mr-2 h-4 w-4" /> {t('actions.save')}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => window.api.fileSaveAs()}>
-                <Save className="mr-2 h-4 w-4" /> Save as...
+                <Save className="mr-2 h-4 w-4" /> {t('actions.saveAs')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -89,7 +92,7 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
         <>
           <Button variant="destructive" onClick={() => window.api.openGameScreen()}>
             <Play className="mr-1 h-4 w-4" />
-            <strong>RUN QUIZ</strong>
+            <strong>{t('actions.runQuiz')}</strong>
           </Button>
           <Separator orientation="vertical" className="mx-1 h-8" />
           {backLabel && (
@@ -100,15 +103,18 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
               <Separator orientation="vertical" className="mx-1 h-8" />
             </>
           )}
+          <Button variant="outline" onClick={() => window.api.showSplash()}>
+            <Image className="mr-1 h-4 w-4" /> {t('actions.splash')}
+          </Button>
           <Button variant="outline" onClick={() => window.api.showCategories()}>
-            <LayoutGrid className="mr-1 h-4 w-4" /> Categories
+            <LayoutGrid className="mr-1 h-4 w-4" /> {t('actions.categories')}
           </Button>
           <Button variant="outline" onClick={() => window.api.showRanking()}>
-            <Trophy className="mr-1 h-4 w-4" /> Ranking
+            <Trophy className="mr-1 h-4 w-4" /> {t('actions.ranking')}
           </Button>
           <Separator orientation="vertical" className="mx-1 h-8" />
           <Button variant="outline" onClick={() => window.api.toggleGameFullscreen()}>
-            <Maximize className="mr-1 h-4 w-4" /> Fullscreen
+            <Maximize className="mr-1 h-4 w-4" /> {t('actions.fullscreen')}
           </Button>
           <Button variant="outline" onClick={() => window.api.toggleGameDarkMode()}>
             {gameScreenDarkMode ? (
@@ -116,7 +122,7 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
             ) : (
               <Moon className="mr-1 h-4 w-4" />
             )}
-            {gameScreenDarkMode ? 'Light' : 'Dark'}
+            {gameScreenDarkMode ? t('actions.light') : t('actions.dark')}
           </Button>
         </>
       )}
