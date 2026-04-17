@@ -8,7 +8,7 @@ Triviacon is a self-contained desktop application for running trivia quiz nights
 
 ## Download
 
-Head to the [Releases page](https://github.com/alucard87pl/triviacon/releases/latest) and grab the build for your platform:
+Head to the [Releases page](https://github.com/TriviaCon/triviacon/releases/latest) and grab the build for your platform:
 
 | Platform | File |
 |---|---|
@@ -43,7 +43,7 @@ The UI is available in **Polish** and **English**. Change the language in the Se
 
 ## Reporting issues & suggestions
 
-Found a bug or have an idea? [Open an issue](https://github.com/alucard87pl/triviacon/issues) on GitHub. Please include:
+Found a bug or have an idea? [Open an issue](https://github.com/TriviaCon/triviacon/issues) on GitHub. Please include:
 - What you were trying to do
 - What happened instead
 - Your operating system and Triviacon version
@@ -60,7 +60,7 @@ Found a bug or have an idea? [Open an issue](https://github.com/alucard87pl/triv
 ### Setup
 
 ```bash
-git clone https://github.com/alucard87pl/triviacon.git
+git clone https://github.com/TriviaCon/triviacon.git
 cd triviacon
 npm install
 ```

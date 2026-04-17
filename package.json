@@ -4,7 +4,7 @@
   "description": "An Electron application with React and TypeScript",
   "main": "./out/main/index.js",
   "author": "Marcin \"Aluś\" Jędrecki",
-  "homepage": "https://github.com/alucard87pl/triviacon",
+  "homepage": "https://github.com/TriviaCon/triviacon",
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",

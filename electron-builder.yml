@@ -39,4 +39,4 @@ npmRebuild: false
 publish:
   provider: github
   owner: TriviaCon
-  repo: triviacon-react
+  repo: triviacon
