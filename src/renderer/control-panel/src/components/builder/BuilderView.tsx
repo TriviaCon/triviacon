@@ -10,9 +10,9 @@ type View = { view: 'question'; id: number } | { view: 'category'; id: number } 
 export const BuilderView = () => {
   const { t } = useTranslation()
   const [view, setView] = useState<View>(null)
-  const { categories } = useGameState()
+  const { categories, quizFilePath } = useGameState()
 
-  if (!categories.length) {
+  if (!quizFilePath) {
     return <span className="text-muted-foreground">{t('builder.noQuizLoaded')}</span>
   }
 
