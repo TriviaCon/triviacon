@@ -17,3 +17,8 @@ export function buildIssueUrl(): string {
   })
   return `https://github.com/TriviaCon/triviacon/issues/new?${params.toString()}`
 }
+
+export function buildFeatureUrl(): string {
+  const params = new URLSearchParams({ template: 'feature_request.yml' })
+  return `https://github.com/TriviaCon/triviacon/issues/new?${params.toString()}`
+}
