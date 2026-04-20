@@ -1,0 +1,65 @@
+name: Raport błędu
+description: Zgłoś błąd w działaniu aplikacji
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Dziękujemy za zgłoszenie! Wypełnij formularz możliwie dokładnie — pomaga to szybciej znaleźć i naprawić problem.
+
+  - type: input
+    id: version
+    attributes:
+      label: Wersja aplikacji
+      placeholder: np. 0.9.1
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: System operacyjny
+      options:
+        - Windows
+        - Linux
+        - macOS
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Opis błędu
+      description: Co się stało? Czego się spodziewałeś/-aś?
+      placeholder: Opisz błąd...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Kroki do odtworzenia
+      placeholder: |
+        1. Otwórz plik quizu
+        2. Kliknij...
+        3. ...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Dotkliwość
+      options:
+        - Krytyczny (aplikacja się crashuje)
+        - Wysoki (funkcja nie działa)
+        - Średni (coś działa niepoprawnie)
+        - Niski (kosmetyczny)
+    validations:
+      required: true
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Dodatkowe informacje
+      description: Logi, zrzuty ekranu, pliki quizu (jeśli problem jest z konkretnym quizem).

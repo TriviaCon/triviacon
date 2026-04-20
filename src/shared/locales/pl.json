@@ -101,12 +101,6 @@
     "byAuthor": "autorstwa {{author}}"
   },
 
-  "debug": {
-    "title": "Debug",
-    "clearStorage": "Wyczyść pamięć lokalną",
-    "submitBug": "Zgłoś błąd"
-  },
-
   "stats": {
     "title": "Statystyki quizu",
     "totalCategories": "Liczba kategorii",

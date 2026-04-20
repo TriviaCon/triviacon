@@ -108,6 +108,9 @@ declare global {
       openGameScreen: () => Promise<void>
       toggleGameFullscreen: () => Promise<boolean>
       toggleGameDarkMode: () => Promise<void>
+
+      // --- App info ---
+      platform: string
     }
   }
 }

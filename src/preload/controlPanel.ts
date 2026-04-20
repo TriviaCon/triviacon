@@ -124,7 +124,10 @@ const api = {
   // ── Display management ─────────────────────────────────────────
   openGameScreen: (): Promise<void> => ipcRenderer.invoke(IPC.DISPLAY_OPEN_SCREEN),
   toggleGameFullscreen: (): Promise<boolean> => ipcRenderer.invoke(IPC.DISPLAY_TOGGLE_FULLSCREEN),
-  toggleGameDarkMode: (): Promise<void> => ipcRenderer.invoke(IPC.GAME_TOGGLE_DARK_MODE)
+  toggleGameDarkMode: (): Promise<void> => ipcRenderer.invoke(IPC.GAME_TOGGLE_DARK_MODE),
+
+  // ── App info ───────────────────────────────────────────────────
+  platform: process.platform as string
 }
 
 export type ControlPanelApi = typeof api

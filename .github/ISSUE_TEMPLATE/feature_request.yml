@@ -1,0 +1,37 @@
+name: Propozycja funkcji
+description: Zaproponuj nową funkcję lub usprawnienie
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Masz pomysł? Świetnie! Opisz go poniżej.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem lub potrzeba
+      description: Jaki problem rozwiązuje ta funkcja? Czego Ci brakuje?
+      placeholder: Kiedy robię X, chciałbym móc...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proponowane rozwiązanie
+      description: Jak Twoim zdaniem powinna działać ta funkcja?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatywy
+      description: Czy rozważałeś/-aś inne podejścia?
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Dodatkowe informacje
+      description: Kontekst, przykłady, mockupy — cokolwiek może pomóc.
