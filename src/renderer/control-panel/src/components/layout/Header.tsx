@@ -8,7 +8,6 @@ import {
   DropdownMenuTrigger
 } from '@renderer/components/ui/dropdown-menu'
 import Logo from './Logo'
-import DebugMenu from '../DebugMenu'
 import { CreditsModal } from '../CreditsModal'
 import { buildIssueUrl, buildFeatureUrl } from '@renderer/utils/issueUrl'
 import a87Logo from '../../assets/a87logo.png'
@@ -21,7 +20,6 @@ const Header = () => {
       <nav className="mb-1 px-3 bg-card border-b border-border rounded flex items-center justify-between">
         <Logo />
         <div className="flex items-center gap-1">
-          {import.meta.env.DEV && <DebugMenu />}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="icon" className="h-7 w-7" title="Feedback">

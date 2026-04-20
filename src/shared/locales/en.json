@@ -101,12 +101,6 @@
     "byAuthor": "by {{author}}"
   },
 
-  "debug": {
-    "title": "Debug",
-    "clearStorage": "Clear Local Storage",
-    "submitBug": "Submit Bug Report"
-  },
-
   "stats": {
     "title": "Quiz Statistics",
     "totalCategories": "Total Categories",
