@@ -60,6 +60,19 @@ export interface QuizDocument {
 // ── Module state ──────────────────────────────────────────────────
 
 let doc: QuizDocument | null = null
+let dirty = false
+
+export function isDirty(): boolean {
+  return dirty
+}
+
+export function markDirty(): void {
+  dirty = true
+}
+
+export function clearDirty(): void {
+  dirty = false
+}
 
 export function createEmptyDocument(): QuizDocument {
   return {
@@ -79,10 +92,12 @@ export function getDocument(): QuizDocument | null {
 
 export function setDocument(d: QuizDocument): void {
   doc = d
+  dirty = false
 }
 
 export function clearDocument(): void {
   doc = null
+  dirty = false
 }
 
 function requireDoc(): QuizDocument {
@@ -116,22 +131,26 @@ export function categoryCreate(name: string): number {
   const d = requireDoc()
   const id = d.nextIds.category++
   d.categories.push({ id, name })
+  markDirty()
   return id
 }
 
 export function categoryUpdate(id: number, name: string): void {
   const d = requireDoc()
   const c = d.categories.find((c) => c.id === id)
-  if (c) c.name = name
+  if (c) {
+    c.name = name
+    markDirty()
+  }
 }
 
 export function categoryRemove(id: number): void {
   const d = requireDoc()
-  // Remove child questions and their answer options
   const questionIds = d.questions.filter((q) => q.categoryId === id).map((q) => q.id)
   d.answerOptions = d.answerOptions.filter((ao) => !questionIds.includes(ao.questionId))
   d.questions = d.questions.filter((q) => q.categoryId !== id)
   d.categories = d.categories.filter((c) => c.id !== id)
+  markDirty()
 }
 
 // ── Questions ─────────────────────────────────────────────────────
@@ -159,6 +178,7 @@ export function questionCreate(question: Omit<Question, 'id'>): number {
     text: question.text,
     media: question.media
   })
+  markDirty()
   return id
 }
 
@@ -170,12 +190,14 @@ export function questionUpdate(id: number, updates: Partial<Omit<Question, 'id'>
   if (updates.type !== undefined) q.type = updates.type
   if (updates.text !== undefined) q.text = updates.text
   if (updates.media !== undefined) q.media = updates.media
+  markDirty()
 }
 
 export function questionDelete(id: number): void {
   const d = requireDoc()
   d.answerOptions = d.answerOptions.filter((ao) => ao.questionId !== id)
   d.questions = d.questions.filter((q) => q.id !== id)
+  markDirty()
 }
 
 export function questionCategoryMap(): Record<number, number> {
@@ -204,6 +226,7 @@ export function answerOptionCreate(
   const d = requireDoc()
   const id = d.nextIds.answerOption++
   d.answerOptions.push({ id, questionId, text, correct, sortOrder })
+  markDirty()
   return id
 }
 
@@ -217,11 +240,13 @@ export function answerOptionUpdate(
   if (fields.text !== undefined) ao.text = fields.text
   if (fields.correct !== undefined) ao.correct = fields.correct
   if (fields.sortOrder !== undefined) ao.sortOrder = fields.sortOrder
+  markDirty()
 }
 
 export function answerOptionRemove(id: number): void {
   const d = requireDoc()
   d.answerOptions = d.answerOptions.filter((ao) => ao.id !== id)
+  markDirty()
 }
 
 // ── Meta ──────────────────────────────────────────────────────────
@@ -233,18 +258,23 @@ export function metaGet(): QuizMeta {
 
 export function metaUpdateName(name: string): void {
   requireDoc().meta.name = name
+  markDirty()
 }
 export function metaUpdateAuthor(author: string): void {
   requireDoc().meta.author = author
+  markDirty()
 }
 export function metaUpdateDate(date: string): void {
   requireDoc().meta.date = date
+  markDirty()
 }
 export function metaUpdateLocation(location: string): void {
   requireDoc().meta.location = location
+  markDirty()
 }
 export function metaUpdateSplash(splash: string): void {
   requireDoc().meta.splash = splash
+  markDirty()
 }
 
 // ── Teams ─────────────────────────────────────────────────────────
@@ -264,6 +294,7 @@ export function teamsSaveAll(teams: Team[]): void {
     score: t.score,
     sortOrder: i
   }))
+  markDirty()
 }
 
 // ── Stats ─────────────────────────────────────────────────────────

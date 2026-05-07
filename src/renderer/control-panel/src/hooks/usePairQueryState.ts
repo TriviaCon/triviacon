@@ -15,11 +15,9 @@ type PairQueryState =
  *     return null
  *   }
  */
-export function usePairQueryState(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  q1: UseQueryResult<any>,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  q2: UseQueryResult<any>
+export function usePairQueryState<T1, T2>(
+  q1: UseQueryResult<T1>,
+  q2: UseQueryResult<T2>
 ): PairQueryState {
   if (q1.isLoading || q2.isLoading) {
     return { ok: false, loading: true, errorMessage: undefined }

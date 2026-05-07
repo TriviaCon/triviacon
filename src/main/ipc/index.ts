@@ -1,5 +1,6 @@
 import { BrowserWindow, ipcMain, dialog } from 'electron'
 import { IPC } from '@shared/types/ipc'
+import type { AnswerOption, Question } from '@shared/types/quiz'
 import { getSetting, setSetting } from '../settings'
 import { QUIZ_FILE_FILTER } from '@shared/constants'
 import db from '../../data/db'
@@ -140,9 +141,11 @@ export function registerIpcHandlers(): void {
 
   ipcMain.handle(IPC.QUIZ_QUESTION_BY_ID, (_, id: number) => store.questionById(id))
 
-  ipcMain.handle(IPC.QUIZ_QUESTION_CREATE, (_, question) => store.questionCreate(question))
+  ipcMain.handle(IPC.QUIZ_QUESTION_CREATE, (_, question: Omit<Question, 'id'>) =>
+    store.questionCreate(question)
+  )
 
-  ipcMain.handle(IPC.QUIZ_QUESTION_UPDATE, (_, id: number, updates) =>
+  ipcMain.handle(IPC.QUIZ_QUESTION_UPDATE, (_, id: number, updates: Partial<Omit<Question, 'id'>>) =>
     store.questionUpdate(id, updates)
   )
 
@@ -160,8 +163,10 @@ export function registerIpcHandlers(): void {
       store.answerOptionCreate(questionId, text, correct, sortOrder)
   )
 
-  ipcMain.handle(IPC.QUIZ_ANSWER_OPTION_UPDATE, (_, id: number, fields) =>
-    store.answerOptionUpdate(id, fields)
+  ipcMain.handle(
+    IPC.QUIZ_ANSWER_OPTION_UPDATE,
+    (_, id: number, fields: Partial<Omit<AnswerOption, 'id' | 'questionId'>>) =>
+      store.answerOptionUpdate(id, fields)
   )
 
   ipcMain.handle(IPC.QUIZ_ANSWER_OPTION_REMOVE, (_, id: number) => store.answerOptionRemove(id))
@@ -298,6 +303,18 @@ export function registerIpcHandlers(): void {
 
   ipcMain.handle(IPC.GAME_SHOW_RANKING, () => {
     engine.showRanking()
+    broadcastState()
+  })
+
+  // ── Selection (preview before reveal) ────────────────────────────
+
+  ipcMain.handle(IPC.GAME_SELECT_CATEGORY, (_, categoryId: number | null) => {
+    engine.selectCategory(categoryId)
+    broadcastState()
+  })
+
+  ipcMain.handle(IPC.GAME_SELECT_QUESTION, (_, questionId: number | null) => {
+    engine.selectQuestion(questionId)
     broadcastState()
   })
 

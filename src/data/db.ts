@@ -21,10 +21,11 @@ import {
   getDocument,
   setDocument,
   clearDocument,
+  clearDirty,
   getStats as storeGetStats
 } from './quizStore'
 
-const dbg = console.log
+const dbg = app.isPackaged ? (() => {}) : console.log
 
 /**
  * Resolve the runtime root directory.
@@ -153,14 +154,11 @@ const _saveTo = async (destPath: string): Promise<void> => {
   const doc = getDocument()
   if (!doc) throw new Error('No quiz document in memory')
 
-  // Write quiz.json to workDir
-  await writeFile(join(workDir, JSON_FILENAME), JSON.stringify(doc, null, 2), 'utf-8')
+  const jsonBuffer = Buffer.from(JSON.stringify(doc, null, 2), 'utf-8')
+  await writeFile(join(workDir, JSON_FILENAME), jsonBuffer)
 
   const zip = new AdmZip()
-
-  // Add quiz.json
-  const jsonData = await readFile(join(workDir, JSON_FILENAME))
-  zip.addFile(JSON_FILENAME, jsonData)
+  zip.addFile(JSON_FILENAME, jsonBuffer)
 
   // Add media files
   const mediaDir = join(workDir, MEDIA_DIR)
@@ -170,6 +168,7 @@ const _saveTo = async (destPath: string): Promise<void> => {
 
   zip.writeZip(destPath)
   quizFilePath = destPath
+  clearDirty()
 }
 
 const _copyTo = async (destPath: string): Promise<void> => {
@@ -224,10 +223,11 @@ async function migrateSqliteToJson(
   }
 
   function tableExists(name: string): boolean {
-    const rows = query<{ name: string }>(
-      `SELECT name FROM sqlite_master WHERE type='table' AND name='${name}'`
-    )
-    return rows.length > 0
+    const stmt = sqlDb.prepare('SELECT name FROM sqlite_master WHERE type=\'table\' AND name=?')
+    stmt.bind([name])
+    const found = stmt.step()
+    stmt.free()
+    return found
   }
 
   // ── Run legacy migrations inside SQLite before reading ──────────
@@ -445,7 +445,10 @@ export async function cleanupStaleRuntimeDirs(): Promise<void> {
 export default {
   new: _new,
   open: _open,
-  save: () => _saveTo(quizFilePath!),
+  save: () => {
+    if (!quizFilePath) throw new Error('No file path — use Save As')
+    return _saveTo(quizFilePath)
+  },
   saveTo: _saveTo,
   copyTo: _copyTo,
   getFilePath,

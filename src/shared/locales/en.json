@@ -28,8 +28,11 @@
     "delete": "Delete",
     "prev": "Prev",
     "next": "Next",
+    "back": "\u2190 Back",
     "backCategories": "\u2190 Categories",
-    "backQuestions": "\u2190 Questions"
+    "backQuestions": "\u2190 Questions",
+    "reveal": "Reveal: {{name}}",
+    "revealNone": "Reveal"
   },
 
   "confirm": {

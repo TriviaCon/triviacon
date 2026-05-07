@@ -78,6 +78,10 @@ declare global {
       showQuestion: (questionId: number) => Promise<void>
       showRanking: () => Promise<void>
 
+      // --- Selection (preview before reveal) ---
+      selectCategory: (id: number | null) => Promise<void>
+      selectQuestion: (id: number | null) => Promise<void>
+
       // --- Question state ---
       toggleAnswer: (questionId: number) => Promise<void>
       markUsed: (questionId: number) => Promise<void>
