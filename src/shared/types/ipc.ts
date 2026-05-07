@@ -7,7 +7,7 @@ export const IPC = {
   FILE_SAVE: 'file:save',
   FILE_SAVE_AS: 'file:saveAs',
 
-  // Quiz content (builder — proxied to SQLite)
+  // Quiz content (builder — proxied to quiz store)
   QUIZ_CATEGORIES_ALL: 'quiz:categories:all',
   QUIZ_CATEGORY_BY_ID: 'quiz:category:byId',
   QUIZ_CATEGORY_CREATE: 'quiz:category:create',
@@ -53,6 +53,10 @@ export const IPC = {
   GAME_SHOW_QUESTIONS: 'game:showQuestions',
   GAME_SHOW_QUESTION: 'game:showQuestion',
   GAME_SHOW_RANKING: 'game:showRanking',
+
+  // Selection (preview before reveal)
+  GAME_SELECT_CATEGORY: 'game:selectCategory',
+  GAME_SELECT_QUESTION: 'game:selectQuestion',
 
   // Question state
   GAME_TOGGLE_ANSWER: 'game:toggleAnswer',

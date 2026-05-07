@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import TeamTable from './TeamTable'
 import QuizTree from '../builder/QuizTree'
@@ -8,6 +8,7 @@ import { useAnswerOptions } from '@renderer/hooks/useAnswerOptions'
 import BasicQuestionViewer from './BasicQuestionViewer'
 import { QueryLoading, QueryError } from '@renderer/components/ui/query-state'
 import { usePairQueryState } from '@renderer/hooks/usePairQueryState'
+import { GamePhase } from '@shared/types/state'
 
 const QuestionColumn = ({ id }: { id: number }) => {
   const { t } = useTranslation()
@@ -40,21 +41,36 @@ const QuestionColumn = ({ id }: { id: number }) => {
 }
 
 export const RunnerView = () => {
-  const [selectedQuestionId, setSelectedQuestionId] = useState<number | null>(null)
-  const { categories, usedQuestions } = useGameState()
+  const { categories, usedQuestions, selectedQuestionId, activeQuestion, phase } = useGameState()
+  const [stickyPreviewId, setStickyPreviewId] = useState<number | null>(null)
+
+  // Remember whichever id is currently being previewed (selection wins, else active).
+  useEffect(() => {
+    const currentId = selectedQuestionId ?? activeQuestion?.question.id ?? null
+    if (currentId !== null) {
+      setStickyPreviewId(currentId)
+    }
+  }, [selectedQuestionId, activeQuestion?.question.id])
+
+  // Drop sticky preview when host navigates back to category list / splash / ranking.
+  useEffect(() => {
+    if (phase === GamePhase.Categories || phase === GamePhase.Splash || phase === GamePhase.Ranking || phase === GamePhase.Idle) {
+      setStickyPreviewId(null)
+    }
+  }, [phase])
+
+  const previewQuestionId = stickyPreviewId
 
   if (!categories.length) return null
 
   const handleCategoryClicked = (id: number | null) => {
     if (!id) return
-    setSelectedQuestionId(null)
-    window.api.showQuestions(id)
+    window.api.selectCategory(id)
   }
 
   const handleQuestionClicked = (id: number | null) => {
     if (!id) return
-    setSelectedQuestionId(id)
-    window.api.showQuestion(id)
+    window.api.selectQuestion(id)
   }
 
   return (
@@ -73,7 +89,7 @@ export const RunnerView = () => {
           />
         </div>
         <div className="flex-1 pl-3">
-          {selectedQuestionId && <QuestionColumn id={selectedQuestionId} />}
+          {previewQuestionId && <QuestionColumn id={previewQuestionId} />}
         </div>
       </div>
     </div>

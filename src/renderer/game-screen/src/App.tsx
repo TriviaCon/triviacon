@@ -22,6 +22,7 @@ function App() {
           categories={gameState.categories}
           usedQuestions={gameState.usedQuestions}
           questionCategoryMap={gameState.questionCategoryMap}
+          selectedCategoryId={gameState.selectedCategoryId}
         />
       )
     case GamePhase.Questions:
@@ -31,6 +32,7 @@ function App() {
           currentCategoryId={gameState.currentCategoryId}
           questions={gameState.categoryQuestions}
           usedQuestions={gameState.usedQuestions}
+          selectedQuestionId={gameState.selectedQuestionId}
         />
       )
     case GamePhase.Question:

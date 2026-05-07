@@ -1,5 +1,7 @@
 import { join } from 'path'
-import { BrowserWindow, shell } from 'electron'
+import { BrowserWindow, dialog, shell } from 'electron'
+import { isDirty } from '../data/quizStore'
+import db from '../data/db'
 
 let controlPanelWindow: BrowserWindow | null = null
 let gameScreenWindow: BrowserWindow | null = null
@@ -34,6 +36,29 @@ export function createControlPanelWindow(): BrowserWindow {
   } else {
     controlPanelWindow.loadFile(join(__dirname, '../renderer/control-panel/index.html'))
   }
+
+  controlPanelWindow.on('close', (e) => {
+    if (!isDirty()) return
+    const choice = dialog.showMessageBoxSync(controlPanelWindow!, {
+      type: 'warning',
+      buttons: ['Save', "Don't Save", 'Cancel'],
+      defaultId: 0,
+      cancelId: 2,
+      title: 'Unsaved Changes',
+      message: 'You have unsaved changes. Do you want to save before closing?'
+    })
+    if (choice === 0) {
+      try {
+        db.save()
+      } catch {
+        e.preventDefault()
+        return
+      }
+    } else if (choice === 2) {
+      e.preventDefault()
+      return
+    }
+  })
 
   controlPanelWindow.on('closed', () => {
     controlPanelWindow = null

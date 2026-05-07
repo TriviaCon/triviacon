@@ -6,12 +6,14 @@ const QuestionsScreen = ({
   categories,
   currentCategoryId,
   questions,
-  usedQuestions
+  usedQuestions,
+  selectedQuestionId
 }: {
   categories: Category[]
   currentCategoryId: number | null
   questions: Question[]
   usedQuestions: number[]
+  selectedQuestionId: number | null
 }) => {
   const { t } = useTranslation()
   const category = categories.find((c) => c.id === currentCategoryId)
@@ -41,13 +43,16 @@ const QuestionsScreen = ({
           >
             {questions.map((q, index) => {
               const used = usedQuestions.includes(q.id)
+              const selected = q.id === selectedQuestionId
               return (
                 <div
                   key={q.id}
-                  className={`rounded-lg border font-bold flex items-center justify-center transition-colors ${
+                  className={`rounded-lg border font-bold flex items-center justify-center transition-all ${
                     used
                       ? 'border-border/30 bg-muted/20 text-muted-foreground/30 line-through opacity-40'
-                      : 'border-primary/50 bg-card text-card-foreground shadow-sm'
+                      : selected
+                        ? 'border-primary bg-primary/15 text-card-foreground shadow-md ring-2 ring-primary/40'
+                        : 'border-primary/50 bg-card text-card-foreground shadow-sm'
                   }`}
                   style={{
                     width: tileSize,

@@ -55,20 +55,22 @@ Found a bug or have an idea? [Open an issue](https://github.com/TriviaCon/trivia
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) v22+
-- npm (comes with Node)
+- [pnpm](https://pnpm.io/) v10+ — install with `npm i -g pnpm` or via [Corepack](https://pnpm.io/installation#using-corepack)
+
+> This project uses pnpm exclusively. Running `npm install` is blocked by a `preinstall` guard to avoid lockfile drift.
 
 ### Setup
 
 ```bash
 git clone https://github.com/TriviaCon/triviacon.git
 cd triviacon
-npm install
+pnpm install
 ```
 
 ### Development
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 Starts the app in dev mode with hot reload on both the main process and both renderer windows.
@@ -76,9 +78,18 @@ Starts the app in dev mode with hot reload on both the main process and both ren
 ### Build
 
 ```bash
-npm run build:win    # Windows (zip)
-npm run build:mac    # macOS (zip, x64 + arm64)
-npm run build:linux  # Linux (AppImage)
+pnpm build:win    # Windows (zip)
+pnpm build:mac    # macOS (zip, x64 + arm64)
+pnpm build:linux  # Linux (AppImage)
+```
+
+### Other useful scripts
+
+```bash
+pnpm typecheck    # TypeScript checks (node + web configs)
+pnpm test         # Run the Vitest test suite
+pnpm lint         # ESLint with autofix
+pnpm format       # Prettier
 ```
 
 ### Tech stack

@@ -5,3 +5,8 @@ out
 *.log*
 *.tsbuildinfo
 ROADMAP.md
+
+# This project uses pnpm (see packageManager + preinstall guard in package.json).
+# Block accidental npm/yarn lockfiles from sneaking into the repo.
+package-lock.json
+yarn.lock

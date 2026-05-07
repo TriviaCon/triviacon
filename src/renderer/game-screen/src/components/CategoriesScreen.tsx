@@ -21,11 +21,13 @@ function categoryFontSize(tileSize: number, name: string): number {
 const CategoriesScreen = ({
   categories,
   usedQuestions,
-  questionCategoryMap
+  questionCategoryMap,
+  selectedCategoryId
 }: {
   categories: Category[]
   usedQuestions: number[]
   questionCategoryMap: Record<number, number>
+  selectedCategoryId: number | null
 }) => {
   const { t } = useTranslation()
   const { containerRef, cols, tileSize } = useSquareGrid(categories.length)
@@ -64,14 +66,17 @@ const CategoriesScreen = ({
               const used = usedByCategory.get(category.id) ?? 0
               const remaining = category.questionCount - used
               const exhausted = category.questionCount > 0 && remaining === 0
+              const selected = category.id === selectedCategoryId
               const fontSize = categoryFontSize(tileSize, category.name)
               return (
                 <div
                   key={category.id}
-                  className={`rounded-lg border flex flex-col items-center justify-center text-center overflow-hidden transition-opacity ${
+                  className={`rounded-lg border flex flex-col items-center justify-center text-center overflow-hidden transition-all ${
                     exhausted
                       ? 'border-border/30 bg-muted/20 opacity-40'
-                      : 'border-border bg-card'
+                      : selected
+                        ? 'border-primary bg-primary/15 ring-2 ring-primary/40'
+                        : 'border-border bg-card'
                   }`}
                   style={{ width: tileSize, height: tileSize }}
                 >

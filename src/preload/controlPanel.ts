@@ -95,6 +95,12 @@ const api = {
     ipcRenderer.invoke(IPC.GAME_SHOW_QUESTION, questionId),
   showRanking: (): Promise<void> => ipcRenderer.invoke(IPC.GAME_SHOW_RANKING),
 
+  // ── Selection (preview before reveal) ──────────────────────────
+  selectCategory: (id: number | null): Promise<void> =>
+    ipcRenderer.invoke(IPC.GAME_SELECT_CATEGORY, id),
+  selectQuestion: (id: number | null): Promise<void> =>
+    ipcRenderer.invoke(IPC.GAME_SELECT_QUESTION, id),
+
   // ── Question state ─────────────────────────────────────────────
   toggleAnswer: (questionId: number): Promise<void> =>
     ipcRenderer.invoke(IPC.GAME_TOGGLE_ANSWER, questionId),

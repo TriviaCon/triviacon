@@ -5,10 +5,9 @@ function createInitialState(): GameState {
   return { ...INITIAL_GAME_STATE }
 }
 
-let nextTeamId = 1
-
 export class GameEngine {
   private state: GameState
+  private nextTeamId = 1
 
   constructor() {
     this.state = createInitialState()
@@ -41,8 +40,8 @@ export class GameEngine {
       // Restore nextTeamId counter past existing team IDs
       for (const t of savedTeams) {
         const num = parseInt(t.id.replace(/\D/g, ''), 10)
-        if (!isNaN(num) && num >= nextTeamId) {
-          nextTeamId = num + 1
+        if (!isNaN(num) && num >= this.nextTeamId) {
+          this.nextTeamId = num + 1
         }
       }
     }
@@ -63,7 +62,7 @@ export class GameEngine {
   // ── Team management ──────────────────────────────────────────
 
   addTeam(name: string): void {
-    const id = `t${nextTeamId++}`
+    const id = `t${this.nextTeamId++}`
     this.state.teams.push({ id, name, score: 0 })
     if (!this.state.currentTeamId) {
       this.state.currentTeamId = id
@@ -111,6 +110,7 @@ export class GameEngine {
   showSplash(): void {
     this.state.phase = GamePhase.Splash
     this.state.activeQuestion = null
+    this.clearSelection()
   }
 
   showCategories(): void {
@@ -118,6 +118,7 @@ export class GameEngine {
     this.state.currentCategoryId = null
     this.state.categoryQuestions = []
     this.state.activeQuestion = null
+    this.clearSelection()
   }
 
   showQuestions(categoryId: number, questions: Question[]): void {
@@ -125,6 +126,7 @@ export class GameEngine {
     this.state.currentCategoryId = categoryId
     this.state.categoryQuestions = questions
     this.state.activeQuestion = null
+    this.clearSelection()
   }
 
   showQuestion(question: Question, answerOptions: AnswerOption[]): void {
@@ -135,11 +137,29 @@ export class GameEngine {
       answerRevealed: this.state.revealedAnswers.includes(question.id),
       markedAnswerId: null
     }
+    this.clearSelection()
   }
 
   showRanking(): void {
     this.state.phase = GamePhase.Ranking
     this.state.activeQuestion = null
+    this.clearSelection()
+  }
+
+  // ── Selection (preview before reveal) ────────────────────────
+
+  selectCategory(id: number | null): void {
+    this.state.selectedCategoryId = id
+    this.state.selectedQuestionId = null
+  }
+
+  selectQuestion(id: number | null): void {
+    this.state.selectedQuestionId = id
+  }
+
+  private clearSelection(): void {
+    this.state.selectedCategoryId = null
+    this.state.selectedQuestionId = null
   }
 
   // ── Question state ───────────────────────────────────────────

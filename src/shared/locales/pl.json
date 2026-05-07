@@ -28,8 +28,11 @@
     "delete": "Usuń",
     "prev": "Poprz.",
     "next": "Nast.",
+    "back": "\u2190 Wstecz",
     "backCategories": "\u2190 Kategorie",
-    "backQuestions": "\u2190 Pytania"
+    "backQuestions": "\u2190 Pytania",
+    "reveal": "Poka\u017c: {{name}}",
+    "revealNone": "Poka\u017c"
   },
 
   "confirm": {
