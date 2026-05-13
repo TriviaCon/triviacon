@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Camera, Plus, Trash2 } from 'lucide-react'
+import { Camera, Music, Play, Plus, Trash2 } from 'lucide-react'
 import { Button } from '@renderer/components/ui/button'
 import { Input } from '@renderer/components/ui/input'
 import {
@@ -12,6 +12,30 @@ import { Category } from '@shared/types/quiz'
 import useCategoryQuestions from '@renderer/hooks/useCategoryQuestions'
 import { useDeleteCategoryMutation } from '@renderer/hooks/useDeleteCategoryMutation'
 import { useAddQuestionMutation } from '@renderer/hooks/useAddQuestionMutation'
+import { detectMediaType } from '@shared/media'
+
+/**
+ * Icon for the per-question media slot in the quiz tree.
+ *
+ * - image → camera, audio → musical note, video → play arrow.
+ * - When no media is attached, render a faded camera as a placeholder
+ *   so the button keeps its width.
+ */
+const MediaIcon = ({ media }: { media: string | null }) => {
+  const type = detectMediaType(media)
+  const className = 'ml-1 h-3 w-3'
+  switch (type) {
+    case 'audio':
+      return <Music className={className} />
+    case 'video':
+      return <Play className={className} />
+    case 'image':
+      return <Camera className={className} />
+    default:
+      // No media — render a faded placeholder to preserve button sizing.
+      return <Camera className={`${className} opacity-30`} aria-hidden="true" />
+  }
+}
 
 const DeleteCategoryButton = ({
   name,
@@ -118,7 +142,7 @@ const QuizTreeItem = ({
                 className={isUsed ? 'opacity-40 line-through' : ''}
               >
                 {index + 1}
-                <Camera className={`ml-1 h-3 w-3 ${!question.media ? 'opacity-30' : ''}`} />
+                <MediaIcon media={question.media} />
               </Button>
             )
           })}
