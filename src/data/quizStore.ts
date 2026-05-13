@@ -1,8 +1,8 @@
 /**
  * In-memory quiz document store.
  *
- * Replaces the SQLite data layer with a plain JSON structure.
- * All operations are synchronous — just array manipulation.
+ * The whole quiz lives as a plain JSON structure (see QuizDocument
+ * below); all operations are synchronous array manipulation.
  */
 
 import type {
