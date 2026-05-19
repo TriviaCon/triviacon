@@ -1,7 +1,7 @@
 import { join } from 'path'
 import { BrowserWindow, dialog, shell } from 'electron'
 import { isDirty } from '../data/quizStore'
-import db from '../data/db'
+import quizFile from '../data/quizFile'
 
 let controlPanelWindow: BrowserWindow | null = null
 let gameScreenWindow: BrowserWindow | null = null
@@ -49,7 +49,7 @@ export function createControlPanelWindow(): BrowserWindow {
     })
     if (choice === 0) {
       try {
-        db.save()
+        quizFile.save()
       } catch {
         e.preventDefault()
         return

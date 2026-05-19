@@ -11,7 +11,7 @@ import { getControlPanelWindow } from './windows'
 import { IPC } from '@shared/types/ipc'
 import { GamePhase } from '@shared/types/state'
 import { MEDIA_PROTOCOL, registerMediaProtocol } from './mediaProtocol'
-import { cleanupTempDirs, cleanupStaleRuntimeDirs } from '../data/db'
+import { cleanupTempDirs, cleanupStaleRuntimeDirs } from '../data/quizFile'
 
 // Register custom protocol scheme before app is ready
 protocol.registerSchemesAsPrivileged([

@@ -3,7 +3,7 @@ import { IPC } from '@shared/types/ipc'
 import type { AnswerOption, Question } from '@shared/types/quiz'
 import { getSetting, setSetting } from '../settings'
 import { QUIZ_FILE_FILTER } from '@shared/constants'
-import db from '../../data/db'
+import quizFile from '../../data/quizFile'
 import * as store from '../../data/quizStore'
 import { GameEngine } from '../state/GameEngine'
 import { getControlPanelWindow, getGameScreenWindow } from '../windows'
@@ -48,7 +48,7 @@ export function registerIpcHandlers(): void {
     })
     if (result.canceled || !result.filePath) return null
     try {
-      await db.new(result.filePath)
+      await quizFile.new(result.filePath)
       const quizMeta = store.metaGet()
       const cats = store.categoriesAll()
       const qMap = store.questionCategoryMap()
@@ -69,7 +69,7 @@ export function registerIpcHandlers(): void {
     if (result.canceled || result.filePaths.length === 0) return null
     const filePath = result.filePaths[0]
     try {
-      await db.open(filePath)
+      await quizFile.open(filePath)
       const quizMeta = store.metaGet()
       const cats = store.categoriesAll()
       const qMap = store.questionCategoryMap()
@@ -85,7 +85,7 @@ export function registerIpcHandlers(): void {
 
   ipcMain.handle(IPC.FILE_SAVE, async () => {
     try {
-      await db.save()
+      await quizFile.save()
       return true
     } catch (err) {
       console.error('FILE_SAVE failed:', err)
@@ -99,7 +99,7 @@ export function registerIpcHandlers(): void {
     })
     if (result.canceled || !result.filePath) return null
     try {
-      await db.saveTo(result.filePath)
+      await quizFile.saveTo(result.filePath)
       broadcastState()
       return result.filePath
     } catch (err) {
@@ -217,7 +217,7 @@ export function registerIpcHandlers(): void {
     if (result.canceled || result.filePaths.length === 0) return null
     const sourcePath = result.filePaths[0]
     const filename = sourcePath.split(/[\\/]/).pop()!
-    const mediaPath = await db.attachMedia(sourcePath, filename)
+    const mediaPath = await quizFile.attachMedia(sourcePath, filename)
     store.questionUpdate(questionId, { media: mediaPath })
     return mediaPath
   })
@@ -225,7 +225,7 @@ export function registerIpcHandlers(): void {
   ipcMain.handle(IPC.QUIZ_MEDIA_REMOVE, async (_, questionId: number) => {
     const question = store.questionById(questionId)
     if (question?.media) {
-      await db.removeMedia(question.media)
+      await quizFile.removeMedia(question.media)
     }
     store.questionUpdate(questionId, { media: null })
   })

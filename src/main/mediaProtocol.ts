@@ -1,6 +1,6 @@
 import { net, protocol } from 'electron'
 import { join } from 'path'
-import { getMediaDir } from '../data/db'
+import { getMediaDir } from '../data/quizFile'
 
 export const MEDIA_PROTOCOL = 'triviacon-media'
 
