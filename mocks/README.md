@@ -1,16 +1,27 @@
 # Mock quiz files
 
-Sample `.tcq` files for manual testing and local development.
+Sample `.tcq` quiz files for manual testing and development. Open them
+from the app (**Load Quiz**) to exercise the builder and runner without
+hand-building a quiz first.
 
-This directory is intentionally empty in the repo. The historical samples
-that lived here were in legacy formats (raw SQLite and an early inline
-JSON schema) that the app no longer reads. Regenerate fresh ones with
-the current app:
+| File | Contents |
+|------|----------|
+| `mockQuiz.tcq`     | A small quiz — a few categories, mixed media (images + video). |
+| `big_mockQuiz.tcq` | A larger quiz for stress-testing layout and the quiz tree. |
 
-1. `pnpm dev`
-2. **New Quiz** → save into `mocks/` as `mockQuiz.tcq` (or similar)
-3. Add a few categories / questions / media and save again
+## Format
 
-A current `.tcq` file is a ZIP archive containing `quiz.json` plus a
-`media/` directory (see `src/data/quizStore.ts` for the `QuizDocument`
-schema and `src/data/db.ts` for the on-disk packaging).
+A `.tcq` file is a ZIP archive containing:
+
+- `quiz.json` — the quiz document (see the `QuizDocument` schema in
+  [`src/data/quizStore.ts`](../src/data/quizStore.ts))
+- `media/` — attached media files, UUID-named
+
+Packaging is handled by [`src/data/quizFile.ts`](../src/data/quizFile.ts).
+
+## Regenerating
+
+To refresh these samples, open one in the app, edit it, and save — or
+create a new quiz and save it over the file. They are committed
+intentionally so contributors have something to test against out of the
+box; keep them reasonably small.
