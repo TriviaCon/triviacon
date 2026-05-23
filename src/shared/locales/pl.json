@@ -68,7 +68,13 @@
     "media": "Media:",
     "attachMedia": "Dodaj media",
     "answerOptions": "Opcje odpowiedzi",
+    "answer": "Odpowiedź",
+    "answers": "Odpowiedzi",
+    "addAnswer": "Dodaj odpowiedź",
     "correctAnswer": "Poprawna odpowiedź",
+    "bold": "Pogrubienie",
+    "italic": "Kursywa",
+    "underline": "Podkreślenie",
     "loadingQuestion": "Wczytywanie pytania..."
   },
 

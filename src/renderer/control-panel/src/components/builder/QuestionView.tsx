@@ -1,12 +1,13 @@
+import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CloudUpload, Trash2 } from 'lucide-react'
 import { Button } from '@renderer/components/ui/button'
-import { Input } from '@renderer/components/ui/input'
-import { NativeSelect } from '@renderer/components/ui/native-select'
 import { Label } from '@renderer/components/ui/label'
 import { Card, CardContent } from '@renderer/components/ui/card'
+import { ToggleGroup, ToggleGroupItem } from '@renderer/components/ui/toggle-group'
+import { RichTextEditor } from '@renderer/components/ui/rich-text-editor'
 import { useQuestion } from '@renderer/hooks/useQuestion'
-import { Question } from '@shared/types/quiz'
+import { AnswerOption, Question } from '@shared/types/quiz'
 import { useUpdateQuestionMutation } from '@renderer/hooks/useUpdateQuestionMutation'
 import { useAnswerOptions } from '@renderer/hooks/useAnswerOptions'
 import { useUpdateAnswerOptionMutation } from '@renderer/hooks/useUpdateAnswerOptionMutation'
@@ -15,6 +16,45 @@ import { useAddAnswerOptionMutation } from '@renderer/hooks/useAddAnswerOptionMu
 import { QueryLoading, QueryError } from '@renderer/components/ui/query-state'
 import { MediaPreview } from '@renderer/components/ui/media-preview'
 import { usePairQueryState } from '@renderer/hooks/usePairQueryState'
+
+/**
+ * Single-answer editor. The question has exactly one answer option, which
+ * IS the answer (no "correct" checkbox). The option is created lazily on
+ * first edit so a brand-new question doesn't carry an empty option.
+ */
+const SingleAnswerField = ({
+  questionId,
+  option,
+  onRefetch
+}: {
+  questionId: number
+  option: AnswerOption | undefined
+  onRefetch: () => void
+}) => {
+  const { t } = useTranslation()
+  const updateOption = useUpdateAnswerOptionMutation(questionId)
+  const creatingRef = useRef(false)
+
+  const handleChange = async (html: string) => {
+    if (option) {
+      updateOption.mutate({ id: option.id, text: html, correct: true })
+    } else if (!creatingRef.current) {
+      creatingRef.current = true
+      await window.api.answerOptionCreate(questionId, html, true, 0)
+      onRefetch()
+      creatingRef.current = false
+    }
+  }
+
+  return (
+    <RichTextEditor
+      key={`single-${questionId}`}
+      value={option?.text ?? ''}
+      onChange={handleChange}
+      ariaLabel={t('builder.answer')}
+    />
+  )
+}
 
 const QuestionView = ({ id }: { id: number }) => {
   const { t } = useTranslation()
@@ -34,28 +74,88 @@ const QuestionView = ({ id }: { id: number }) => {
     return null
   }
 
+  const type = question.data!.type
+  const options = answerOptions.data!
+
+  const handleTypeChange = (newType: string) => {
+    if (!newType || newType === type) return
+    update({ type: newType as Question['type'] })
+    if (newType === 'single-answer' && options.length > 0) {
+      // Collapse to one option: keep the first correct one (else the first),
+      // force it correct, delete the rest.
+      const keep = options.find((o) => o.correct) ?? options[0]
+      options.filter((o) => o.id !== keep.id).forEach((o) => deleteOption.mutate(o.id))
+      if (!keep.correct) updateOption.mutate({ id: keep.id, correct: true })
+    }
+  }
+
+  const renderOptionList = (withCorrect: boolean) => (
+    <Card>
+      <CardContent className="py-2 px-3">
+        <div className="flex items-center justify-between mb-2">
+          <h6 className="text-sm font-semibold">
+            {withCorrect ? t('builder.answerOptions') : t('builder.answers')}
+          </h6>
+          <Button size="sm" onClick={() => addOption.mutate()}>
+            {t('builder.addAnswer')}
+          </Button>
+        </div>
+        <div className="space-y-2">
+          {options.map((opt, index) => (
+            <div key={opt.id} className="flex items-start gap-2">
+              {withCorrect && (
+                <input
+                  type="checkbox"
+                  checked={opt.correct}
+                  onChange={(e) => updateOption.mutate({ id: opt.id, correct: e.target.checked })}
+                  className="h-4 w-4 rounded border-input mt-2.5"
+                  title={t('builder.correctAnswer')}
+                />
+              )}
+              <Label className="font-semibold shrink-0 mt-2">
+                {String.fromCharCode(65 + index)}.
+              </Label>
+              <RichTextEditor
+                key={opt.id}
+                value={opt.text}
+                onChange={(html) => updateOption.mutate({ id: opt.id, text: html })}
+                ariaLabel={`${t('builder.answer')} ${String.fromCharCode(65 + index)}`}
+                className="flex-1"
+              />
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8 shrink-0 mt-1 text-destructive border-destructive/50 hover:bg-destructive/10"
+                onClick={() => deleteOption.mutate(opt.id)}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  )
+
   return (
     <div className="h-full flex flex-col space-y-3">
       <div className="space-y-1">
-        <Label htmlFor="question">{t('builder.question')}</Label>
-        <Input
-          id="question"
+        <Label>{t('builder.question')}</Label>
+        <RichTextEditor
+          key={`q-${id}`}
           value={question.data!.text}
-          onChange={(e) => update({ text: e.target.value })}
+          onChange={(html) => update({ text: html })}
+          ariaLabel={t('builder.question')}
         />
       </div>
 
       <div className="space-y-1">
         <Label htmlFor="questionType">{t('builder.type')}</Label>
-        <NativeSelect
-          id="questionType"
-          value={question.data!.type}
-          onChange={(e) => update({ type: e.target.value as Question['type'] })}
-        >
-          <option value="single-answer">{t('builder.typeSingle')}</option>
-          <option value="multiple-choice">{t('builder.typeMultiple')}</option>
-          <option value="list">{t('builder.typeList')}</option>
-        </NativeSelect>
+        <ToggleGroup id="questionType" type="single" value={type} onValueChange={handleTypeChange}>
+          <ToggleGroupItem value="single-answer">{t('builder.typeSingle')}</ToggleGroupItem>
+          <ToggleGroupItem value="multiple-choice">{t('builder.typeMultiple')}</ToggleGroupItem>
+          <ToggleGroupItem value="list">{t('builder.typeList')}</ToggleGroupItem>
+        </ToggleGroup>
       </div>
 
       <Card>
@@ -105,42 +205,20 @@ const QuestionView = ({ id }: { id: number }) => {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardContent className="py-2 px-3">
-          <div className="flex items-center justify-between mb-2">
-            <h6 className="text-sm font-semibold">{t('builder.answerOptions')}</h6>
-            <Button size="sm" onClick={() => addOption.mutate()}>
-              {t('actions.add')}
-            </Button>
-          </div>
-          <div className="space-y-2">
-            {answerOptions.data!.map((opt, index) => (
-              <div key={opt.id} className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={opt.correct}
-                  onChange={(e) => updateOption.mutate({ id: opt.id, correct: e.target.checked })}
-                  className="h-4 w-4 rounded border-input"
-                  title={t('builder.correctAnswer')}
-                />
-                <Label className="font-semibold shrink-0">{String.fromCharCode(65 + index)}.</Label>
-                <Input
-                  value={opt.text}
-                  onChange={(e) => updateOption.mutate({ id: opt.id, text: e.target.value })}
-                />
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8 shrink-0 text-destructive border-destructive/50 hover:bg-destructive/10"
-                  onClick={() => deleteOption.mutate(opt.id)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      {type === 'single-answer' ? (
+        <Card>
+          <CardContent className="py-2 px-3 space-y-2">
+            <h6 className="text-sm font-semibold">{t('builder.answer')}</h6>
+            <SingleAnswerField
+              questionId={id}
+              option={options[0]}
+              onRefetch={answerOptions.refetch}
+            />
+          </CardContent>
+        </Card>
+      ) : (
+        renderOptionList(type === 'multiple-choice')
+      )}
     </div>
   )
 }
