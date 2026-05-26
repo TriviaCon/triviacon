@@ -41,4 +41,4 @@ jobs:
         run: pnpm run test
 
       - name: Build
-        run: electron-vite build
+        run: pnpm exec electron-vite build
