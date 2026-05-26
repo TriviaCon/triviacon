@@ -27,6 +27,8 @@
   ],
   "exclude": [
     "src/shared/hooks/**",
-    "src/shared/i18n.ts"
+    "src/shared/i18n.ts",
+    "src/shared/**/*.tsx",
+    "src/shared/**/*.test.ts"
   ]
 }

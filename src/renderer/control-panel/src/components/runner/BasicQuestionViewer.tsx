@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { AnswerOption, Question } from '@shared/types/quiz'
 import { Label } from '@renderer/components/ui/label'
 import { MediaPreview } from '@renderer/components/ui/media-preview'
+import { RichText } from '@shared/RichText'
 import { cn } from '@renderer/lib/utils'
 import { mediaUrl } from '@shared/mediaUrl'
 
@@ -26,10 +27,14 @@ const BasicQuestionViewer = ({
 }) => {
   const { t } = useTranslation()
   const mediaSrc = mediaUrl(question.media)
+  const type = question.type
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-semibold">{question.text}</h2>
+      <RichText
+        html={question.text}
+        className="text-xl font-semibold [&_p]:m-0 [&_p+p]:mt-1"
+      />
 
       <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 items-start">
         <span className="font-semibold text-sm text-right">{t('runner.media')}</span>
@@ -45,7 +50,9 @@ const BasicQuestionViewer = ({
 
         <span className="font-semibold text-sm text-right pt-1">{t('runner.answers')}</span>
         <div className="space-y-1.5">
-          {answerOptions.length > 0 ? (
+          {answerOptions.length === 0 ? (
+            <span className="text-sm text-muted-foreground">{t('runner.noAnswerOptions')}</span>
+          ) : type === 'multiple-choice' ? (
             answerOptions.map((opt, index) => {
               const isMarked = opt.id === markedAnswerId
               return (
@@ -54,7 +61,7 @@ const BasicQuestionViewer = ({
                   type="button"
                   onClick={() => onMarkAnswer(isMarked ? null : opt.id)}
                   className={cn(
-                    'w-full text-left rounded-md px-3 py-2 text-sm border cursor-pointer transition-colors',
+                    'w-full text-left rounded-md px-3 py-2 text-sm border cursor-pointer transition-colors flex items-baseline gap-1 flex-wrap',
                     answerRevealed && opt.correct
                       ? 'bg-green-100 border-green-300 text-green-900'
                       : answerRevealed && isMarked && !opt.correct
@@ -66,17 +73,29 @@ const BasicQuestionViewer = ({
                             : 'bg-muted/50 border-border hover:bg-muted'
                   )}
                 >
-                  <strong>{String.fromCharCode(65 + index)}.</strong> {opt.text}
-                  {opt.correct && !answerRevealed && (
-                    <span className="text-green-600 ml-1">{'\u2713'}</span>
-                  )}
-                  {answerRevealed && opt.correct && ' \u2714'}
-                  {isMarked && !answerRevealed && ' \u25C0'}
+                  <strong>{String.fromCharCode(65 + index)}.</strong>
+                  <RichText html={opt.text} className="[&_p]:m-0" />
+                  {opt.correct && !answerRevealed && <span className="text-green-600">{'\u2713'}</span>}
+                  {answerRevealed && opt.correct && <span>{'\u2714'}</span>}
+                  {isMarked && !answerRevealed && <span>{'\u25C0'}</span>}
                 </button>
               )
             })
+          ) : type === 'single-answer' ? (
+            <div className="rounded-md px-3 py-2 text-sm border bg-muted/50 border-green-400/50 flex items-baseline gap-1">
+              <RichText html={answerOptions[0]?.text ?? ''} className="[&_p]:m-0" />
+            </div>
           ) : (
-            <span className="text-sm text-muted-foreground">{t('runner.noAnswerOptions')}</span>
+            // list \u2014 every item is part of the answer
+            answerOptions.map((opt, index) => (
+              <div
+                key={opt.id}
+                className="rounded-md px-3 py-2 text-sm border bg-muted/50 border-green-400/50 flex items-baseline gap-1"
+              >
+                <strong>{index + 1}.</strong>
+                <RichText html={opt.text} className="[&_p]:m-0" />
+              </div>
+            ))
           )}
         </div>
 

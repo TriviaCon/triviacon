@@ -68,7 +68,13 @@
     "media": "Media:",
     "attachMedia": "Attach Media",
     "answerOptions": "Answer Options",
+    "answer": "Answer",
+    "answers": "Answers",
+    "addAnswer": "Add answer",
     "correctAnswer": "Correct answer",
+    "bold": "Bold",
+    "italic": "Italic",
+    "underline": "Underline",
     "loadingQuestion": "Loading question..."
   },
 

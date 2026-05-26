@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import type { ActiveQuestionState } from '@shared/types/state'
 import { detectMediaType } from '@shared/media'
 import { mediaUrl } from '@shared/mediaUrl'
+import { RichText } from '@shared/RichText'
 
 function optionClass(
   correct: boolean,
@@ -74,6 +75,7 @@ const QuestionScreen = ({ activeQuestion }: { activeQuestion: ActiveQuestionStat
   const correctOptions = answerOptions.filter((opt) => opt.correct)
   const mediaType = detectMediaType(question.media)
   const mediaSrc = mediaUrl(question.media)
+  const type = question.type
 
   return (
     <>
@@ -100,7 +102,10 @@ const QuestionScreen = ({ activeQuestion }: { activeQuestion: ActiveQuestionStat
 
       <div className="w-full py-8 px-6">
         <div className="text-center">
-          <h1 className="text-5xl mb-6">{question.text}</h1>
+          <RichText
+            html={question.text}
+            className="text-5xl mb-6 [&_p]:m-0 [&_p+p]:mt-3"
+          />
 
           {mediaSrc && mediaType === 'image' && !mediaFullscreen && (
             <img src={mediaSrc} className="max-w-full h-auto mx-auto mt-2 mb-6" alt="" />
@@ -117,23 +122,51 @@ const QuestionScreen = ({ activeQuestion }: { activeQuestion: ActiveQuestionStat
             />
           )}
 
-          <h1
-            className="text-7xl font-bold mb-6"
-            style={{ visibility: answerRevealed ? 'visible' : 'hidden' }}
-          >
-            {correctOptions.map((o) => o.text).join(', ')}
-          </h1>
+          {/* Single answer: reveal the one answer (independent of any "correct" flag). */}
+          {type === 'single-answer' && (
+            <div
+              className="text-7xl font-bold mb-6 [&_p]:m-0"
+              style={{ visibility: answerRevealed ? 'visible' : 'hidden' }}
+            >
+              <RichText html={answerOptions[0]?.text ?? ''} />
+            </div>
+          )}
 
-          {answerOptions.length > 1 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
-              {answerOptions.map((opt, index) => (
+          {/* Multiple choice: A/B/C/D grid, correct highlighted on reveal. */}
+          {type === 'multiple-choice' && (
+            <>
+              {correctOptions.length > 0 && (
                 <div
-                  key={opt.id}
-                  className={`rounded-lg p-4 transition-colors ${optionClass(opt.correct, opt.id === markedAnswerId, answerRevealed)}`}
+                  className="text-7xl font-bold mb-6 flex flex-wrap justify-center gap-x-6 [&_p]:m-0"
+                  style={{ visibility: answerRevealed ? 'visible' : 'hidden' }}
                 >
-                  <p className="text-4xl">
-                    {String.fromCharCode(65 + index)}. {opt.text}
-                  </p>
+                  {correctOptions.map((o) => (
+                    <RichText key={o.id} html={o.text} />
+                  ))}
+                </div>
+              )}
+              {answerOptions.length > 0 && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+                  {answerOptions.map((opt, index) => (
+                    <div
+                      key={opt.id}
+                      className={`rounded-lg p-4 transition-colors flex items-baseline gap-2 text-4xl text-left ${optionClass(opt.correct, opt.id === markedAnswerId, answerRevealed)}`}
+                    >
+                      <span className="font-semibold">{String.fromCharCode(65 + index)}.</span>
+                      <RichText html={opt.text} className="[&_p]:m-0" />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+
+          {/* List: no tiles before reveal (no spoiler); reveal shows the items. */}
+          {type === 'list' && answerRevealed && (
+            <div className="mt-6 flex flex-col items-center gap-3">
+              {answerOptions.map((opt) => (
+                <div key={opt.id} className="text-5xl font-semibold [&_p]:m-0">
+                  <RichText html={opt.text} />
                 </div>
               ))}
             </div>
