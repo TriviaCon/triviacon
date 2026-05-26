@@ -67,6 +67,19 @@ cd triviacon
 pnpm install
 ```
 
+> **Electron binary not found?** If `pnpm dev` fails with `Error: Electron uninstall`, Electron's postinstall download was interrupted or skipped. Fix it with:
+>
+> ```bash
+> node node_modules/electron/install.js
+> ```
+>
+> If that doesn't help, clear the cache and reinstall:
+>
+> ```bash
+> rm -rf node_modules ~/.cache/electron
+> pnpm install
+> ```
+
 ### Development
 
 ```bash
