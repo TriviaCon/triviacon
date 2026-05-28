@@ -31,10 +31,11 @@ const api = {
   sendMediaState: (state: MediaPlaybackState) =>
     ipcRenderer.send(IPC.MEDIA_STATE_UPDATE, state),
 
-  // ── Settings (language sync) ───────────────────────────────────
+  // ── Settings ───────────────────────────────────────────────────
   getLanguage: (): Promise<string> => ipcRenderer.invoke(IPC.SETTINGS_GET_LANGUAGE),
   onLanguageChange: (cb: (lang: string) => void) =>
-    subscribeWith<string>(IPC.SETTINGS_SET_LANGUAGE, cb)
+    subscribeWith<string>(IPC.SETTINGS_SET_LANGUAGE, cb),
+  getDefaultVolume: (): Promise<number> => ipcRenderer.invoke(IPC.SETTINGS_GET_DEFAULT_VOLUME)
 }
 
 export type GameScreenApi = typeof api

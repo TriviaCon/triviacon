@@ -116,6 +116,8 @@ declare global {
       getLanguage: () => Promise<string>
       setLanguage: (lang: string) => Promise<void>
       onLanguageChange: (callback: (lang: string) => void) => () => void
+      getDefaultVolume: () => Promise<number>
+      setDefaultVolume: (volume: number) => Promise<void>
 
       // --- Display management (control panel only) ---
       openGameScreen: () => Promise<void>

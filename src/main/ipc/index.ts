@@ -401,4 +401,12 @@ export function registerIpcHandlers(): void {
     safeSend(getControlPanelWindow(), IPC.SETTINGS_SET_LANGUAGE, lang)
     safeSend(getGameScreenWindow(), IPC.SETTINGS_SET_LANGUAGE, lang)
   })
+
+  ipcMain.handle(IPC.SETTINGS_GET_DEFAULT_VOLUME, () => {
+    return getSetting('defaultVolume')
+  })
+
+  ipcMain.handle(IPC.SETTINGS_SET_DEFAULT_VOLUME, (_, volume: number) => {
+    setSetting('defaultVolume', volume)
+  })
 }

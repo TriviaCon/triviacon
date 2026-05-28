@@ -128,7 +128,9 @@
   "settings": {
     "title": "Ustawienia",
     "language": "Język",
-    "languageDescription": "Wybierz język interfejsu."
+    "languageDescription": "Wybierz język interfejsu.",
+    "defaultVolume": "Domyślna głośność",
+    "defaultVolumeDescription": "Początkowy poziom głośności odtwarzania mediów."
   },
 
   "languages": {

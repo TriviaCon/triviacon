@@ -83,6 +83,8 @@ export const IPC = {
   // Settings
   SETTINGS_GET_LANGUAGE: 'settings:getLanguage',
   SETTINGS_SET_LANGUAGE: 'settings:setLanguage',
+  SETTINGS_GET_DEFAULT_VOLUME: 'settings:getDefaultVolume',
+  SETTINGS_SET_DEFAULT_VOLUME: 'settings:setDefaultVolume',
 
   // Display management
   DISPLAY_OPEN_SCREEN: 'display:openScreen',

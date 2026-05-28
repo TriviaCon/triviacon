@@ -136,6 +136,9 @@ const api = {
   setLanguage: (lang: string): Promise<void> => ipcRenderer.invoke(IPC.SETTINGS_SET_LANGUAGE, lang),
   onLanguageChange: (cb: (lang: string) => void) =>
     subscribeWith<string>(IPC.SETTINGS_SET_LANGUAGE, cb),
+  getDefaultVolume: (): Promise<number> => ipcRenderer.invoke(IPC.SETTINGS_GET_DEFAULT_VOLUME),
+  setDefaultVolume: (volume: number): Promise<void> =>
+    ipcRenderer.invoke(IPC.SETTINGS_SET_DEFAULT_VOLUME, volume),
 
   // ── Display management ─────────────────────────────────────────
   openGameScreen: (): Promise<void> => ipcRenderer.invoke(IPC.DISPLAY_OPEN_SCREEN),

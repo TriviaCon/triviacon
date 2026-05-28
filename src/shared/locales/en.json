@@ -128,7 +128,9 @@
   "settings": {
     "title": "Settings",
     "language": "Language",
-    "languageDescription": "Choose the interface language."
+    "languageDescription": "Choose the interface language.",
+    "defaultVolume": "Default Volume",
+    "defaultVolumeDescription": "Initial volume level for media playback."
   },
 
   "languages": {
