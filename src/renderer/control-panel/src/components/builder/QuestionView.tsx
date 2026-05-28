@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CloudUpload, Trash2, Volume2 } from 'lucide-react'
 import { Button } from '@renderer/components/ui/button'
@@ -16,7 +16,7 @@ import { useAddAnswerOptionMutation } from '@renderer/hooks/useAddAnswerOptionMu
 import { useDeleteQuestionMutation } from '@renderer/hooks/useDeleteQuestionMutation'
 import { QueryLoading, QueryError } from '@renderer/components/ui/query-state'
 import { MediaPreview } from '@renderer/components/ui/media-preview'
-import { detectMediaType } from '@shared/media'
+import { detectMediaType, ALLOWED_MEDIA_EXTENSIONS } from '@shared/media'
 import { usePairQueryState } from '@renderer/hooks/usePairQueryState'
 
 /**
@@ -68,8 +68,59 @@ const QuestionView = ({ id, onDelete }: { id: number; onDelete?: () => void }) =
   const updateQuestionMutation = useUpdateQuestionMutation(id)
   const deleteQuestionMutation = useDeleteQuestionMutation(question.data?.categoryId ?? 0)
   const [deleting, setDeleting] = useState(false)
+  const [dragOver, setDragOver] = useState(false)
+  const [dropError, setDropError] = useState<string | null>(null)
+  const dropTimerRef = useRef<ReturnType<typeof setTimeout>>()
 
   const update = (q: Partial<Question>) => updateQuestionMutation.mutate(q)
+
+  const showDropError = useCallback((msg: string) => {
+    setDropError(msg)
+    clearTimeout(dropTimerRef.current)
+    dropTimerRef.current = setTimeout(() => setDropError(null), 3000)
+  }, [])
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragOver(true)
+  }, [])
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragOver(false)
+  }, [])
+
+  const handleDrop = useCallback(
+    async (e: React.DragEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      setDragOver(false)
+      setDropError(null)
+
+      const files = e.dataTransfer.files
+      if (files.length > 1) {
+        showDropError(t('builder.dropOneFileOnly'))
+        return
+      }
+      if (files.length === 0) return
+
+      const file = files[0]
+      const ext = file.name.split('.').pop()?.toLowerCase()
+      if (!ext || !ALLOWED_MEDIA_EXTENSIONS.includes(ext)) {
+        showDropError(t('builder.dropUnsupportedType'))
+        return
+      }
+
+      const hasExisting = !!question.data?.media
+      if (hasExisting && !window.confirm(t('builder.replaceMedia'))) return
+
+      await window.api.mediaAttachFile(id, file.path)
+      question.refetch()
+    },
+    [id, question, t, showDropError]
+  )
 
   const guard = usePairQueryState(question, answerOptions)
   if (!guard.ok) {
@@ -173,9 +224,17 @@ const QuestionView = ({ id, onDelete }: { id: number; onDelete?: () => void }) =
         </ToggleGroup>
       </div>
 
-      <Card>
+      <Card
+        className={dragOver ? 'border-dashed border-primary border-2' : ''}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
         <CardContent className="py-2 px-3 space-y-2">
           <h6 className="text-sm font-semibold">{t('builder.media')}</h6>
+          {dropError && (
+            <p className="text-sm text-destructive">{dropError}</p>
+          )}
           {question.data!.media ? (
             <>
               <div className="flex items-center gap-3">

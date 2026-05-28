@@ -36,6 +36,7 @@ export const IPC = {
 
   // Media management
   QUIZ_MEDIA_PICK: 'quiz:media:pick',
+  QUIZ_MEDIA_ATTACH: 'quiz:media:attach',
   QUIZ_MEDIA_REMOVE: 'quiz:media:remove',
 
   // Team management

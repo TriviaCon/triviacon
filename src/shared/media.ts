@@ -1,5 +1,11 @@
 export type MediaType = 'image' | 'audio' | 'video' | null
 
+export const ALLOWED_MEDIA_EXTENSIONS = [
+  'mp3', 'wav', 'ogg', 'aac', 'm4a',
+  'mp4', 'webm', 'mov',
+  'png', 'jpg', 'jpeg', 'gif', 'webp'
+]
+
 /** Detect media type from a data URI, URL, or file path. */
 export function detectMediaType(src: string | null | undefined): MediaType {
   if (!src) return null

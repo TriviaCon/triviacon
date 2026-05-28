@@ -228,6 +228,13 @@ export function registerIpcHandlers(): void {
     return mediaPath
   })
 
+  ipcMain.handle(IPC.QUIZ_MEDIA_ATTACH, async (_, questionId: number, filePath: string) => {
+    const filename = filePath.split(/[\\/]/).pop()!
+    const mediaPath = await quizFile.attachMedia(filePath, filename)
+    store.questionUpdate(questionId, { media: mediaPath })
+    return mediaPath
+  })
+
   ipcMain.handle(IPC.QUIZ_MEDIA_REMOVE, async (_, questionId: number) => {
     const question = store.questionById(questionId)
     if (question?.media) {

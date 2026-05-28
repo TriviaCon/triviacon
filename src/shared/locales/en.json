@@ -77,7 +77,11 @@
     "italic": "Italic",
     "underline": "Underline",
     "audioOnly": "Audio only (hide video on display)",
-    "loadingQuestion": "Loading question..."
+    "loadingQuestion": "Loading question...",
+    "dropMedia": "Drop media file here",
+    "dropOneFileOnly": "Please drop only one file.",
+    "dropUnsupportedType": "Unsupported file type.",
+    "replaceMedia": "Replace the current media attachment?"
   },
 
   "runner": {

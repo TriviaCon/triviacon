@@ -115,6 +115,8 @@ const api = {
   // ── Media management ───────────────────────────────────────────
   mediaPickFile: (questionId: number): Promise<string | null> =>
     ipcRenderer.invoke(IPC.QUIZ_MEDIA_PICK, questionId),
+  mediaAttachFile: (questionId: number, filePath: string): Promise<string> =>
+    ipcRenderer.invoke(IPC.QUIZ_MEDIA_ATTACH, questionId, filePath),
   mediaRemoveFile: (questionId: number): Promise<void> =>
     ipcRenderer.invoke(IPC.QUIZ_MEDIA_REMOVE, questionId),
 

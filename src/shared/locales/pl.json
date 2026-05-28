@@ -77,7 +77,11 @@
     "italic": "Kursywa",
     "underline": "Podkreślenie",
     "audioOnly": "Tylko audio (ukryj wideo na ekranie)",
-    "loadingQuestion": "Wczytywanie pytania..."
+    "loadingQuestion": "Wczytywanie pytania...",
+    "dropMedia": "Upuść plik multimedialny tutaj",
+    "dropOneFileOnly": "Upuść tylko jeden plik.",
+    "dropUnsupportedType": "Nieobsługiwany typ pliku.",
+    "replaceMedia": "Zastąpić bieżące media?"
   },
 
   "runner": {
