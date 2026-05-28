@@ -125,6 +125,7 @@ const LocalMediaPlayer = ({ src, mediaType }: { src: string; mediaType: 'audio' 
   const [duration, setDuration] = useState(0)
   const [volume, setVolume] = useState(0.1)
   const [playing, setPlaying] = useState(false)
+  const draggingRef = useRef(false)
 
   const el = () => (mediaType === 'audio' ? audioRef.current : videoRef.current)
 
@@ -139,7 +140,7 @@ const LocalMediaPlayer = ({ src, mediaType }: { src: string; mediaType: 'audio' 
   useEffect(() => {
     const m = el()
     if (!m) return
-    const onTime = () => setCurrentTime(m.currentTime)
+    const onTime = () => { if (!draggingRef.current) setCurrentTime(m.currentTime) }
     const onMeta = () => setDuration(m.duration || 0)
     const onVol = () => setVolume(m.volume)
     const onPlay = () => setPlaying(true)
@@ -158,6 +159,11 @@ const LocalMediaPlayer = ({ src, mediaType }: { src: string; mediaType: 'audio' 
     }
   }, [src, mediaType])
 
+  const startDrag = useCallback(() => { draggingRef.current = true }, [])
+  const stopDrag = useCallback(() => {
+    setTimeout(() => { draggingRef.current = false }, 150)
+  }, [])
+
   const toggle = useCallback(() => {
     const m = el()
     if (!m) return
@@ -173,8 +179,10 @@ const LocalMediaPlayer = ({ src, mediaType }: { src: string; mediaType: 'audio' 
 
   const handleSeek = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
+      const time = Number(e.target.value)
+      setCurrentTime(time)
       const m = el()
-      if (m) m.currentTime = Number(e.target.value)
+      if (m) m.currentTime = time
     },
     [mediaType]
   )
@@ -224,6 +232,8 @@ const LocalMediaPlayer = ({ src, mediaType }: { src: string; mediaType: 'audio' 
           step={0.1}
           value={currentTime}
           onChange={handleSeek}
+          onPointerDown={startDrag}
+          onPointerUp={stopDrag}
           className="flex-1 h-1.5 accent-primary cursor-pointer"
         />
         <span className="text-xs text-muted-foreground tabular-nums w-9">
