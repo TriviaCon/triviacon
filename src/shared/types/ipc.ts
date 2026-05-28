@@ -36,6 +36,7 @@ export const IPC = {
 
   // Media management
   QUIZ_MEDIA_PICK: 'quiz:media:pick',
+  QUIZ_MEDIA_ATTACH: 'quiz:media:attach',
   QUIZ_MEDIA_REMOVE: 'quiz:media:remove',
 
   // Team management
@@ -82,6 +83,8 @@ export const IPC = {
   // Settings
   SETTINGS_GET_LANGUAGE: 'settings:getLanguage',
   SETTINGS_SET_LANGUAGE: 'settings:setLanguage',
+  SETTINGS_GET_DEFAULT_VOLUME: 'settings:getDefaultVolume',
+  SETTINGS_SET_DEFAULT_VOLUME: 'settings:setDefaultVolume',
 
   // Display management
   DISPLAY_OPEN_SCREEN: 'display:openScreen',

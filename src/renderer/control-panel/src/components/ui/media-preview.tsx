@@ -40,7 +40,7 @@ export const MediaControls = ({ mediaType }: { mediaType: 'audio' | 'video' }) =
   const [state, setState] = useState<MediaPlaybackState>({
     currentTime: 0,
     duration: 0,
-    volume: 1
+    volume: 0.1
   })
   const draggingRef = useRef(false)
 
@@ -123,10 +123,18 @@ const LocalMediaPlayer = ({ src, mediaType }: { src: string; mediaType: 'audio' 
   const videoRef = useRef<HTMLVideoElement>(null)
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
-  const [volume, setVolume] = useState(1)
+  const [volume, setVolume] = useState(0.1)
   const [playing, setPlaying] = useState(false)
 
   const el = () => (mediaType === 'audio' ? audioRef.current : videoRef.current)
+
+  useEffect(() => {
+    window.api.getDefaultVolume().then((v) => {
+      setVolume(v)
+      const m = el()
+      if (m) m.volume = v
+    })
+  }, [])
 
   useEffect(() => {
     const m = el()

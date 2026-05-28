@@ -35,7 +35,11 @@ const QuestionScreen = ({
   const videoRef = useRef<HTMLVideoElement>(null)
   const [mediaFullscreen, setMediaFullscreen] = useState(false)
   const savedTimeRef = useRef(0)
-  const savedVolumeRef = useRef(1)
+  const savedVolumeRef = useRef(0.1)
+
+  useEffect(() => {
+    window.api.getDefaultVolume().then((v) => { savedVolumeRef.current = v })
+  }, [])
 
   // Reset fullscreen when the active question changes
   useEffect(() => {

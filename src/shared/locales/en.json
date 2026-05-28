@@ -39,6 +39,7 @@
     "newQuiz": "Create a new, empty Quiz?\n\nUnsaved changes will be lost!",
     "loadQuiz": "Load a Quiz?\n\nUnsaved changes will be lost!",
     "deleteCategory": "Are you sure you want to delete category \"{{name}}\" and all its questions?",
+    "deleteQuestion": "Are you sure you want to delete this question and all its answers?",
     "deleteTeam": "Are you sure you want to delete team '{{name}}'?"
   },
 
@@ -76,7 +77,11 @@
     "italic": "Italic",
     "underline": "Underline",
     "audioOnly": "Audio only (hide video on display)",
-    "loadingQuestion": "Loading question..."
+    "loadingQuestion": "Loading question...",
+    "dropMedia": "Drop media file here",
+    "dropOneFileOnly": "Please drop only one file.",
+    "dropUnsupportedType": "Unsupported file type.",
+    "replaceMedia": "Replace the current media attachment?"
   },
 
   "runner": {
@@ -123,7 +128,9 @@
   "settings": {
     "title": "Settings",
     "language": "Language",
-    "languageDescription": "Choose the interface language."
+    "languageDescription": "Choose the interface language.",
+    "defaultVolume": "Default Volume",
+    "defaultVolumeDescription": "Initial volume level for media playback."
   },
 
   "languages": {

@@ -47,6 +47,16 @@ function QueryInvalidator() {
 }
 
 function App() {
+  useEffect(() => {
+    const prevent = (e: DragEvent) => e.preventDefault()
+    document.addEventListener('dragover', prevent)
+    document.addEventListener('drop', prevent)
+    return () => {
+      document.removeEventListener('dragover', prevent)
+      document.removeEventListener('drop', prevent)
+    }
+  }, [])
+
   return (
     <div className="px-1 py-1 flex flex-col h-full">
       <QueryClientProvider client={queryClient}>

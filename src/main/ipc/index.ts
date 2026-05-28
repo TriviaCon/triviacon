@@ -149,7 +149,13 @@ export function registerIpcHandlers(): void {
     store.questionUpdate(id, updates)
   )
 
-  ipcMain.handle(IPC.QUIZ_QUESTION_DELETE, (_, id: number) => store.questionDelete(id))
+  ipcMain.handle(IPC.QUIZ_QUESTION_DELETE, async (_, id: number) => {
+    const question = store.questionById(id)
+    if (question?.media) {
+      await quizFile.removeMedia(question.media)
+    }
+    store.questionDelete(id)
+  })
 
   // ── Answer Options ───────────────────────────────────────────────
 
@@ -218,6 +224,13 @@ export function registerIpcHandlers(): void {
     const sourcePath = result.filePaths[0]
     const filename = sourcePath.split(/[\\/]/).pop()!
     const mediaPath = await quizFile.attachMedia(sourcePath, filename)
+    store.questionUpdate(questionId, { media: mediaPath })
+    return mediaPath
+  })
+
+  ipcMain.handle(IPC.QUIZ_MEDIA_ATTACH, async (_, questionId: number, filePath: string) => {
+    const filename = filePath.split(/[\\/]/).pop()!
+    const mediaPath = await quizFile.attachMedia(filePath, filename)
     store.questionUpdate(questionId, { media: mediaPath })
     return mediaPath
   })
@@ -387,5 +400,13 @@ export function registerIpcHandlers(): void {
     setSetting('language', lang)
     safeSend(getControlPanelWindow(), IPC.SETTINGS_SET_LANGUAGE, lang)
     safeSend(getGameScreenWindow(), IPC.SETTINGS_SET_LANGUAGE, lang)
+  })
+
+  ipcMain.handle(IPC.SETTINGS_GET_DEFAULT_VOLUME, () => {
+    return getSetting('defaultVolume')
+  })
+
+  ipcMain.handle(IPC.SETTINGS_SET_DEFAULT_VOLUME, (_, volume: number) => {
+    setSetting('defaultVolume', volume)
   })
 }

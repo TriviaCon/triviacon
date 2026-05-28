@@ -29,7 +29,9 @@ export const BuilderView = () => {
           />
         </div>
         <div className="flex-1 border-l border-border pl-4">
-          {view?.view === 'question' && <QuestionView id={view.id} />}
+          {view?.view === 'question' && (
+            <QuestionView id={view.id} onDelete={() => setView(null)} />
+          )}
         </div>
       </div>
     </div>

@@ -4,10 +4,12 @@ import { join, dirname } from 'path'
 
 export interface AppSettings {
   language: string
+  defaultVolume: number
 }
 
 const DEFAULTS: AppSettings = {
-  language: 'en'
+  language: 'en',
+  defaultVolume: 0.1
 }
 
 const SETTINGS_FILENAME = 'triviacon-settings.json'
