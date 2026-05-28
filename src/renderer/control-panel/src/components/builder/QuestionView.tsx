@@ -70,7 +70,7 @@ const QuestionView = ({ id, onDelete }: { id: number; onDelete?: () => void }) =
   const [deleting, setDeleting] = useState(false)
   const [dragOver, setDragOver] = useState(false)
   const [dropError, setDropError] = useState<string | null>(null)
-  const dropTimerRef = useRef<ReturnType<typeof setTimeout>>()
+  const dropTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   const update = (q: Partial<Question>) => updateQuestionMutation.mutate(q)
 
@@ -116,7 +116,7 @@ const QuestionView = ({ id, onDelete }: { id: number; onDelete?: () => void }) =
       const hasExisting = !!question.data?.media
       if (hasExisting && !window.confirm(t('builder.replaceMedia'))) return
 
-      await window.api.mediaAttachFile(id, file.path)
+      await window.api.mediaAttachFile(id, (file as File & { path: string }).path)
       question.refetch()
     },
     [id, question, t, showDropError]
