@@ -75,6 +75,7 @@
     "bold": "Bold",
     "italic": "Italic",
     "underline": "Underline",
+    "audioOnly": "Audio only (hide video on display)",
     "loadingQuestion": "Loading question..."
   },
 
@@ -104,6 +105,8 @@
     "questions": "Questions",
     "noQuestions": "No questions in this category.",
     "noQuestionSelected": "No question selected",
+    "questionIndicator": "Question {{current}}",
+    "answering": "Answering:",
     "ranking": "RANKING",
     "noTeams": "No teams in ranking.",
     "points": "points",

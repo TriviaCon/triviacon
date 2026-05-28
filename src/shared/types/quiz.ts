@@ -12,6 +12,7 @@ export interface Question {
   type: QuestionType
   text: string
   media: string | null
+  audioOnly?: boolean
 }
 
 export interface AnswerOption {

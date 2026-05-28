@@ -15,6 +15,7 @@ export interface ActiveQuestionState {
   answerOptions: AnswerOption[]
   answerRevealed: boolean
   markedAnswerId: number | null
+  revealedOptionIds: number[]
 }
 
 export interface GameState {

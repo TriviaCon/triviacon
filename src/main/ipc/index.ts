@@ -335,6 +335,11 @@ export function registerIpcHandlers(): void {
     broadcastState()
   })
 
+  ipcMain.handle(IPC.GAME_TOGGLE_LIST_OPTION, (_, answerOptionId: number) => {
+    engine.toggleListOption(answerOptionId)
+    broadcastState()
+  })
+
   // ── Media playback (forward to game screen) ────────────────────
 
   ipcMain.handle(IPC.MEDIA_PLAY, () => {
@@ -351,6 +356,18 @@ export function registerIpcHandlers(): void {
 
   ipcMain.handle(IPC.MEDIA_TOGGLE_FULLSCREEN, () => {
     safeSend(getGameScreenWindow(), IPC.MEDIA_TOGGLE_FULLSCREEN)
+  })
+
+  ipcMain.handle(IPC.MEDIA_SEEK, (_, time: number) => {
+    safeSend(getGameScreenWindow(), IPC.MEDIA_SEEK, time)
+  })
+
+  ipcMain.handle(IPC.MEDIA_SET_VOLUME, (_, volume: number) => {
+    safeSend(getGameScreenWindow(), IPC.MEDIA_SET_VOLUME, volume)
+  })
+
+  ipcMain.on(IPC.MEDIA_STATE_UPDATE, (_, payload) => {
+    safeSend(getControlPanelWindow(), IPC.MEDIA_STATE_UPDATE, payload)
   })
 
   // ── Game screen appearance ──────────────────────────────────────

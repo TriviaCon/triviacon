@@ -62,12 +62,16 @@ export const IPC = {
   GAME_TOGGLE_ANSWER: 'game:toggleAnswer',
   GAME_MARK_USED: 'game:markUsed',
   GAME_MARK_ANSWER: 'game:markAnswer',
+  GAME_TOGGLE_LIST_OPTION: 'game:toggleListOption',
 
   // Media control (control panel -> main -> game screen)
   MEDIA_PLAY: 'media:play',
   MEDIA_PAUSE: 'media:pause',
   MEDIA_STOP: 'media:stop',
   MEDIA_TOGGLE_FULLSCREEN: 'media:toggleFullscreen',
+  MEDIA_SEEK: 'media:seek',
+  MEDIA_SET_VOLUME: 'media:setVolume',
+  MEDIA_STATE_UPDATE: 'media:stateUpdate',
 
   // Game screen appearance
   GAME_TOGGLE_DARK_MODE: 'game:toggleDarkMode',
@@ -113,3 +117,9 @@ export interface ShowQuestionPayload {
 }
 
 export type StateUpdatePayload = GameState
+
+export interface MediaPlaybackState {
+  currentTime: number
+  duration: number
+  volume: number
+}

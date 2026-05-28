@@ -35,8 +35,23 @@ function App() {
           selectedQuestionId={gameState.selectedQuestionId}
         />
       )
-    case GamePhase.Question:
-      return <QuestionScreen activeQuestion={gameState.activeQuestion} />
+    case GamePhase.Question: {
+      const category = gameState.categories.find((c) => c.id === gameState.currentCategoryId)
+      const questionIndex = gameState.activeQuestion
+        ? gameState.categoryQuestions.findIndex(
+            (q) => q.id === gameState.activeQuestion!.question.id
+          ) + 1
+        : 0
+      const currentTeam = gameState.teams.find((t) => t.id === gameState.currentTeamId)
+      return (
+        <QuestionScreen
+          activeQuestion={gameState.activeQuestion}
+          categoryName={category?.name ?? null}
+          questionIndex={questionIndex}
+          currentTeamName={currentTeam?.name ?? null}
+        />
+      )
+    }
     case GamePhase.Ranking:
       return <RankingScreen teams={gameState.teams} />
     case GamePhase.Splash:

@@ -135,7 +135,8 @@ export class GameEngine {
       question,
       answerOptions,
       answerRevealed: this.state.revealedAnswers.includes(question.id),
-      markedAnswerId: null
+      markedAnswerId: null,
+      revealedOptionIds: []
     }
     this.clearSelection()
   }
@@ -188,6 +189,17 @@ export class GameEngine {
   markAnswer(answerOptionId: number | null): void {
     if (this.state.activeQuestion) {
       this.state.activeQuestion.markedAnswerId = answerOptionId
+    }
+  }
+
+  toggleListOption(answerOptionId: number): void {
+    if (!this.state.activeQuestion) return
+    const ids = this.state.activeQuestion.revealedOptionIds
+    const idx = ids.indexOf(answerOptionId)
+    if (idx >= 0) {
+      ids.splice(idx, 1)
+    } else {
+      ids.push(answerOptionId)
     }
   }
 

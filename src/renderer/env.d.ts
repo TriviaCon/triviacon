@@ -1,6 +1,7 @@
 /// <reference types="vite/client" />
 
 import type { GameState } from '@shared/types/state'
+import type { MediaPlaybackState } from '@shared/types/ipc'
 import type { Category, Question, AnswerOption, QuizMeta, Stats } from '@shared/types/quiz'
 
 /**
@@ -86,6 +87,7 @@ declare global {
       toggleAnswer: (questionId: number) => Promise<void>
       markUsed: (questionId: number) => Promise<void>
       markAnswer: (answerOptionId: number | null) => Promise<void>
+      toggleListOption: (answerOptionId: number) => Promise<void>
 
       // --- Media management ---
       mediaPickFile: (questionId: number) => Promise<string | null>
@@ -96,12 +98,18 @@ declare global {
       mediaPause: () => Promise<void>
       mediaStop: () => Promise<void>
       mediaToggleFullscreen: () => Promise<void>
+      mediaSeek: (time: number) => Promise<void>
+      mediaSetVolume: (volume: number) => Promise<void>
+      onMediaStateUpdate: (callback: (state: MediaPlaybackState) => void) => () => void
 
       // --- Media playback listeners (game screen only) ---
       onMediaPlay: (callback: () => void) => () => void
       onMediaPause: (callback: () => void) => () => void
       onMediaStop: (callback: () => void) => () => void
       onMediaToggleFullscreen: (callback: () => void) => () => void
+      onMediaSeek: (callback: (time: number) => void) => () => void
+      onMediaSetVolume: (callback: (volume: number) => void) => () => void
+      sendMediaState: (state: MediaPlaybackState) => void
 
       // --- Settings ---
       getLanguage: () => Promise<string>
