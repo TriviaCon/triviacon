@@ -25,6 +25,8 @@ const QuestionColumn = ({ id }: { id: number }) => {
 
   const markedAnswerId =
     activeQuestion?.question.id === id ? (activeQuestion.markedAnswerId ?? null) : null
+  const revealedOptionIds =
+    activeQuestion?.question.id === id ? (activeQuestion.revealedOptionIds ?? []) : []
 
   return (
     <BasicQuestionViewer
@@ -34,6 +36,8 @@ const QuestionColumn = ({ id }: { id: number }) => {
       onRevealAnswer={() => window.api.toggleAnswer(id)}
       markedAnswerId={markedAnswerId}
       onMarkAnswer={(answerId) => window.api.markAnswer(answerId)}
+      revealedOptionIds={revealedOptionIds}
+      onToggleListOption={(optId) => window.api.toggleListOption(optId)}
       used={usedQuestions.includes(id)}
       onUse={() => window.api.markUsed(id)}
     />

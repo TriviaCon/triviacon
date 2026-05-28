@@ -13,6 +13,8 @@ const BasicQuestionViewer = ({
   onRevealAnswer,
   markedAnswerId,
   onMarkAnswer,
+  revealedOptionIds,
+  onToggleListOption,
   used,
   onUse
 }: {
@@ -22,6 +24,8 @@ const BasicQuestionViewer = ({
   onRevealAnswer: () => void
   markedAnswerId: number | null
   onMarkAnswer: (id: number | null) => void
+  revealedOptionIds: number[]
+  onToggleListOption: (id: number) => void
   used: boolean
   onUse: () => void
 }) => {
@@ -86,16 +90,27 @@ const BasicQuestionViewer = ({
               <RichText html={answerOptions[0]?.text ?? ''} className="[&_p]:m-0" />
             </div>
           ) : (
-            // list \u2014 every item is part of the answer
-            answerOptions.map((opt, index) => (
-              <div
-                key={opt.id}
-                className="rounded-md px-3 py-2 text-sm border bg-muted/50 border-green-400/50 flex items-baseline gap-1"
-              >
-                <strong>{index + 1}.</strong>
-                <RichText html={opt.text} className="[&_p]:m-0" />
-              </div>
-            ))
+            // list \u2014 click to reveal individual items on display
+            answerOptions.map((opt, index) => {
+              const found = revealedOptionIds.includes(opt.id)
+              return (
+                <button
+                  key={opt.id}
+                  type="button"
+                  onClick={() => onToggleListOption(opt.id)}
+                  className={cn(
+                    'w-full text-left rounded-md px-3 py-2 text-sm border cursor-pointer transition-colors flex items-baseline gap-1',
+                    found
+                      ? 'bg-green-100 border-green-300 text-green-900'
+                      : 'bg-muted/50 border-green-400/50 hover:bg-muted'
+                  )}
+                >
+                  <strong>{index + 1}.</strong>
+                  <RichText html={opt.text} className="[&_p]:m-0" />
+                  {found && <span className="ml-auto">{'\u2714'}</span>}
+                </button>
+              )
+            })
           )}
         </div>
 

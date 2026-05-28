@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CloudUpload, Trash2 } from 'lucide-react'
+import { CloudUpload, Trash2, Volume2 } from 'lucide-react'
 import { Button } from '@renderer/components/ui/button'
 import { Label } from '@renderer/components/ui/label'
 import { Card, CardContent } from '@renderer/components/ui/card'
@@ -15,6 +15,7 @@ import { useDeleteAnswerOptionMutation } from '@renderer/hooks/useDeleteAnswerOp
 import { useAddAnswerOptionMutation } from '@renderer/hooks/useAddAnswerOptionMutation'
 import { QueryLoading, QueryError } from '@renderer/components/ui/query-state'
 import { MediaPreview } from '@renderer/components/ui/media-preview'
+import { detectMediaType } from '@shared/media'
 import { usePairQueryState } from '@renderer/hooks/usePairQueryState'
 
 /**
@@ -162,34 +163,48 @@ const QuestionView = ({ id }: { id: number }) => {
         <CardContent className="py-2 px-3 space-y-2">
           <h6 className="text-sm font-semibold">{t('builder.media')}</h6>
           {question.data!.media ? (
-            <div className="flex items-center gap-3">
-              <div className="flex-1 border border-border rounded p-2">
-                <MediaPreview media={question.data!.media} />
+            <>
+              <div className="flex items-center gap-3">
+                <div className="flex-1 border border-border rounded p-2">
+                  <MediaPreview media={question.data!.media} localPlayer />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={async () => {
+                      const path = await window.api.mediaPickFile(id)
+                      if (path) question.refetch()
+                    }}
+                  >
+                    {t('actions.change')}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="text-destructive border-destructive/50 hover:bg-destructive/10"
+                    onClick={async () => {
+                      await window.api.mediaRemoveFile(id)
+                      question.refetch()
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
-              <div className="flex flex-col gap-1">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={async () => {
-                    const path = await window.api.mediaPickFile(id)
-                    if (path) question.refetch()
-                  }}
-                >
-                  {t('actions.change')}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="text-destructive border-destructive/50 hover:bg-destructive/10"
-                  onClick={async () => {
-                    await window.api.mediaRemoveFile(id)
-                    question.refetch()
-                  }}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
+              {detectMediaType(question.data!.media) === 'video' && (
+                <label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={question.data!.audioOnly ?? false}
+                    onChange={(e) => update({ audioOnly: e.target.checked })}
+                    className="h-4 w-4 rounded border-input"
+                  />
+                  <Volume2 className="h-4 w-4" />
+                  {t('builder.audioOnly')}
+                </label>
+              )}
+            </>
           ) : (
             <Button
               variant="outline"
