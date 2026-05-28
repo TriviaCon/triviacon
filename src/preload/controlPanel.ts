@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { IPC } from '@shared/types/ipc'
+import type { MediaPlaybackState } from '@shared/types/ipc'
 import type { GameState } from '@shared/types/state'
 import type { Category, Question, AnswerOption, QuizMeta, Stats } from '@shared/types/quiz'
 
@@ -108,6 +109,8 @@ const api = {
     ipcRenderer.invoke(IPC.GAME_MARK_USED, questionId),
   markAnswer: (answerOptionId: number | null): Promise<void> =>
     ipcRenderer.invoke(IPC.GAME_MARK_ANSWER, answerOptionId),
+  toggleListOption: (answerOptionId: number): Promise<void> =>
+    ipcRenderer.invoke(IPC.GAME_TOGGLE_LIST_OPTION, answerOptionId),
 
   // ── Media management ───────────────────────────────────────────
   mediaPickFile: (questionId: number): Promise<string | null> =>
@@ -120,6 +123,11 @@ const api = {
   mediaPause: (): Promise<void> => ipcRenderer.invoke(IPC.MEDIA_PAUSE),
   mediaStop: (): Promise<void> => ipcRenderer.invoke(IPC.MEDIA_STOP),
   mediaToggleFullscreen: (): Promise<void> => ipcRenderer.invoke(IPC.MEDIA_TOGGLE_FULLSCREEN),
+  mediaSeek: (time: number): Promise<void> => ipcRenderer.invoke(IPC.MEDIA_SEEK, time),
+  mediaSetVolume: (volume: number): Promise<void> =>
+    ipcRenderer.invoke(IPC.MEDIA_SET_VOLUME, volume),
+  onMediaStateUpdate: (cb: (state: MediaPlaybackState) => void) =>
+    subscribeWith<MediaPlaybackState>(IPC.MEDIA_STATE_UPDATE, cb),
 
   // ── Settings ───────────────────────────────────────────────────
   getLanguage: (): Promise<string> => ipcRenderer.invoke(IPC.SETTINGS_GET_LANGUAGE),

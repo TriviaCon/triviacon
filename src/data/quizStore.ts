@@ -41,6 +41,7 @@ export interface QuizDocument {
     type: QuestionType
     text: string
     media: string | null
+    audioOnly?: boolean
   }>
   answerOptions: Array<{
     id: number
@@ -176,7 +177,8 @@ export function questionCreate(question: Omit<Question, 'id'>): number {
     categoryId: question.categoryId,
     type: question.type,
     text: question.text,
-    media: question.media
+    media: question.media,
+    audioOnly: question.audioOnly
   })
   markDirty()
   return id
@@ -190,6 +192,7 @@ export function questionUpdate(id: number, updates: Partial<Omit<Question, 'id'>
   if (updates.type !== undefined) q.type = updates.type
   if (updates.text !== undefined) q.text = updates.text
   if (updates.media !== undefined) q.media = updates.media
+  if (updates.audioOnly !== undefined) q.audioOnly = updates.audioOnly
   markDirty()
 }
 

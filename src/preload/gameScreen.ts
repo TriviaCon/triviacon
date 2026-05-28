@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { IPC } from '@shared/types/ipc'
+import type { MediaPlaybackState } from '@shared/types/ipc'
 import type { GameState } from '@shared/types/state'
 
 /** Subscribe to a bare IPC event (no payload). Returns an unsubscribe function. */
@@ -24,6 +25,11 @@ const api = {
   onMediaPause: (cb: () => void) => subscribe(IPC.MEDIA_PAUSE, cb),
   onMediaStop: (cb: () => void) => subscribe(IPC.MEDIA_STOP, cb),
   onMediaToggleFullscreen: (cb: () => void) => subscribe(IPC.MEDIA_TOGGLE_FULLSCREEN, cb),
+  onMediaSeek: (cb: (time: number) => void) => subscribeWith<number>(IPC.MEDIA_SEEK, cb),
+  onMediaSetVolume: (cb: (volume: number) => void) =>
+    subscribeWith<number>(IPC.MEDIA_SET_VOLUME, cb),
+  sendMediaState: (state: MediaPlaybackState) =>
+    ipcRenderer.send(IPC.MEDIA_STATE_UPDATE, state),
 
   // ── Settings (language sync) ───────────────────────────────────
   getLanguage: (): Promise<string> => ipcRenderer.invoke(IPC.SETTINGS_GET_LANGUAGE),
