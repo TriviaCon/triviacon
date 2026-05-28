@@ -75,6 +75,7 @@
     "bold": "Pogrubienie",
     "italic": "Kursywa",
     "underline": "Podkreślenie",
+    "audioOnly": "Tylko audio (ukryj wideo na ekranie)",
     "loadingQuestion": "Wczytywanie pytania..."
   },
 
@@ -104,6 +105,8 @@
     "questions": "Pytania",
     "noQuestions": "Brak pytań w tej kategorii.",
     "noQuestionSelected": "Nie wybrano pytania",
+    "questionIndicator": "Pytanie {{current}}",
+    "answering": "Odpowiada:",
     "ranking": "RANKING",
     "noTeams": "Brak drużyn w rankingu.",
     "points": "pkt",
