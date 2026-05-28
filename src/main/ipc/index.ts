@@ -149,7 +149,13 @@ export function registerIpcHandlers(): void {
     store.questionUpdate(id, updates)
   )
 
-  ipcMain.handle(IPC.QUIZ_QUESTION_DELETE, (_, id: number) => store.questionDelete(id))
+  ipcMain.handle(IPC.QUIZ_QUESTION_DELETE, async (_, id: number) => {
+    const question = store.questionById(id)
+    if (question?.media) {
+      await quizFile.removeMedia(question.media)
+    }
+    store.questionDelete(id)
+  })
 
   // ── Answer Options ───────────────────────────────────────────────
 

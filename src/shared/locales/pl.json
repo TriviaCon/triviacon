@@ -39,6 +39,7 @@
     "newQuiz": "Utworzyć nowy, pusty Quiz?\n\nNiezapisane zmiany zostaną utracone!",
     "loadQuiz": "Wczytać Quiz?\n\nNiezapisane zmiany zostaną utracone!",
     "deleteCategory": "Czy na pewno chcesz usunąć kategorię \"{{name}}\" i wszystkie jej pytania?",
+    "deleteQuestion": "Czy na pewno chcesz usunąć to pytanie i wszystkie jego odpowiedzi?",
     "deleteTeam": "Czy na pewno chcesz usunąć drużynę '{{name}}'?"
   },
 

@@ -39,6 +39,7 @@
     "newQuiz": "Create a new, empty Quiz?\n\nUnsaved changes will be lost!",
     "loadQuiz": "Load a Quiz?\n\nUnsaved changes will be lost!",
     "deleteCategory": "Are you sure you want to delete category \"{{name}}\" and all its questions?",
+    "deleteQuestion": "Are you sure you want to delete this question and all its answers?",
     "deleteTeam": "Are you sure you want to delete team '{{name}}'?"
   },
 

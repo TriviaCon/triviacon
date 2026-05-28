@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CloudUpload, Trash2, Volume2 } from 'lucide-react'
 import { Button } from '@renderer/components/ui/button'
@@ -13,6 +13,7 @@ import { useAnswerOptions } from '@renderer/hooks/useAnswerOptions'
 import { useUpdateAnswerOptionMutation } from '@renderer/hooks/useUpdateAnswerOptionMutation'
 import { useDeleteAnswerOptionMutation } from '@renderer/hooks/useDeleteAnswerOptionMutation'
 import { useAddAnswerOptionMutation } from '@renderer/hooks/useAddAnswerOptionMutation'
+import { useDeleteQuestionMutation } from '@renderer/hooks/useDeleteQuestionMutation'
 import { QueryLoading, QueryError } from '@renderer/components/ui/query-state'
 import { MediaPreview } from '@renderer/components/ui/media-preview'
 import { detectMediaType } from '@shared/media'
@@ -57,7 +58,7 @@ const SingleAnswerField = ({
   )
 }
 
-const QuestionView = ({ id }: { id: number }) => {
+const QuestionView = ({ id, onDelete }: { id: number; onDelete?: () => void }) => {
   const { t } = useTranslation()
   const question = useQuestion(id)
   const answerOptions = useAnswerOptions(id)
@@ -65,6 +66,8 @@ const QuestionView = ({ id }: { id: number }) => {
   const updateOption = useUpdateAnswerOptionMutation(id)
   const deleteOption = useDeleteAnswerOptionMutation(id)
   const updateQuestionMutation = useUpdateQuestionMutation(id)
+  const deleteQuestionMutation = useDeleteQuestionMutation(question.data?.categoryId ?? 0)
+  const [deleting, setDeleting] = useState(false)
 
   const update = (q: Partial<Question>) => updateQuestionMutation.mutate(q)
 
@@ -77,6 +80,17 @@ const QuestionView = ({ id }: { id: number }) => {
 
   const type = question.data!.type
   const options = answerOptions.data!
+
+  const handleDeleteQuestion = async () => {
+    if (!window.confirm(t('confirm.deleteQuestion'))) return
+    setDeleting(true)
+    try {
+      await deleteQuestionMutation.mutateAsync(id)
+      onDelete?.()
+    } finally {
+      setDeleting(false)
+    }
+  }
 
   const handleTypeChange = (newType: string) => {
     if (!newType || newType === type) return
@@ -233,6 +247,18 @@ const QuestionView = ({ id }: { id: number }) => {
         </Card>
       ) : (
         renderOptionList(type === 'multiple-choice')
+      )}
+
+      {onDelete && (
+        <Button
+          variant="outline"
+          className="w-full text-destructive border-destructive/50 hover:bg-destructive/10"
+          onClick={handleDeleteQuestion}
+          disabled={deleting}
+        >
+          <Trash2 className="mr-2 h-4 w-4" />
+          {t('actions.delete')}
+        </Button>
       )}
     </div>
   )
