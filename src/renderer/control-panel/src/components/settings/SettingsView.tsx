@@ -5,12 +5,20 @@ import { Label } from '@renderer/components/ui/label'
 import { NativeSelect } from '@renderer/components/ui/native-select'
 import { Card, CardContent, CardHeader, CardTitle } from '@renderer/components/ui/card'
 
+const COLOR_MODES = ['heatmap', 'rainbow', 'gradient'] as const
+
 export const SettingsView = () => {
   const { t, i18n } = useTranslation()
   const [volume, setVolume] = useState(0.1)
+  const [colorMode, setColorMode] = useState('heatmap')
+  const [barCount, setBarCount] = useState(48)
 
   useEffect(() => {
     window.api.getDefaultVolume().then(setVolume)
+    window.api.getVisualizer().then((v) => {
+      setColorMode(v.colorMode)
+      setBarCount(v.barCount)
+    })
   }, [])
 
   const handleLanguageChange = async (lang: string) => {
@@ -65,6 +73,46 @@ export const SettingsView = () => {
           </div>
           <p className="text-sm text-muted-foreground ml-28">
             {t('settings.defaultVolumeDescription')}
+          </p>
+
+          <div className="flex items-center gap-4">
+            <Label className="w-24 text-right shrink-0">{t('settings.visualizerColor')}</Label>
+            <NativeSelect
+              value={colorMode}
+              onChange={(e) => {
+                setColorMode(e.target.value)
+                window.api.setVisualizer({ colorMode: e.target.value })
+              }}
+            >
+              {COLOR_MODES.map((mode) => (
+                <option key={mode} value={mode}>
+                  {t(`settings.color${mode.charAt(0).toUpperCase()}${mode.slice(1)}` as 'settings.colorHeatmap')}
+                </option>
+              ))}
+            </NativeSelect>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <Label className="w-24 text-right shrink-0">{t('settings.visualizerBars')}</Label>
+            <input
+              type="range"
+              min={16}
+              max={128}
+              step={8}
+              value={barCount}
+              onChange={(e) => {
+                const v = Number(e.target.value)
+                setBarCount(v)
+                window.api.setVisualizer({ barCount: v })
+              }}
+              className="flex-1 h-1.5 accent-primary cursor-pointer"
+            />
+            <span className="text-sm text-muted-foreground tabular-nums w-10">
+              {barCount}
+            </span>
+          </div>
+          <p className="text-sm text-muted-foreground ml-28">
+            {t('settings.visualizerDescription')}
           </p>
         </CardContent>
       </Card>

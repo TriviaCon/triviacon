@@ -139,6 +139,10 @@ const api = {
   getDefaultVolume: (): Promise<number> => ipcRenderer.invoke(IPC.SETTINGS_GET_DEFAULT_VOLUME),
   setDefaultVolume: (volume: number): Promise<void> =>
     ipcRenderer.invoke(IPC.SETTINGS_SET_DEFAULT_VOLUME, volume),
+  getVisualizer: (): Promise<{ colorMode: string; barCount: number }> =>
+    ipcRenderer.invoke(IPC.SETTINGS_GET_VISUALIZER),
+  setVisualizer: (settings: { colorMode?: string; barCount?: number }): Promise<void> =>
+    ipcRenderer.invoke(IPC.SETTINGS_SET_VISUALIZER, settings),
 
   // ── Display management ─────────────────────────────────────────
   openGameScreen: (): Promise<void> => ipcRenderer.invoke(IPC.DISPLAY_OPEN_SCREEN),

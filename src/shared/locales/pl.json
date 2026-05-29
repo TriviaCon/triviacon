@@ -130,7 +130,13 @@
     "language": "Język",
     "languageDescription": "Wybierz język interfejsu.",
     "defaultVolume": "Domyślna głośność",
-    "defaultVolumeDescription": "Początkowy poziom głośności odtwarzania mediów."
+    "defaultVolumeDescription": "Początkowy poziom głośności odtwarzania mediów.",
+    "visualizerColor": "Kolory wizualizera",
+    "visualizerBars": "Słupki wizualizera",
+    "visualizerDescription": "Wygląd wizualizera audio.",
+    "colorHeatmap": "Mapa ciepła",
+    "colorRainbow": "Tęcza",
+    "colorGradient": "Gradient"
   },
 
   "languages": {
