@@ -85,6 +85,8 @@ export const IPC = {
   SETTINGS_SET_LANGUAGE: 'settings:setLanguage',
   SETTINGS_GET_DEFAULT_VOLUME: 'settings:getDefaultVolume',
   SETTINGS_SET_DEFAULT_VOLUME: 'settings:setDefaultVolume',
+  SETTINGS_GET_VISUALIZER: 'settings:getVisualizer',
+  SETTINGS_SET_VISUALIZER: 'settings:setVisualizer',
 
   // Display management
   DISPLAY_OPEN_SCREEN: 'display:openScreen',

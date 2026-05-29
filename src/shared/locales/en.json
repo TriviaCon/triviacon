@@ -130,7 +130,13 @@
     "language": "Language",
     "languageDescription": "Choose the interface language.",
     "defaultVolume": "Default Volume",
-    "defaultVolumeDescription": "Initial volume level for media playback."
+    "defaultVolumeDescription": "Initial volume level for media playback.",
+    "visualizerColor": "Visualizer Colors",
+    "visualizerBars": "Visualizer Bars",
+    "visualizerDescription": "Audio visualizer appearance.",
+    "colorHeatmap": "Heat Map",
+    "colorRainbow": "Rainbow",
+    "colorGradient": "Gradient"
   },
 
   "languages": {

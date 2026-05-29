@@ -409,4 +409,16 @@ export function registerIpcHandlers(): void {
   ipcMain.handle(IPC.SETTINGS_SET_DEFAULT_VOLUME, (_, volume: number) => {
     setSetting('defaultVolume', volume)
   })
+
+  ipcMain.handle(IPC.SETTINGS_GET_VISUALIZER, () => {
+    return {
+      colorMode: getSetting('visualizerColorMode'),
+      barCount: getSetting('visualizerBarCount')
+    }
+  })
+
+  ipcMain.handle(IPC.SETTINGS_SET_VISUALIZER, (_, settings: { colorMode?: string; barCount?: number }) => {
+    if (settings.colorMode) setSetting('visualizerColorMode', settings.colorMode as 'heatmap' | 'rainbow' | 'gradient')
+    if (settings.barCount) setSetting('visualizerBarCount', settings.barCount)
+  })
 }

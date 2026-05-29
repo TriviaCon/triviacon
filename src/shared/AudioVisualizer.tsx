@@ -1,7 +1,9 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
-const BAR_COUNT = 48
 const BAR_GAP = 4
+
+const GRADIENT_START = { h: 195, s: 100, l: 50 } // cyan
+const GRADIENT_END = { h: 300, s: 100, l: 50 } // magenta
 
 type MediaElement = HTMLAudioElement | HTMLVideoElement
 
@@ -27,12 +29,41 @@ function getOrCreateAnalyser(audio: MediaElement) {
   return entry
 }
 
+function barColor(mode: string, i: number, count: number, value: number): string {
+  const t = count > 1 ? i / (count - 1) : 0
+
+  switch (mode) {
+    case 'rainbow':
+      return `hsl(${t * 360}, 85%, 55%)`
+    case 'gradient': {
+      const h = GRADIENT_START.h + t * (GRADIENT_END.h - GRADIENT_START.h)
+      const s = GRADIENT_START.s + t * (GRADIENT_END.s - GRADIENT_START.s)
+      const l = GRADIENT_START.l + t * (GRADIENT_END.l - GRADIENT_START.l)
+      return `hsl(${h}, ${s}%, ${l}%)`
+    }
+    case 'heatmap':
+    default: {
+      const hue = (1 - value) * 240
+      return `hsl(${hue}, 90%, 50%)`
+    }
+  }
+}
+
 interface AudioVisualizerProps {
   audioRef: React.RefObject<HTMLAudioElement | HTMLVideoElement | null>
 }
 
 export default function AudioVisualizer({ audioRef }: AudioVisualizerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [colorMode, setColorMode] = useState('heatmap')
+  const [barCount, setBarCount] = useState(48)
+
+  useEffect(() => {
+    window.api.getVisualizer().then((v) => {
+      setColorMode(v.colorMode)
+      setBarCount(v.barCount)
+    })
+  }, [])
 
   useEffect(() => {
     const audio = audioRef.current
@@ -51,18 +82,17 @@ export default function AudioVisualizer({ audioRef }: AudioVisualizerProps) {
       const { width, height } = canvas
       ctx2d.clearRect(0, 0, width, height)
 
-      const barWidth = (width - BAR_GAP * (BAR_COUNT - 1)) / BAR_COUNT
-      const style = getComputedStyle(canvas)
-      const color = style.getPropertyValue('--color-primary').trim()
-      ctx2d.fillStyle = color ? `oklch(${color})` : '#6366f1'
+      const barWidth = (width - BAR_GAP * (barCount - 1)) / barCount
 
-      for (let i = 0; i < BAR_COUNT; i++) {
-        const dataIndex = Math.floor((i / BAR_COUNT) * data.length)
+      for (let i = 0; i < barCount; i++) {
+        const dataIndex = Math.floor((i / barCount) * data.length)
         const value = data[dataIndex] / 255
         const barHeight = value * height * 0.9
         const x = i * (barWidth + BAR_GAP)
         const y = (height - barHeight) / 2
         const radius = Math.min(barWidth / 2, 4)
+
+        ctx2d.fillStyle = barColor(colorMode, i, barCount, value)
         ctx2d.beginPath()
         ctx2d.roundRect(x, y, barWidth, barHeight, radius)
         ctx2d.fill()
@@ -71,7 +101,7 @@ export default function AudioVisualizer({ audioRef }: AudioVisualizerProps) {
 
     draw()
     return () => cancelAnimationFrame(raf)
-  }, [audioRef])
+  }, [audioRef, colorMode, barCount])
 
   return (
     <canvas

@@ -2,14 +2,20 @@ import { app } from 'electron'
 import { readFileSync, writeFileSync, existsSync } from 'fs'
 import { join, dirname } from 'path'
 
+export type VisualizerColorMode = 'heatmap' | 'rainbow' | 'gradient'
+
 export interface AppSettings {
   language: string
   defaultVolume: number
+  visualizerColorMode: VisualizerColorMode
+  visualizerBarCount: number
 }
 
 const DEFAULTS: AppSettings = {
   language: 'en',
-  defaultVolume: 0.1
+  defaultVolume: 0.1,
+  visualizerColorMode: 'heatmap',
+  visualizerBarCount: 48
 }
 
 const SETTINGS_FILENAME = 'triviacon-settings.json'
