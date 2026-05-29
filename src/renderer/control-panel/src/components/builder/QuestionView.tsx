@@ -172,7 +172,7 @@ const QuestionView = ({ id, onDelete }: { id: number; onDelete?: () => void }) =
               {withCorrect && (
                 <input
                   type="radio"
-                  name={`correct-answer-${question.id}`}
+                  name={`correct-answer-${question.data!.id}`}
                   checked={opt.correct}
                   onChange={() => {
                     options.filter((o) => o.correct && o.id !== opt.id).forEach((o) => updateOption.mutate({ id: o.id, correct: false }))
