@@ -6,8 +6,9 @@ hand-building a quiz first.
 
 | File | Contents |
 |------|----------|
-| `mockQuiz.tcq`     | A small quiz — a few categories, mixed media (images + video). |
-| `big_mockQuiz.tcq` | A larger quiz for stress-testing layout and the quiz tree. |
+| `mockQuiz.tcq`          | A small quiz — a few categories, mixed media (images + video). |
+| `big_mockQuiz.tcq`      | A larger quiz for stress-testing layout and the quiz tree. |
+| `stress_test_quiz.tcq`  | Exercises all question types, rich text, media placeholders, and edge cases. |
 
 ## Format
 
