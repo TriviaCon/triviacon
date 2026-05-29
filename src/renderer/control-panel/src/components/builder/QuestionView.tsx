@@ -171,10 +171,14 @@ const QuestionView = ({ id, onDelete }: { id: number; onDelete?: () => void }) =
             <div key={opt.id} className="flex items-start gap-2">
               {withCorrect && (
                 <input
-                  type="checkbox"
+                  type="radio"
+                  name={`correct-answer-${question.id}`}
                   checked={opt.correct}
-                  onChange={(e) => updateOption.mutate({ id: opt.id, correct: e.target.checked })}
-                  className="h-4 w-4 rounded border-input mt-2.5"
+                  onChange={() => {
+                    options.filter((o) => o.correct && o.id !== opt.id).forEach((o) => updateOption.mutate({ id: o.id, correct: false }))
+                    updateOption.mutate({ id: opt.id, correct: true })
+                  }}
+                  className="h-4 w-4 border-input mt-2.5"
                   title={t('builder.correctAnswer')}
                 />
               )}
