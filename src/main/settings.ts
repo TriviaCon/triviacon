@@ -12,7 +12,7 @@ export interface AppSettings {
 }
 
 const DEFAULTS: AppSettings = {
-  language: 'en',
+  language: 'pl',
   defaultVolume: 0.1,
   visualizerColorMode: 'heatmap',
   visualizerBarCount: 48
