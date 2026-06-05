@@ -1,3 +1,4 @@
+import '@web/bootstrapControlPanel'
 import './index.css'
 
 import React from 'react'

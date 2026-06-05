@@ -1,6 +1,13 @@
 node_modules
 dist
+dist-web
 out
+
+# Tauri
+src-tauri/target
+src-tauri/gen/schemas
+# Icons are generated from build/icon.png at build time (scripts/gen-icons.mjs).
+src-tauri/icons
 .DS_Store
 *.log*
 *.tsbuildinfo

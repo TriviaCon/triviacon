@@ -92,6 +92,8 @@ declare global {
       // --- Media management ---
       mediaPickFile: (questionId: number) => Promise<string | null>
       mediaAttachFile: (questionId: number, filePath: string) => Promise<string>
+      /** Tauri build: attach media from raw bytes (drag & drop has no path). */
+      mediaAttachBytes?: (questionId: number, bytes: Uint8Array, filename: string) => Promise<string>
       mediaRemoveFile: (questionId: number) => Promise<void>
 
       // --- Media playback ---

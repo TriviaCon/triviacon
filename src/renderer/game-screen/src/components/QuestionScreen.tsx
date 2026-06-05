@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { ActiveQuestionState } from '@shared/types/state'
 import { detectMediaType } from '@shared/media'
-import { mediaUrl } from '@shared/mediaUrl'
+import { mediaUrl, isAssetMedia } from '@shared/mediaUrl'
 import { RichText } from '@shared/RichText'
 import AudioVisualizer from '@shared/AudioVisualizer'
 
@@ -139,6 +139,7 @@ const QuestionScreen = ({
   const mediaType = detectMediaType(question.media)
   const mediaSrc = mediaUrl(question.media)
   const audioOnly = question.audioOnly && mediaType === 'video'
+  const mediaCrossOrigin = isAssetMedia() ? ('anonymous' as const) : undefined
   const hasVisualMedia =
     mediaSrc && (mediaType === 'image' || (mediaType === 'video' && !audioOnly)) && !mediaFullscreen
   const hasAudioVisualizer = (mediaSrc && mediaType === 'audio') || audioOnly
@@ -162,6 +163,7 @@ const QuestionScreen = ({
               ref={videoRef}
               src={mediaSrc}
               preload="auto"
+              crossOrigin={mediaCrossOrigin}
               className="w-full h-full object-contain"
             />
           )}
@@ -189,10 +191,16 @@ const QuestionScreen = ({
         <hr className="border-border mx-6 shrink-0" />
 
         {mediaSrc && mediaType === 'audio' && (
-          <audio ref={audioRef} src={mediaSrc} preload="auto" />
+          <audio ref={audioRef} src={mediaSrc} preload="auto" crossOrigin={mediaCrossOrigin} />
         )}
         {audioOnly && mediaSrc && (
-          <video ref={videoRef} src={mediaSrc} preload="auto" className="hidden" />
+          <video
+            ref={videoRef}
+            src={mediaSrc}
+            preload="auto"
+            className="hidden"
+            crossOrigin={mediaCrossOrigin}
+          />
         )}
 
         <div className="flex-1 min-h-0 flex flex-col px-6 pb-4 pt-2">
@@ -221,6 +229,7 @@ const QuestionScreen = ({
                   ref={videoRef}
                   src={mediaSrc!}
                   preload="auto"
+                  crossOrigin={mediaCrossOrigin}
                   className="w-full h-full object-contain"
                 />
               )}

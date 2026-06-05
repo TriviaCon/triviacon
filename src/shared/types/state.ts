@@ -34,6 +34,11 @@ export interface GameState {
   gameScreenDarkMode: boolean
   selectedCategoryId: number | null
   selectedQuestionId: number | null
+  /**
+   * Absolute path to the extracted media directory (Tauri build only).
+   * Attached at broadcast time so the game screen can resolve asset URLs.
+   */
+  mediaBaseDir?: string | null
 }
 
 export const INITIAL_GAME_STATE: GameState = {

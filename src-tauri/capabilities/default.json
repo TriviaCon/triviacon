@@ -1,0 +1,50 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Capabilities for control panel + game screen windows.",
+  "windows": ["*"],
+  "permissions": [
+    "core:default",
+    "core:app:default",
+    "core:path:default",
+    "core:event:default",
+    "core:event:allow-emit",
+    "core:event:allow-emit-to",
+    "core:event:allow-listen",
+    "core:event:allow-unlisten",
+    "core:window:default",
+    "core:window:allow-create",
+    "core:window:allow-close",
+    "core:window:allow-destroy",
+    "core:window:allow-show",
+    "core:window:allow-hide",
+    "core:window:allow-set-focus",
+    "core:window:allow-set-fullscreen",
+    "core:window:allow-is-fullscreen",
+    "core:window:allow-set-title",
+    "core:webview:default",
+    "core:webview:allow-create-webview-window",
+    "opener:default",
+    "dialog:default",
+    "fs:default",
+    "fs:allow-read-file",
+    "fs:allow-write-file",
+    "fs:allow-read-dir",
+    "fs:allow-mkdir",
+    "fs:allow-remove",
+    "fs:allow-exists",
+    "fs:allow-copy-file",
+    "fs:allow-rename",
+    {
+      "identifier": "fs:scope",
+      "allow": [
+        { "path": "$HOME/**" },
+        { "path": "$APPLOCALDATA/**" },
+        { "path": "$APPDATA/**" },
+        { "path": "$APPCONFIG/**" },
+        { "path": "$APPCACHE/**" },
+        { "path": "$TEMP/**" }
+      ]
+    }
+  ]
+}

@@ -116,7 +116,14 @@ const QuestionView = ({ id, onDelete }: { id: number; onDelete?: () => void }) =
       const hasExisting = !!question.data?.media
       if (hasExisting && !window.confirm(t('builder.replaceMedia'))) return
 
-      await window.api.mediaAttachFile(id, (file as File & { path: string }).path)
+      // Tauri webview has no File.path — read bytes directly. Fall back to the
+      // Electron path-based attach when running under Electron.
+      if (window.api.mediaAttachBytes) {
+        const bytes = new Uint8Array(await file.arrayBuffer())
+        await window.api.mediaAttachBytes(id, bytes, file.name)
+      } else {
+        await window.api.mediaAttachFile(id, (file as File & { path: string }).path)
+      }
       question.refetch()
     },
     [id, question, t, showDropError]

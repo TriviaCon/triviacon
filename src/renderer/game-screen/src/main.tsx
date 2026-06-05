@@ -1,3 +1,4 @@
+import '@web/bootstrapGameScreen'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { initI18n } from '@shared/i18n'
