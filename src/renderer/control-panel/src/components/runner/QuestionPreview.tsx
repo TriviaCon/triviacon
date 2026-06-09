@@ -1,13 +1,15 @@
 import { useTranslation } from 'react-i18next'
+import { Eye } from 'lucide-react'
 import { AnswerOption, Question } from '@shared/types/quiz'
 import { Label } from '@renderer/components/ui/label'
+import { Button } from '@renderer/components/ui/button'
 import { MediaPreview } from '@renderer/components/ui/media-preview'
 import { RichText } from '@shared/RichText'
 import { cn } from '@renderer/lib/utils'
 import { mediaUrl } from '@shared/mediaUrl'
 import { mediaDisplayName } from '@shared/media'
 
-const BasicQuestionViewer = ({
+const QuestionPreview = ({
   question,
   answerOptions,
   answerRevealed,
@@ -17,7 +19,8 @@ const BasicQuestionViewer = ({
   revealedOptionIds,
   onToggleListOption,
   used,
-  onUse
+  onUse,
+  onShowOnScreen
 }: {
   question: Question
   answerOptions: AnswerOption[]
@@ -29,13 +32,24 @@ const BasicQuestionViewer = ({
   onToggleListOption: (id: number) => void
   used: boolean
   onUse: () => void
+  onShowOnScreen: (() => void) | null
 }) => {
   const { t } = useTranslation()
   const mediaSrc = mediaUrl(question.media)
   const type = question.type
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
+      {onShowOnScreen && (
+        <Button
+          className="w-full"
+          onClick={onShowOnScreen}
+        >
+          <Eye className="mr-2 h-4 w-4" />
+          {t('runner.showOnScreen')}
+        </Button>
+      )}
+
       <RichText
         html={question.text}
         className="text-xl font-semibold [&_p]:m-0 [&_p+p]:mt-1"
@@ -83,9 +97,9 @@ const BasicQuestionViewer = ({
                 >
                   <strong>{String.fromCharCode(65 + index)}.</strong>
                   <RichText html={opt.text} className="[&_p]:m-0" />
-                  {opt.correct && !answerRevealed && <span className="text-green-600">{'\u2713'}</span>}
-                  {answerRevealed && opt.correct && <span>{'\u2714'}</span>}
-                  {isMarked && !answerRevealed && <span>{'\u25C0'}</span>}
+                  {opt.correct && !answerRevealed && <span className="text-green-600">{'✓'}</span>}
+                  {answerRevealed && opt.correct && <span>{'✔'}</span>}
+                  {isMarked && !answerRevealed && <span>{'◀'}</span>}
                 </button>
               )
             })
@@ -94,7 +108,6 @@ const BasicQuestionViewer = ({
               <RichText html={answerOptions[0]?.text ?? ''} className="[&_p]:m-0" />
             </div>
           ) : (
-            // list \u2014 click to reveal individual items on display
             answerOptions.map((opt, index) => {
               const found = revealedOptionIds.includes(opt.id)
               return (
@@ -111,7 +124,7 @@ const BasicQuestionViewer = ({
                 >
                   <strong>{index + 1}.</strong>
                   <RichText html={opt.text} className="[&_p]:m-0" />
-                  {found && <span className="ml-auto">{'\u2714'}</span>}
+                  {found && <span className="ml-auto">{'✔'}</span>}
                 </button>
               )
             })
@@ -152,4 +165,4 @@ const BasicQuestionViewer = ({
   )
 }
 
-export default BasicQuestionViewer
+export default QuestionPreview
