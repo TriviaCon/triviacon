@@ -22,6 +22,9 @@ import {
   clearDirty,
   getStats as storeGetStats
 } from './quizStore'
+import type { FileOpenProgressPayload } from '@shared/types/ipc'
+
+export type OpenProgressCallback = (event: FileOpenProgressPayload) => void
 
 const dbg = app.isPackaged ? (() => {}) : console.log
 
@@ -96,7 +99,7 @@ const _new = async (path: string) => {
 
 // ── Open existing quiz ─────────────────────────────────────────────
 
-const _open = async (path: string) => {
+const _open = async (path: string, onProgress?: OpenProgressCallback) => {
   dbg('Opening quiz', path)
 
   clearDocument()
@@ -115,18 +118,42 @@ const _open = async (path: string) => {
   await mkdir(join(workDir, MEDIA_DIR), { recursive: true })
 
   const zip = new AdmZip(fileBuffer)
-  zip.extractAllTo(workDir, true)
 
-  quizFilePath = path
+  // Parse quiz.json synchronously — it's tiny even for large quizzes
+  const jsonEntry = zip.getEntry(JSON_FILENAME)
+  if (!jsonEntry) throw new Error(`Quiz archive is missing ${JSON_FILENAME}`)
 
-  const jsonPath = join(workDir, JSON_FILENAME)
-  if (!existsSync(jsonPath)) {
-    throw new Error(`Quiz archive is missing ${JSON_FILENAME}`)
+  const raw = jsonEntry.getData().toString('utf-8')
+  const doc: QuizDocument = JSON.parse(raw)
+
+  onProgress?.({ phase: 'metadata', meta: { name: doc.meta.name, author: doc.meta.author, location: doc.meta.location, date: doc.meta.date } })
+
+  const cats = (doc.categories ?? []).length
+  const questions = (doc.questions ?? []).length
+  onProgress?.({ phase: 'structure', categoryCount: cats, questionCount: questions })
+
+  // Extract quiz.json first
+  await writeFile(join(workDir, JSON_FILENAME), raw, 'utf-8')
+
+  // Extract media files one-by-one so we can report progress
+  const mediaEntries = zip.getEntries().filter(e => !e.isDirectory && e.entryName.startsWith(`${MEDIA_DIR}/`))
+  const total = mediaEntries.length
+
+  if (total > 0) {
+    onProgress?.({ phase: 'extracting', current: 0, total })
+    const mediaDir = join(workDir, MEDIA_DIR)
+    await mkdir(mediaDir, { recursive: true })
+    for (let i = 0; i < mediaEntries.length; i++) {
+      const entry = mediaEntries[i]
+      const destPath = join(workDir, entry.entryName)
+      await writeFile(destPath, entry.getData())
+      onProgress?.({ phase: 'extracting', current: i + 1, total })
+    }
   }
 
-  const raw = await readFile(jsonPath, 'utf-8')
-  const doc: QuizDocument = JSON.parse(raw)
+  quizFilePath = path
   setDocument(doc)
+  onProgress?.({ phase: 'done' })
   dbg('Loaded quiz.json')
 }
 
@@ -225,7 +252,7 @@ export async function cleanupStaleRuntimeDirs(): Promise<void> {
 
 export default {
   new: _new,
-  open: _open,
+  open: (path: string, onProgress?: OpenProgressCallback) => _open(path, onProgress),
   save: () => {
     if (!quizFilePath) throw new Error('No file path — use Save As')
     return _saveTo(quizFilePath)
