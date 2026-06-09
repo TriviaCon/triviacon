@@ -117,7 +117,8 @@
     "timerStart": "Start",
     "timerPause": "Pauza",
     "timerReset": "Reset",
-    "timerDisabled": "Brak timera"
+    "timerDisabled": "Brak timera",
+    "showOnScreen": "Pokaż na ekranie"
   },
 
   "gameScreen": {
