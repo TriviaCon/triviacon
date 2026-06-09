@@ -251,4 +251,8 @@ export class GameEngine {
   setTimerSound(mode: import('@shared/types/state').TimerSoundMode): void {
     this.state.timerSound = mode
   }
+
+  setQuizFilePath(path: string): void {
+    this.state.quizFilePath = path
+  }
 }
