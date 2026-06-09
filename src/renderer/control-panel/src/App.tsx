@@ -59,11 +59,11 @@ function App() {
   }, [])
 
   return (
-    <div className="px-1 py-1 flex flex-col h-full">
+    <div className="px-1 py-1 flex flex-col h-full overflow-hidden">
       <QueryClientProvider client={queryClient}>
         <QueryInvalidator />
         <Header />
-        <div className="flex-grow flex flex-col">
+        <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
           <ControlView />
         </div>
         <CloseConfirmModal />
