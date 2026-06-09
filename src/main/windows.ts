@@ -46,10 +46,15 @@ export function createControlPanelWindow(): BrowserWindow {
     controlPanelWindow!.webContents.send(IPC.APP_CLOSE_REQUEST)
   })
 
-  ipcMain.handle(IPC.APP_CLOSE_RESPOND, async (_, choice: 'save' | 'discard' | 'cancel') => {
+  ipcMain.handle(IPC.APP_CLOSE_RESPOND, async (_, choice: 'save' | 'saveAs' | 'discard' | 'cancel') => {
     if (choice === 'cancel') return
     if (choice === 'save') {
       try { await quizFile.save() } catch { return }
+    } else if (choice === 'saveAs') {
+      const { dialog } = await import('electron')
+      const result = await dialog.showSaveDialog(controlPanelWindow!, { filters: [{ name: 'TriviaCON Quiz', extensions: ['tcq'] }] })
+      if (result.canceled || !result.filePath) return
+      try { await quizFile.saveTo(result.filePath) } catch { return }
     }
     forceClose = true
     controlPanelWindow?.close()

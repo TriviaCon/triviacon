@@ -18,7 +18,7 @@ export function CloseConfirmModal() {
     return unsub
   }, [])
 
-  const respond = (choice: 'save' | 'discard' | 'cancel') => {
+  const respond = (choice: 'save' | 'saveAs' | 'discard' | 'cancel') => {
     setOpen(false)
     window.api.closeRespond(choice)
   }
@@ -40,6 +40,10 @@ export function CloseConfirmModal() {
           </Button>
           <Button variant="outline" className="text-destructive border-destructive/50 hover:bg-destructive/10" onClick={() => respond('discard')}>
             {t('confirm.dontSave')}
+          </Button>
+          <Button variant="outline" onClick={() => respond('saveAs')}>
+            <Save className="mr-2 h-4 w-4" />
+            {t('actions.saveAs')}
           </Button>
           <Button onClick={() => respond('save')}>
             <Save className="mr-2 h-4 w-4" />
