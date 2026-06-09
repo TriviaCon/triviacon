@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@renderer/components/u
 
 const COLOR_MODES = ['heatmap', 'rainbow', 'gradient'] as const
 const TIMER_SOUND_MODES = ['beeps-and-buzz', 'beeps', 'buzz', 'silent'] as const
+const FANFARE_MODES = ['ff5', 'nfl', 'pokemon'] as const
 
 export const SettingsView = () => {
   const { t, i18n } = useTranslation()
@@ -14,6 +15,7 @@ export const SettingsView = () => {
   const [colorMode, setColorMode] = useState('heatmap')
   const [barCount, setBarCount] = useState(48)
   const [timerSound, setTimerSound] = useState('beeps-and-buzz')
+  const [fanfare, setFanfare] = useState('ff5')
 
   useEffect(() => {
     window.api.getDefaultVolume().then(setVolume)
@@ -22,6 +24,7 @@ export const SettingsView = () => {
       setBarCount(v.barCount)
     })
     window.api.getTimerSound().then(setTimerSound)
+    window.api.getFanfare?.().then(setFanfare)
   }, [])
 
   const handleLanguageChange = async (lang: string) => {
@@ -96,6 +99,26 @@ export const SettingsView = () => {
           </div>
           <p className="text-sm text-muted-foreground ml-28">
             {t(`settings.timerSound_${timerSound}_desc` as 'settings.timerSound_beeps-and-buzz_desc')}
+          </p>
+
+          <div className="flex items-center gap-4">
+            <Label className="w-24 text-right shrink-0">{t('settings.fanfare')}</Label>
+            <NativeSelect
+              value={fanfare}
+              onChange={(e) => {
+                setFanfare(e.target.value)
+                window.api.setFanfare(e.target.value)
+              }}
+            >
+              {FANFARE_MODES.map((mode) => (
+                <option key={mode} value={mode}>
+                  {t(`settings.fanfare_${mode}` as 'settings.fanfare_ff5')}
+                </option>
+              ))}
+            </NativeSelect>
+          </div>
+          <p className="text-sm text-muted-foreground ml-28">
+            {t('settings.fanfareDescription')}
           </p>
 
           <div className="flex items-center gap-4">

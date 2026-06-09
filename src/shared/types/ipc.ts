@@ -60,6 +60,7 @@ export const IPC = {
   GAME_SHOW_QUESTIONS: 'game:showQuestions',
   GAME_SHOW_QUESTION: 'game:showQuestion',
   GAME_SHOW_RANKING: 'game:showRanking',
+  GAME_REVEAL_RANKING: 'game:revealRanking',
 
   // Selection (preview before reveal)
   GAME_SELECT_CATEGORY: 'game:selectCategory',
@@ -103,6 +104,8 @@ export const IPC = {
   SETTINGS_SET_VISUALIZER: 'settings:setVisualizer',
   SETTINGS_GET_TIMER_SOUND: 'settings:getTimerSound',
   SETTINGS_SET_TIMER_SOUND: 'settings:setTimerSound',
+  SETTINGS_GET_FANFARE: 'settings:getFanfare',
+  SETTINGS_SET_FANFARE: 'settings:setFanfare',
 
   // Display management
   DISPLAY_OPEN_SCREEN: 'display:openScreen',

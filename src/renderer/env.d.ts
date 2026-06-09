@@ -86,6 +86,7 @@ declare global {
       showQuestions: (categoryId: number) => Promise<void>
       showQuestion: (questionId: number) => Promise<void>
       showRanking: () => Promise<void>
+      revealRanking: () => Promise<void>
 
       // --- Selection (preview before reveal) ---
       selectCategory: (id: number | null) => Promise<void>
@@ -137,6 +138,8 @@ declare global {
 
       getTimerSound: () => Promise<string>
       setTimerSound: (mode: string) => Promise<void>
+      getFanfare: () => Promise<string>
+      setFanfare: (sound: string) => Promise<void>
 
       timerStart: () => Promise<void>
       timerPause: () => Promise<void>

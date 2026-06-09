@@ -184,7 +184,12 @@
     "timerSound_buzz": "Tylko buzzer",
     "timerSound_buzz_desc": "Odliczanie bez dźwięku, buzzer po upływie czasu.",
     "timerSound_silent": "Cisza",
-    "timerSound_silent_desc": "Brak sygnałów dźwiękowych."
+    "timerSound_silent_desc": "Brak sygnałów dźwiękowych.",
+    "fanfare": "Fanfara",
+    "fanfare_ff5": "FF5 Victory",
+    "fanfare_nfl": "NFL Fox",
+    "fanfare_pokemon": "Pokémon Gen 1",
+    "fanfareDescription": "Odtwarzana przy ogłoszeniu wyników."
   },
 
   "languages": {
