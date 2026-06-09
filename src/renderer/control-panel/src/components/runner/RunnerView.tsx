@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Play, Pause, RotateCcw } from 'lucide-react'
-import { Button } from '@renderer/components/ui/button'
+import { LayoutGrid, Trophy } from 'lucide-react'
 import { cn } from '@renderer/lib/utils'
+import { Button } from '@renderer/components/ui/button'
+import { ConfirmDialog } from '@renderer/components/ui/confirm-dialog'
 import TeamTable from './TeamTable'
 import QuestionPreview from './QuestionPreview'
 import { RunnerQuestionList } from './RunnerQuestionList'
@@ -13,53 +14,61 @@ import { QueryLoading, QueryError } from '@renderer/components/ui/query-state'
 import { usePairQueryState } from '@renderer/hooks/usePairQueryState'
 import { GamePhase } from '@shared/types/state'
 
-// ── Category sidebar (runner read-only variant) ─────────────────
+// ── Category sidebar (runner two-step: first click selects, second reveals) ──
 
 function RunnerCategorySidebar({
   categories,
   selectedCategoryId,
-  usedQuestions,
-  onSelect
+  currentCategoryId,
+  onClick
 }: {
   categories: { id: number; name: string; questionCount: number; sortOrder: number }[]
   selectedCategoryId: number | null
-  usedQuestions: number[]
-  onSelect: (id: number | null) => void
+  currentCategoryId: number | null
+  onClick: (id: number) => void
 }) {
   const { t } = useTranslation()
+  const focusedId = selectedCategoryId ?? currentCategoryId
 
   return (
-    <aside className="w-56 shrink-0 border-r border-border flex flex-col overflow-hidden">
-      <div className="px-3 py-2 border-b border-border shrink-0">
+    <aside className="w-64 shrink-0 border-r border-border flex flex-col overflow-hidden">
+      <div className="px-3 py-1.5 border-b border-border shrink-0 flex items-center justify-between gap-2">
         <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           {t('actions.categories')}
         </span>
+        <button
+          type="button"
+          title={t('actions.categories')}
+          className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-primary border border-primary/40 rounded px-2 py-0.5 hover:bg-primary/10 transition-colors"
+          onClick={() => window.api.showCategories()}
+        >
+          <LayoutGrid className="h-3 w-3" />
+          {t('runner.showCategories')}
+        </button>
       </div>
       <div className="flex-1 overflow-y-auto p-1.5 space-y-0.5">
-        <div
-          className={cn(
-            'flex items-center gap-1 rounded-md px-2 py-1.5 text-sm cursor-pointer transition-colors select-none',
-            selectedCategoryId === null ? 'bg-primary text-primary-foreground' : 'hover:bg-accent'
-          )}
-          onClick={() => onSelect(null)}
-        >
-          <span className="flex-1">{t('builder.allQuestions')}</span>
-        </div>
-        {categories.map((cat) => (
-          <div
-            key={cat.id}
-            className={cn(
-              'flex items-center gap-1 rounded-md px-2 py-1.5 text-sm cursor-pointer transition-colors select-none',
-              selectedCategoryId === cat.id ? 'bg-primary text-primary-foreground' : 'hover:bg-accent'
-            )}
-            onClick={() => onSelect(cat.id)}
-          >
-            <span className="flex-1 truncate">{cat.name}</span>
-            <span className={cn('text-xs shrink-0 tabular-nums', selectedCategoryId === cat.id ? 'text-primary-foreground/70' : 'text-muted-foreground')}>
-              {cat.questionCount}
-            </span>
-          </div>
-        ))}
+        {categories.map((cat) => {
+          const isFocused = focusedId === cat.id
+          const isLive = currentCategoryId === cat.id
+          return (
+            <div
+              key={cat.id}
+              className={cn(
+                'flex items-center gap-1.5 rounded-md px-2.5 py-2 text-sm cursor-pointer transition-colors select-none',
+                isFocused
+                  ? 'ring-2 ring-primary bg-primary/10 text-foreground'
+                  : 'hover:bg-accent'
+              )}
+              onClick={() => onClick(cat.id)}
+            >
+              <span className="flex-1 truncate">{cat.name}</span>
+              {isLive && <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0" />}
+              <span className="text-xs shrink-0 tabular-nums text-muted-foreground">
+                {cat.questionCount}
+              </span>
+            </div>
+          )
+        })}
       </div>
     </aside>
   )
@@ -93,7 +102,6 @@ const PreviewColumn = ({
   const revealedOptionIds =
     activeQuestion?.question.id === id ? (activeQuestion.revealedOptionIds ?? []) : []
 
-  // "Show on screen" is available when this question is selected (previewed) but not yet active
   const isActiveOnScreen = activeQuestion?.question.id === id
   const isPending = selectedQuestionId === id && !isActiveOnScreen
   const canShow = phase === GamePhase.Questions && isPending
@@ -122,15 +130,16 @@ export const RunnerView = () => {
   const {
     categories,
     usedQuestions,
+    selectedCategoryId,
     selectedQuestionId,
     activeQuestion,
+    currentCategoryId,
     phase,
-    timer,
-    quizMeta
+    rankingRevealed,
   } = useGameState()
 
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null)
   const [stickyPreviewId, setStickyPreviewId] = useState<number | null>(null)
+  const [finishConfirmOpen, setFinishConfirmOpen] = useState(false)
 
   useEffect(() => {
     const currentId = selectedQuestionId ?? activeQuestion?.question.id ?? null
@@ -148,84 +157,106 @@ export const RunnerView = () => {
     }
   }, [phase])
 
-  // Keyboard shortcut: Enter = show on screen, Escape = clear selection
+  // Keyboard: Enter reveals the focused selection (question wins over category),
+  // Escape clears the deepest selection.
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       const tag = (document.activeElement as HTMLElement | null)?.tagName
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
-      if (e.key === 'Enter' && selectedQuestionId !== null && phase === GamePhase.Questions) {
-        e.preventDefault()
-        window.api.showQuestion(selectedQuestionId)
-      } else if (e.key === 'Escape' && selectedQuestionId !== null) {
-        e.preventDefault()
-        window.api.selectQuestion(null)
+      if (e.key === 'Enter') {
+        if (selectedQuestionId !== null && phase === GamePhase.Questions) {
+          e.preventDefault()
+          window.api.showQuestion(selectedQuestionId)
+        } else if (selectedCategoryId !== null && selectedCategoryId !== currentCategoryId) {
+          e.preventDefault()
+          window.api.showQuestions(selectedCategoryId)
+        }
+      } else if (e.key === 'Escape') {
+        if (selectedQuestionId !== null) {
+          e.preventDefault()
+          window.api.selectQuestion(null)
+        } else if (selectedCategoryId !== null) {
+          e.preventDefault()
+          window.api.selectCategory(null)
+        }
       }
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [selectedQuestionId, phase])
+  }, [selectedQuestionId, selectedCategoryId, currentCategoryId, phase])
 
   if (!categories.length) return null
 
-  const handleQuestionClick = (id: number) => {
-    if (selectedQuestionId === id) {
-      window.api.selectQuestion(null)
+  const handleCategoryClick = (id: number) => {
+    if (selectedCategoryId === id) {
+      window.api.showQuestions(id)
     } else {
-      window.api.selectQuestion(id)
+      window.api.selectCategory(id)
     }
   }
 
-  const timerDuration = quizMeta?.timerSeconds ?? 0
-  const isRunning = timer.status === 'running'
-  const isPaused = timer.status === 'paused'
-  const isExpired = timer.status === 'expired'
-  const mm = String(Math.floor(timer.remaining / 60)).padStart(2, '0')
-  const ss = String(timer.remaining % 60).padStart(2, '0')
+  const handleQuestionClick = (id: number) => {
+    if (selectedQuestionId === id && phase === GamePhase.Questions) {
+      window.api.showQuestion(id)
+    } else {
+      window.api.selectQuestion(selectedQuestionId === id ? null : id)
+    }
+  }
+
+  // List follows the preview selection, falling back to the live category once
+  // a reveal clears the selection — so it never snaps back to "all categories".
+  const listCategoryId = selectedCategoryId ?? currentCategoryId
+
+  if (phase === GamePhase.Ranking) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        {rankingRevealed ? (
+          <p className="text-muted-foreground text-lg">{t('actions.ranking')}</p>
+        ) : (
+          <div className="flex flex-col items-center gap-6">
+            <Button
+              size="lg"
+              className="text-2xl font-bold px-16 py-8 h-auto bg-amber-500 hover:bg-amber-400 text-white shadow-lg"
+              onClick={() => setFinishConfirmOpen(true)}
+            >
+              <Trophy className="mr-3 h-8 w-8" />
+              {t('actions.finishQuiz')}
+            </Button>
+          </div>
+        )}
+        <ConfirmDialog
+          open={finishConfirmOpen}
+          title={t('actions.finishQuiz')}
+          description={t('actions.finishQuizConfirm')}
+          confirmLabel={t('actions.finishQuiz')}
+          onConfirm={() => { setFinishConfirmOpen(false); window.api.revealRanking() }}
+          onCancel={() => setFinishConfirmOpen(false)}
+        />
+      </div>
+    )
+  }
 
   return (
     <div className="w-full h-full flex flex-col gap-0 overflow-hidden">
-      {timerDuration > 0 && (
-        <div className="flex items-center gap-2 shrink-0 px-3 py-2 border-b border-border">
-          <span className={cn('font-mono text-lg font-semibold tabular-nums w-14', isExpired && 'text-destructive')}>
-            {mm}:{ss}
-          </span>
-          <Button size="sm" variant="outline" onClick={() => window.api.timerStart()} disabled={isRunning || isExpired}>
-            <Play className="h-3 w-3" />
-            {t('runner.timerStart')}
-          </Button>
-          <Button size="sm" variant="outline" onClick={() => window.api.timerPause()} disabled={!isRunning}>
-            <Pause className="h-3 w-3" />
-            {t('runner.timerPause')}
-          </Button>
-          <Button size="sm" variant="outline" onClick={() => window.api.timerReset()} disabled={timer.status === 'idle'}>
-            <RotateCcw className="h-3 w-3" />
-            {t('runner.timerReset')}
-          </Button>
-        </div>
-      )}
-
       <div className="flex-1 min-h-0 flex overflow-hidden">
         {/* Teams */}
-        <div className="w-48 shrink-0 border-r border-border overflow-y-auto">
+        <div className="w-96 shrink-0 border-r border-border overflow-y-auto p-3">
           <TeamTable />
         </div>
 
-        {/* Category sidebar */}
+        {/* Category sidebar — click previews, inline button / Enter reveals */}
         <RunnerCategorySidebar
           categories={categories}
           selectedCategoryId={selectedCategoryId}
-          usedQuestions={usedQuestions}
-          onSelect={(id) => {
-            setSelectedCategoryId(id)
-            window.api.selectQuestion(null)
-          }}
+          currentCategoryId={currentCategoryId}
+          onClick={handleCategoryClick}
         />
 
-        {/* Question list */}
-        <div className="flex-1 flex flex-col min-h-0 border-r border-border overflow-hidden">
+        {/* Question list — flexes to fill remaining space between fixed columns */}
+        <div className="flex-1 min-w-0 flex flex-col min-h-0 border-r border-border overflow-hidden">
           <RunnerQuestionList
             categories={categories}
-            selectedCategoryId={selectedCategoryId}
+            selectedCategoryId={listCategoryId}
             activeQuestionId={stickyPreviewId}
             usedQuestions={usedQuestions}
             onSelect={handleQuestionClick}
@@ -234,7 +265,7 @@ export const RunnerView = () => {
 
         {/* Question preview */}
         {stickyPreviewId !== null && (
-          <div className="flex-1 min-w-0 overflow-y-auto p-4">
+          <div className="w-[550px] shrink-0 overflow-y-auto p-4 border-l border-border">
             <PreviewColumn
               id={stickyPreviewId}
               phase={phase}

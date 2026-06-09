@@ -41,7 +41,7 @@ function QuestionCard({
   return (
     <div
       className={cn(
-        'flex items-start gap-2 rounded-md border p-3 text-sm cursor-pointer transition-colors select-none',
+        'flex items-stretch gap-3 rounded-md border p-3 text-sm cursor-pointer transition-colors select-none',
         isActive
           ? 'border-primary bg-primary/5'
           : 'border-border bg-card hover:border-primary/40 hover:bg-accent/40',
@@ -49,20 +49,18 @@ function QuestionCard({
       )}
       onClick={onClick}
     >
-      <div className="flex-1 min-w-0">
-        <div className="flex items-baseline gap-1.5 mb-0.5">
-          <span className={cn('text-[11px] font-semibold tabular-nums shrink-0', isUsed ? 'text-muted-foreground/50' : 'text-muted-foreground')}>
-            #{index + 1}
-          </span>
-          <div
-            className={cn(
-              'text-sm leading-snug line-clamp-2 [&_p]:m-0 [&_strong]:font-semibold [&_em]:italic [&_u]:underline',
-              isUsed && 'line-through'
-            )}
-            dangerouslySetInnerHTML={{ __html: question.text || '&nbsp;' }}
-          />
-        </div>
-        <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+      <span className={cn('text-2xl font-bold tabular-nums shrink-0 leading-none pt-0.5', isUsed ? 'text-muted-foreground/40' : 'text-muted-foreground')}>
+        #{index + 1}
+      </span>
+      <div className="flex-1 min-w-0 flex flex-col justify-between gap-1.5">
+        <div
+          className={cn(
+            'text-sm leading-snug line-clamp-2 [&_p]:m-0 [&_strong]:font-semibold [&_em]:italic [&_u]:underline',
+            isUsed && 'line-through'
+          )}
+          dangerouslySetInnerHTML={{ __html: question.text || '&nbsp;' }}
+        />
+        <div className="flex items-center gap-2 flex-wrap">
           <span className={cn('inline-flex items-center rounded-full border px-1.5 py-0 text-[10px] font-medium', TYPE_CLASSES[question.type])}>
             {TYPE_LABELS[question.type]}
           </span>
@@ -132,9 +130,11 @@ export function RunnerQuestionList({
 }: RunnerQuestionListProps) {
   const { t } = useTranslation()
 
-  const visibleCategories = selectedCategoryId !== null
-    ? categories.filter((c) => c.id === selectedCategoryId)
-    : categories
+  if (selectedCategoryId === null) {
+    return <div className="flex-1" />
+  }
+
+  const visibleCategories = categories.filter((c) => c.id === selectedCategoryId)
 
   return (
     <div className="flex-1 overflow-y-auto p-3 space-y-4">
