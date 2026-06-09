@@ -2,6 +2,7 @@ import { BrowserWindow, ipcMain, dialog } from 'electron'
 import { IPC } from '@shared/types/ipc'
 import type { AnswerOption, Question } from '@shared/types/quiz'
 import { getSetting, setSetting } from '../settings'
+import type { TimerSoundMode } from '@shared/types/state'
 import { QUIZ_FILE_FILTER } from '@shared/constants'
 import quizFile from '../../data/quizFile'
 import * as store from '../../data/quizStore'
@@ -40,6 +41,9 @@ function persistTeams(): void {
 }
 
 export function registerIpcHandlers(): void {
+  // Initialize engine from persisted settings
+  engine.setTimerSound(getSetting('timerSound'))
+
   // ── File operations ──────────────────────────────────────────────
 
   ipcMain.handle(IPC.FILE_NEW, async () => {
@@ -448,5 +452,15 @@ export function registerIpcHandlers(): void {
   ipcMain.handle(IPC.SETTINGS_SET_VISUALIZER, (_, settings: { colorMode?: string; barCount?: number }) => {
     if (settings.colorMode) setSetting('visualizerColorMode', settings.colorMode as 'heatmap' | 'rainbow' | 'gradient')
     if (settings.barCount) setSetting('visualizerBarCount', settings.barCount)
+  })
+
+  ipcMain.handle(IPC.SETTINGS_GET_TIMER_SOUND, () => {
+    return getSetting('timerSound')
+  })
+
+  ipcMain.handle(IPC.SETTINGS_SET_TIMER_SOUND, (_, mode: TimerSoundMode) => {
+    setSetting('timerSound', mode)
+    engine.setTimerSound(mode)
+    broadcastState()
   })
 }

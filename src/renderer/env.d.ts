@@ -128,6 +128,9 @@ declare global {
       toggleGameFullscreen: () => Promise<boolean>
       toggleGameDarkMode: () => Promise<void>
 
+      getTimerSound: () => Promise<string>
+      setTimerSound: (mode: string) => Promise<void>
+
       timerStart: () => Promise<void>
       timerPause: () => Promise<void>
       timerReset: () => Promise<void>

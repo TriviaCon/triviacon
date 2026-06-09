@@ -146,6 +146,9 @@ const api = {
     ipcRenderer.invoke(IPC.SETTINGS_GET_VISUALIZER),
   setVisualizer: (settings: { colorMode?: string; barCount?: number }): Promise<void> =>
     ipcRenderer.invoke(IPC.SETTINGS_SET_VISUALIZER, settings),
+  getTimerSound: (): Promise<string> => ipcRenderer.invoke(IPC.SETTINGS_GET_TIMER_SOUND),
+  setTimerSound: (mode: string): Promise<void> =>
+    ipcRenderer.invoke(IPC.SETTINGS_SET_TIMER_SOUND, mode),
 
   // ── Display management ─────────────────────────────────────────
   openGameScreen: (): Promise<void> => ipcRenderer.invoke(IPC.DISPLAY_OPEN_SCREEN),

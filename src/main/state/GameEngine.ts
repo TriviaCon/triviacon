@@ -243,4 +243,8 @@ export class GameEngine {
   toggleDarkMode(): void {
     this.state.gameScreenDarkMode = !this.state.gameScreenDarkMode
   }
+
+  setTimerSound(mode: import('@shared/types/state').TimerSoundMode): void {
+    this.state.timerSound = mode
+  }
 }

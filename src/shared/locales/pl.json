@@ -142,7 +142,16 @@
     "visualizerDescription": "Wygląd wizualizera audio.",
     "colorHeatmap": "Mapa ciepła",
     "colorRainbow": "Tęcza",
-    "colorGradient": "Gradient"
+    "colorGradient": "Gradient",
+    "timerSound": "Dźwięk timera",
+    "timerSound_beeps-and-buzz": "Piknięcia + buzzer",
+    "timerSound_beeps-and-buzz_desc": "Piknięcia przy 5–1 sekundach, buzzer po upływie czasu.",
+    "timerSound_beeps": "Tylko piknięcia",
+    "timerSound_beeps_desc": "Piknięcia przy 5–1 sekundach, cisza po upływie czasu.",
+    "timerSound_buzz": "Tylko buzzer",
+    "timerSound_buzz_desc": "Odliczanie bez dźwięku, buzzer po upływie czasu.",
+    "timerSound_silent": "Cisza",
+    "timerSound_silent_desc": "Brak sygnałów dźwiękowych."
   },
 
   "languages": {

@@ -2,6 +2,7 @@ import { app } from 'electron'
 import { readFileSync, writeFileSync, existsSync } from 'fs'
 import { join } from 'path'
 import { getPortableRoot } from './portablePath'
+import type { TimerSoundMode } from '@shared/types/state'
 
 export type VisualizerColorMode = 'heatmap' | 'rainbow' | 'gradient'
 
@@ -10,13 +11,15 @@ export interface AppSettings {
   defaultVolume: number
   visualizerColorMode: VisualizerColorMode
   visualizerBarCount: number
+  timerSound: TimerSoundMode
 }
 
 const DEFAULTS: AppSettings = {
   language: 'pl',
   defaultVolume: 0.1,
   visualizerColorMode: 'heatmap',
-  visualizerBarCount: 48
+  visualizerBarCount: 48,
+  timerSound: 'beeps-and-buzz'
 }
 
 const SETTINGS_FILENAME = 'triviacon-settings.json'
