@@ -142,10 +142,15 @@ function QuestionCard({
         </button>
 
         <div className="flex-1 min-w-0">
-          <div
-            className="text-sm leading-snug line-clamp-2 [&_p]:m-0 [&_strong]:font-semibold [&_em]:italic [&_u]:underline"
-            dangerouslySetInnerHTML={{ __html: question.text || `<span class="text-muted-foreground">#${index + 1}</span>` }}
-          />
+          <div className="flex items-baseline gap-1.5 mb-0.5">
+            <span className="text-[11px] font-semibold tabular-nums text-muted-foreground shrink-0">
+              #{index + 1}
+            </span>
+            <div
+              className="text-sm leading-snug line-clamp-2 [&_p]:m-0 [&_strong]:font-semibold [&_em]:italic [&_u]:underline"
+              dangerouslySetInnerHTML={{ __html: question.text || '&nbsp;' }}
+            />
+          </div>
           <div className="flex items-center gap-2 mt-1.5 flex-wrap">
             <span className={cn('inline-flex items-center rounded-full border px-1.5 py-0 text-[10px] font-medium', TYPE_CLASSES[question.type])}>
               {TYPE_LABELS[question.type]}
