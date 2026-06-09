@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Loader2 } from 'lucide-react'
 import type { FileOpenProgressPayload } from '@shared/types/ipc'
 import {
   Dialog,
@@ -62,6 +63,9 @@ export function OpenProgressModal({ open, onClose }: Props) {
             return prev
         }
       })
+      if (event.phase === 'done') {
+        setTimeout(onClose, 600)
+      }
     })
 
     unsubRef.current = unsub
@@ -69,7 +73,7 @@ export function OpenProgressModal({ open, onClose }: Props) {
       unsub()
       unsubRef.current = null
     }
-  }, [open])
+  }, [open, onClose])
 
   const isDone = state.phase === 'done'
   const isError = state.phase === 'error'
@@ -92,6 +96,20 @@ export function OpenProgressModal({ open, onClose }: Props) {
         </DialogHeader>
 
         <div className="space-y-4 py-2">
+          {/* Spinner + status while loading */}
+          {!isTerminal && (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Loader2 className="h-4 w-4 animate-spin shrink-0" />
+              <span>
+                {state.phase === 'extracting'
+                  ? t('openProgress.extracting')
+                  : state.phase === 'structure'
+                    ? t('openProgress.readingStructure')
+                    : t('openProgress.reading')}
+              </span>
+            </div>
+          )}
+
           {/* Metadata block */}
           {state.meta && (
             <div className="rounded-md border p-3 text-sm space-y-1">
@@ -146,8 +164,8 @@ export function OpenProgressModal({ open, onClose }: Props) {
           )}
         </div>
 
-        {/* Footer */}
-        {isTerminal && (
+        {/* Footer — only shown on error */}
+        {isError && (
           <div className="flex justify-end pt-1">
             <Button onClick={onClose}>{t('openProgress.close')}</Button>
           </div>

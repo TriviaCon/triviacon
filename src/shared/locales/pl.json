@@ -40,6 +40,8 @@
     "title": "Wczytywanie quizu",
     "categories": "Kategorie:",
     "questions": "Pytania:",
+    "reading": "Wczytywanie pliku quizu…",
+    "readingStructure": "Odczytywanie struktury…",
     "extracting": "Wypakowywanie multimediów:",
     "done": "Gotowe",
     "close": "Zamknij",

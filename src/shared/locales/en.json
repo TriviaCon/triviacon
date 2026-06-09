@@ -40,6 +40,8 @@
     "title": "Loading Quiz",
     "categories": "Categories:",
     "questions": "Questions:",
+    "reading": "Reading quiz file…",
+    "readingStructure": "Reading structure…",
     "extracting": "Extracting multimedia:",
     "done": "Done",
     "close": "Close",
