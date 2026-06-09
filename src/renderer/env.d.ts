@@ -90,6 +90,7 @@ declare global {
       toggleListOption: (answerOptionId: number) => Promise<void>
 
       // --- Media management ---
+      getFilePath: (file: File) => string
       mediaPickFile: (questionId: number) => Promise<string | null>
       mediaAttachFile: (questionId: number, filePath: string) => Promise<string>
       mediaRemoveFile: (questionId: number) => Promise<void>
