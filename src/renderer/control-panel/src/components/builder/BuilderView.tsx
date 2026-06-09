@@ -13,7 +13,6 @@ import { useQueryClient } from '@tanstack/react-query'
 import { CategorySidebar } from './CategorySidebar'
 import { QuestionList } from './QuestionList'
 import QuestionEditor from './QuestionEditor'
-import { QuizMetaModal } from './QuizMetaModal'
 import { useGameState } from '@renderer/hooks/useGameState'
 import keys from '@renderer/utils/keys'
 
@@ -24,7 +23,6 @@ export const BuilderView = () => {
 
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null)
   const [activeQuestionId, setActiveQuestionId] = useState<number | null>(null)
-  const [metaOpen, setMetaOpen] = useState(false)
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
 
@@ -71,7 +69,6 @@ export const BuilderView = () => {
           selectedCategoryId={selectedCategoryId}
           onSelect={setSelectedCategoryId}
           onDeleted={() => queryClient.invalidateQueries({ queryKey: keys.categories() })}
-          onMetaOpen={() => setMetaOpen(true)}
         />
 
         <QuestionList
@@ -91,7 +88,6 @@ export const BuilderView = () => {
         )}
       </div>
 
-      <QuizMetaModal open={metaOpen} onOpenChange={setMetaOpen} />
     </DndContext>
   )
 }

@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
+import keys from '@renderer/utils/keys'
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Check, GripVertical, Info, Pencil, Plus, Shuffle, Trash2, X } from 'lucide-react'
+import { Check, GripVertical, Pencil, Plus, Shuffle, Trash2, X } from 'lucide-react'
 import { Button } from '@renderer/components/ui/button'
 import { Input } from '@renderer/components/ui/input'
 import {
@@ -69,6 +71,7 @@ function CategoryItem({
   const [editValue, setEditValue] = useState(category.name)
   const [showDelete, setShowDelete] = useState(false)
   const deleteMutation = useDeleteCategoryMutation(category.id)
+  const qc = useQueryClient()
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: `category:${category.id}`
@@ -150,7 +153,10 @@ function CategoryItem({
               <Pencil className="h-3 w-3" />
             </button>
             <button
-              onClick={() => window.api.categoryShuffle(category.id)}
+              onClick={async () => {
+                await window.api.categoryShuffle(category.id)
+                qc.invalidateQueries({ queryKey: keys.questions(category.id) })
+              }}
               className={cn('p-0.5 rounded hover:bg-black/10', isActive && 'hover:bg-white/20')}
               title="Shuffle questions"
             >
@@ -184,7 +190,6 @@ interface CategorySidebarProps {
   selectedCategoryId: number | null
   onSelect: (id: number | null) => void
   onDeleted: () => void
-  onMetaOpen: () => void
 }
 
 export function CategorySidebar({
@@ -192,7 +197,6 @@ export function CategorySidebar({
   selectedCategoryId,
   onSelect,
   onDeleted,
-  onMetaOpen
 }: CategorySidebarProps) {
   const { t } = useTranslation()
   const addCategory = useAddCategoryMutation()
@@ -215,9 +219,6 @@ export function CategorySidebar({
           {t('actions.categories')}
         </span>
         <div className="flex items-center gap-1">
-          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={onMetaOpen} title={t('builder.quizInfo')}>
-            <Info className="h-3.5 w-3.5" />
-          </Button>
           <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setAddingNew(true)} title={t('builder.addCategory')}>
             <Plus className="h-4 w-4" />
           </Button>
