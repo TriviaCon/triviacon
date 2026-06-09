@@ -1,6 +1,7 @@
 import { app } from 'electron'
 import { readFileSync, writeFileSync, existsSync } from 'fs'
-import { join, dirname } from 'path'
+import { join } from 'path'
+import { getPortableRoot } from './portablePath'
 
 export type VisualizerColorMode = 'heatmap' | 'rainbow' | 'gradient'
 
@@ -23,7 +24,7 @@ const SETTINGS_FILENAME = 'triviacon-settings.json'
 /** Try portable path (next to executable), fallback to userData. */
 function resolveSettingsPath(): string {
   // Portable: next to the app executable
-  const portablePath = join(dirname(app.getPath('exe')), SETTINGS_FILENAME)
+  const portablePath = join(getPortableRoot(), SETTINGS_FILENAME)
   if (existsSync(portablePath)) return portablePath
 
   // Try writing to portable location

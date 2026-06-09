@@ -1,6 +1,6 @@
 import { app, BrowserWindow, ipcMain, protocol } from 'electron'
 import { mkdirSync, accessSync, constants as fsConstants } from 'fs'
-import { join, dirname } from 'path'
+import { join } from 'path'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 import {
   createControlPanelWindow,
@@ -14,6 +14,7 @@ import { IPC } from '@shared/types/ipc'
 import { GamePhase } from '@shared/types/state'
 import { MEDIA_PROTOCOL, registerMediaProtocol } from './mediaProtocol'
 import { cleanupTempDirs, cleanupStaleRuntimeDirs } from '../data/quizFile'
+import { getPortableRoot } from './portablePath'
 
 // Redirect Electron/Chromium userData to a portable location next to the exe.
 // Prevents cache, cookies, GPU data, etc. from scattering into ~/.config (Linux),
@@ -21,12 +22,12 @@ import { cleanupTempDirs, cleanupStaleRuntimeDirs } from '../data/quizFile'
 // exe directory is not writable (e.g. /opt, /Applications).
 if (app.isPackaged) {
   try {
-    const portableUserData = join(dirname(app.getPath('exe')), 'userdata')
+    const portableUserData = join(getPortableRoot(), 'userdata')
     mkdirSync(portableUserData, { recursive: true })
     accessSync(portableUserData, fsConstants.W_OK)
     app.setPath('userData', portableUserData)
   } catch {
-    // Exe directory not writable — keep default userData path
+    // Portable root not writable — keep default userData path
   }
 }
 
