@@ -142,23 +142,21 @@ function QuestionCard({
         </button>
 
         <div className="flex-1 min-w-0">
-          <div className="flex items-baseline gap-1.5 mb-0.5">
+          <div className="flex items-baseline gap-1.5">
             <span className="text-[11px] font-semibold tabular-nums text-muted-foreground shrink-0">
               #{index + 1}
             </span>
-            <div
-              className="text-sm leading-snug line-clamp-2 [&_p]:m-0 [&_strong]:font-semibold [&_em]:italic [&_u]:underline"
-              dangerouslySetInnerHTML={{ __html: question.text || '&nbsp;' }}
-            />
-          </div>
-          <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-            <span className={cn('inline-flex items-center rounded-full border px-1.5 py-0 text-[10px] font-medium', TYPE_CLASSES[question.type])}>
+            <span className={cn('inline-flex items-center rounded-full border px-1.5 py-0 text-[10px] font-medium shrink-0', TYPE_CLASSES[question.type])}>
               {TYPE_LABELS[question.type]}
             </span>
             <MediaIcon media={question.media} />
             {question.audioOnly && (
-              <span className="text-[10px] text-muted-foreground italic">audio only</span>
+              <span className="text-[10px] text-muted-foreground italic shrink-0">audio only</span>
             )}
+            <div
+              className="text-sm leading-snug line-clamp-2 [&_p]:m-0 [&_strong]:font-semibold [&_em]:italic [&_u]:underline min-w-0"
+              dangerouslySetInnerHTML={{ __html: question.text || '&nbsp;' }}
+            />
           </div>
         </div>
       </div>
@@ -182,36 +180,28 @@ function CategoryQuestionList({
   onSelectQuestion: (id: number) => void
 }) {
   const { data: questions = [] } = useCategoryQuestions(categoryId)
-  const addQuestion = useAddQuestionMutation(categoryId)
 
   const sortableIds = questions.map((q) => `question:${q.id}`)
 
   return (
-    <div className="flex-1 flex flex-col min-h-0">
-      <div className="flex-1 overflow-y-auto p-3 space-y-2">
-        <SortableContext items={sortableIds} strategy={verticalListSortingStrategy}>
-          {questions.map((q, i) => (
-            <QuestionCard
-              key={q.id}
-              question={q}
-              index={i}
-              isActive={activeQuestionId === q.id}
-              isSelected={selectedIds.has(q.id)}
-              isSortable={true}
-              onToggleSelect={() => onToggleSelect(q.id)}
-              onClick={() => onSelectQuestion(q.id)}
-            />
-          ))}
-        </SortableContext>
-        {questions.length === 0 && (
-          <p className="text-center text-sm text-muted-foreground py-8">No questions yet</p>
-        )}
-      </div>
-      <div className="shrink-0 px-3 pb-3">
-        <Button size="sm" variant="outline" className="w-full" onClick={() => addQuestion.mutate()}>
-          <Plus className="mr-1 h-3.5 w-3.5" /> Add question
-        </Button>
-      </div>
+    <div className="flex-1 overflow-y-auto p-3 space-y-2">
+      <SortableContext items={sortableIds} strategy={verticalListSortingStrategy}>
+        {questions.map((q, i) => (
+          <QuestionCard
+            key={q.id}
+            question={q}
+            index={i}
+            isActive={activeQuestionId === q.id}
+            isSelected={selectedIds.has(q.id)}
+            isSortable={true}
+            onToggleSelect={() => onToggleSelect(q.id)}
+            onClick={() => onSelectQuestion(q.id)}
+          />
+        ))}
+      </SortableContext>
+      {questions.length === 0 && (
+        <p className="text-center text-sm text-muted-foreground py-8">No questions yet</p>
+      )}
     </div>
   )
 }
@@ -306,6 +296,7 @@ export function QuestionList({
   const { t } = useTranslation()
   const queryClient = useQueryClient()
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set())
+  const addQuestion = useAddQuestionMutation(selectedCategoryId ?? 0)
 
   const selectedCategory = categories.find((c) => c.id === selectedCategoryId)
   const heading = selectedCategory
@@ -354,7 +345,11 @@ export function QuestionList({
             </span>
           )}
         </h2>
-        {!selectedCategoryId && (
+        {selectedCategoryId !== null ? (
+          <Button size="sm" onClick={() => addQuestion.mutate()}>
+            <Plus className="mr-1 h-3.5 w-3.5" /> {t('builder.addQuestion')}
+          </Button>
+        ) : (
           <span className="text-[10px] text-muted-foreground">{t('builder.selectCategoryToReorder')}</span>
         )}
       </div>
