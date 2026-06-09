@@ -116,7 +116,7 @@ const QuestionView = ({ id, onDelete }: { id: number; onDelete?: () => void }) =
       const hasExisting = !!question.data?.media
       if (hasExisting && !window.confirm(t('builder.replaceMedia'))) return
 
-      await window.api.mediaAttachFile(id, (file as File & { path: string }).path)
+      await window.api.mediaAttachFile(id, window.api.getFilePath(file))
       question.refetch()
     },
     [id, question, t, showDropError]

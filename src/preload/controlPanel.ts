@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer } from 'electron'
+import { contextBridge, ipcRenderer, webUtils } from 'electron'
 import { IPC } from '@shared/types/ipc'
 import type { MediaPlaybackState } from '@shared/types/ipc'
 import type { GameState } from '@shared/types/state'
@@ -113,6 +113,7 @@ const api = {
     ipcRenderer.invoke(IPC.GAME_TOGGLE_LIST_OPTION, answerOptionId),
 
   // ── Media management ───────────────────────────────────────────
+  getFilePath: (file: File): string => webUtils.getPathForFile(file),
   mediaPickFile: (questionId: number): Promise<string | null> =>
     ipcRenderer.invoke(IPC.QUIZ_MEDIA_PICK, questionId),
   mediaAttachFile: (questionId: number, filePath: string): Promise<string> =>
