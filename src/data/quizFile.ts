@@ -9,8 +9,9 @@
 import { readFile, copyFile, mkdir, rm, writeFile, readdir, access } from 'fs/promises'
 import { sanitizeFilename } from '@shared/media'
 import { constants, existsSync } from 'fs'
-import { join, dirname } from 'path'
+import { join } from 'path'
 import { app } from 'electron'
+import { getPortableRoot } from '../main/portablePath'
 import AdmZip from 'adm-zip'
 import {
   type QuizDocument,
@@ -31,7 +32,7 @@ const dbg = app.isPackaged ? (() => {}) : console.log
  * (e.g. macOS /Applications, Linux /opt).
  */
 async function resolveRuntimeRoot(): Promise<string> {
-  const portable = join(dirname(app.getPath('exe')), 'runtime')
+  const portable = join(getPortableRoot(), 'runtime')
   try {
     await mkdir(portable, { recursive: true })
     await access(portable, constants.W_OK)
