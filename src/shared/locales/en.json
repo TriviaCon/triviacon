@@ -72,6 +72,7 @@
     "splashImage": "Splash Image",
     "noImage": "No image",
     "addCategory": "Add new category",
+    "addQuestion": "Add question",
     "noCategories": "No categories",
     "noCategoriesHint": "Add a category above to get started.",
     "question": "Question:",
