@@ -234,7 +234,7 @@ export const RunnerView = () => {
 
         {/* Question preview */}
         {stickyPreviewId !== null && (
-          <div className="w-[380px] shrink-0 overflow-y-auto p-4">
+          <div className="flex-1 min-w-0 overflow-y-auto p-4">
             <PreviewColumn
               id={stickyPreviewId}
               phase={phase}

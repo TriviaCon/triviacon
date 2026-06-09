@@ -82,7 +82,7 @@ export const BuilderView = () => {
         />
 
         {activeQuestionId !== null && (
-          <div className="w-[420px] shrink-0 border-l border-border overflow-y-auto p-4">
+          <div className="flex-1 min-w-0 border-l border-border overflow-y-auto p-4">
             <QuestionEditor
               id={activeQuestionId}
               onDelete={() => setActiveQuestionId(null)}
