@@ -35,14 +35,18 @@ const INITIAL: State = {
   errorMessage: null,
 }
 
+const DONE_COOLDOWN_MS = 3000
+
 export function OpenProgressModal({ open, onClose }: Props) {
   const { t } = useTranslation()
   const [state, setState] = useState<State>(INITIAL)
+  const [cooldown, setCooldown] = useState(0)
   const unsubRef = useRef<(() => void) | null>(null)
 
   useEffect(() => {
     if (!open) {
       setState(INITIAL)
+      setCooldown(0)
       return
     }
 
@@ -64,7 +68,7 @@ export function OpenProgressModal({ open, onClose }: Props) {
         }
       })
       if (event.phase === 'done') {
-        setTimeout(onClose, 600)
+        setCooldown(DONE_COOLDOWN_MS / 1000)
       }
     })
 
@@ -73,7 +77,13 @@ export function OpenProgressModal({ open, onClose }: Props) {
       unsub()
       unsubRef.current = null
     }
-  }, [open, onClose])
+  }, [open])
+
+  useEffect(() => {
+    if (cooldown <= 0) return
+    const id = setTimeout(() => setCooldown((c) => c - 1), 1000)
+    return () => clearTimeout(id)
+  }, [cooldown])
 
   const isDone = state.phase === 'done'
   const isError = state.phase === 'error'
@@ -164,10 +174,12 @@ export function OpenProgressModal({ open, onClose }: Props) {
           )}
         </div>
 
-        {/* Footer — only shown on error */}
-        {isError && (
+        {/* Footer — shown on done (with cooldown) and on error */}
+        {isTerminal && (
           <div className="flex justify-end pt-1">
-            <Button onClick={onClose}>{t('openProgress.close')}</Button>
+            <Button onClick={onClose} disabled={cooldown > 0}>
+              {cooldown > 0 ? `${t('openProgress.close')} (${cooldown})` : t('openProgress.close')}
+            </Button>
           </div>
         )}
       </DialogContent>
