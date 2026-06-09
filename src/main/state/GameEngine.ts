@@ -148,7 +148,12 @@ export class GameEngine {
   showRanking(): void {
     this.state.phase = GamePhase.Ranking
     this.state.activeQuestion = null
+    this.state.rankingRevealed = false
     this.clearSelection()
+  }
+
+  revealRanking(): void {
+    this.state.rankingRevealed = true
   }
 
   // ── Selection (preview before reveal) ────────────────────────

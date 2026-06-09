@@ -5,6 +5,7 @@ import { getPortableRoot } from './portablePath'
 import type { TimerSoundMode } from '@shared/types/state'
 
 export type VisualizerColorMode = 'heatmap' | 'rainbow' | 'gradient'
+export type FanfareSound = 'ff5' | 'nfl' | 'pokemon'
 
 export interface AppSettings {
   language: string
@@ -12,6 +13,7 @@ export interface AppSettings {
   visualizerColorMode: VisualizerColorMode
   visualizerBarCount: number
   timerSound: TimerSoundMode
+  fanfareSound: FanfareSound
 }
 
 const DEFAULTS: AppSettings = {
@@ -19,7 +21,8 @@ const DEFAULTS: AppSettings = {
   defaultVolume: 0.1,
   visualizerColorMode: 'heatmap',
   visualizerBarCount: 48,
-  timerSound: 'beeps-and-buzz'
+  timerSound: 'beeps-and-buzz',
+  fanfareSound: 'ff5'
 }
 
 const SETTINGS_FILENAME = 'triviacon-settings.json'

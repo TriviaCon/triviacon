@@ -110,6 +110,7 @@ const api = {
   showQuestion: (questionId: number): Promise<void> =>
     ipcRenderer.invoke(IPC.GAME_SHOW_QUESTION, questionId),
   showRanking: (): Promise<void> => ipcRenderer.invoke(IPC.GAME_SHOW_RANKING),
+  revealRanking: (): Promise<void> => ipcRenderer.invoke(IPC.GAME_REVEAL_RANKING),
 
   // ── Selection (preview before reveal) ──────────────────────────
   selectCategory: (id: number | null): Promise<void> =>
@@ -162,6 +163,8 @@ const api = {
   getTimerSound: (): Promise<string> => ipcRenderer.invoke(IPC.SETTINGS_GET_TIMER_SOUND),
   setTimerSound: (mode: string): Promise<void> =>
     ipcRenderer.invoke(IPC.SETTINGS_SET_TIMER_SOUND, mode),
+  getFanfare: (): Promise<string> => ipcRenderer.invoke(IPC.SETTINGS_GET_FANFARE),
+  setFanfare: (sound: string): Promise<void> => ipcRenderer.invoke(IPC.SETTINGS_SET_FANFARE, sound),
 
   // ── Display management ─────────────────────────────────────────
   openGameScreen: (): Promise<void> => ipcRenderer.invoke(IPC.DISPLAY_OPEN_SCREEN),

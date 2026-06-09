@@ -37,7 +37,8 @@ const api = {
     subscribeWith<string>(IPC.SETTINGS_SET_LANGUAGE, cb),
   getDefaultVolume: (): Promise<number> => ipcRenderer.invoke(IPC.SETTINGS_GET_DEFAULT_VOLUME),
   getVisualizer: (): Promise<{ colorMode: string; barCount: number }> =>
-    ipcRenderer.invoke(IPC.SETTINGS_GET_VISUALIZER)
+    ipcRenderer.invoke(IPC.SETTINGS_GET_VISUALIZER),
+  getFanfare: (): Promise<string> => ipcRenderer.invoke(IPC.SETTINGS_GET_FANFARE)
 }
 
 export type GameScreenApi = typeof api

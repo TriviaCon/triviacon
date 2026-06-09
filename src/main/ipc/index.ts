@@ -3,6 +3,7 @@ import { IPC } from '@shared/types/ipc'
 import type { AnswerOption, Question } from '@shared/types/quiz'
 import { getSetting, setSetting } from '../settings'
 import type { TimerSoundMode } from '@shared/types/state'
+import type { FanfareSound } from '../settings'
 import { QUIZ_FILE_FILTER } from '@shared/constants'
 import quizFile from '../../data/quizFile'
 import * as store from '../../data/quizStore'
@@ -377,6 +378,11 @@ export function registerIpcHandlers(): void {
     broadcastState()
   })
 
+  ipcMain.handle(IPC.GAME_REVEAL_RANKING, () => {
+    engine.revealRanking()
+    broadcastState()
+  })
+
   // ── Selection (preview before reveal) ────────────────────────────
 
   ipcMain.handle(IPC.GAME_SELECT_CATEGORY, (_, categoryId: number | null) => {
@@ -509,5 +515,11 @@ export function registerIpcHandlers(): void {
     setSetting('timerSound', mode)
     engine.setTimerSound(mode)
     broadcastState()
+  })
+
+  ipcMain.handle(IPC.SETTINGS_GET_FANFARE, () => getSetting('fanfareSound'))
+
+  ipcMain.handle(IPC.SETTINGS_SET_FANFARE, (_, sound: FanfareSound) => {
+    setSetting('fanfareSound', sound)
   })
 }
