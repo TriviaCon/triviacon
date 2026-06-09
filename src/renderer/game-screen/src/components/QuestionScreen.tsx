@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import type { ActiveQuestionState, TimerState } from '@shared/types/state'
+import type { ActiveQuestionState, TimerSoundMode, TimerState } from '@shared/types/state'
 import { detectMediaType } from '@shared/media'
 import { mediaUrl } from '@shared/mediaUrl'
 import { RichText } from '@shared/RichText'
@@ -25,6 +25,7 @@ interface QuestionScreenProps {
   currentTeamName: string | null
   timer: TimerState
   timerDuration: number
+  timerSound: TimerSoundMode
 }
 
 const QuestionScreen = ({
@@ -33,7 +34,8 @@ const QuestionScreen = ({
   questionIndex,
   currentTeamName,
   timer,
-  timerDuration
+  timerDuration,
+  timerSound
 }: QuestionScreenProps) => {
   const { t } = useTranslation()
   const audioRef = useRef<HTMLAudioElement>(null)
@@ -183,7 +185,7 @@ const QuestionScreen = ({
               <>
                 <span className="text-muted-foreground">{t('gameScreen.answering')}</span>{' '}
                 <span className="text-foreground">{currentTeamName}</span>
-                <PieTimer timer={timer} durationSeconds={timerDuration} size={48} />
+                <PieTimer timer={timer} durationSeconds={timerDuration} timerSound={timerSound} size={48} />
               </>
             )}
           </div>

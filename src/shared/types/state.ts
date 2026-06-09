@@ -11,6 +11,7 @@ export enum GamePhase {
 }
 
 export type TimerStatus = 'idle' | 'running' | 'paused' | 'expired'
+export type TimerSoundMode = 'beeps-and-buzz' | 'beeps' | 'buzz' | 'silent'
 
 export interface TimerState {
   status: TimerStatus
@@ -42,6 +43,7 @@ export interface GameState {
   selectedCategoryId: number | null
   selectedQuestionId: number | null
   timer: TimerState
+  timerSound: TimerSoundMode
 }
 
 export const INITIAL_GAME_STATE: GameState = {
@@ -60,5 +62,6 @@ export const INITIAL_GAME_STATE: GameState = {
   gameScreenDarkMode: false,
   selectedCategoryId: null,
   selectedQuestionId: null,
-  timer: { status: 'idle', remaining: 0 }
+  timer: { status: 'idle', remaining: 0 },
+  timerSound: 'beeps-and-buzz'
 }

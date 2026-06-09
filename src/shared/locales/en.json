@@ -142,7 +142,16 @@
     "visualizerDescription": "Audio visualizer appearance.",
     "colorHeatmap": "Heat Map",
     "colorRainbow": "Rainbow",
-    "colorGradient": "Gradient"
+    "colorGradient": "Gradient",
+    "timerSound": "Timer Sound",
+    "timerSound_beeps-and-buzz": "Beeps + Buzzer",
+    "timerSound_beeps-and-buzz_desc": "Tick beeps at 5–1 seconds, buzzer on expiry.",
+    "timerSound_beeps": "Beeps Only",
+    "timerSound_beeps_desc": "Tick beeps at 5–1 seconds, silent on expiry.",
+    "timerSound_buzz": "Buzzer Only",
+    "timerSound_buzz_desc": "Silent countdown, buzzer on expiry.",
+    "timerSound_silent": "Silent",
+    "timerSound_silent_desc": "No audio feedback."
   },
 
   "languages": {

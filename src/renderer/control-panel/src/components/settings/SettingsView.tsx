@@ -6,12 +6,14 @@ import { NativeSelect } from '@renderer/components/ui/native-select'
 import { Card, CardContent, CardHeader, CardTitle } from '@renderer/components/ui/card'
 
 const COLOR_MODES = ['heatmap', 'rainbow', 'gradient'] as const
+const TIMER_SOUND_MODES = ['beeps-and-buzz', 'beeps', 'buzz', 'silent'] as const
 
 export const SettingsView = () => {
   const { t, i18n } = useTranslation()
   const [volume, setVolume] = useState(0.1)
   const [colorMode, setColorMode] = useState('heatmap')
   const [barCount, setBarCount] = useState(48)
+  const [timerSound, setTimerSound] = useState('beeps-and-buzz')
 
   useEffect(() => {
     window.api.getDefaultVolume().then(setVolume)
@@ -19,6 +21,7 @@ export const SettingsView = () => {
       setColorMode(v.colorMode)
       setBarCount(v.barCount)
     })
+    window.api.getTimerSound().then(setTimerSound)
   }, [])
 
   const handleLanguageChange = async (lang: string) => {
@@ -73,6 +76,26 @@ export const SettingsView = () => {
           </div>
           <p className="text-sm text-muted-foreground ml-28">
             {t('settings.defaultVolumeDescription')}
+          </p>
+
+          <div className="flex items-center gap-4">
+            <Label className="w-24 text-right shrink-0">{t('settings.timerSound')}</Label>
+            <NativeSelect
+              value={timerSound}
+              onChange={(e) => {
+                setTimerSound(e.target.value)
+                window.api.setTimerSound(e.target.value)
+              }}
+            >
+              {TIMER_SOUND_MODES.map((mode) => (
+                <option key={mode} value={mode}>
+                  {t(`settings.timerSound_${mode}` as 'settings.timerSound_beeps-and-buzz')}
+                </option>
+              ))}
+            </NativeSelect>
+          </div>
+          <p className="text-sm text-muted-foreground ml-28">
+            {t(`settings.timerSound_${timerSound}_desc` as 'settings.timerSound_beeps-and-buzz_desc')}
           </p>
 
           <div className="flex items-center gap-4">

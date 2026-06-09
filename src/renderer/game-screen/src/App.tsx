@@ -51,6 +51,7 @@ function App() {
           currentTeamName={currentTeam?.name ?? null}
           timer={gameState.timer}
           timerDuration={gameState.quizMeta?.timerSeconds ?? 0}
+          timerSound={gameState.timerSound}
         />
       )
     }

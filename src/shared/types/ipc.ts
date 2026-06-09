@@ -93,6 +93,8 @@ export const IPC = {
   SETTINGS_SET_DEFAULT_VOLUME: 'settings:setDefaultVolume',
   SETTINGS_GET_VISUALIZER: 'settings:getVisualizer',
   SETTINGS_SET_VISUALIZER: 'settings:setVisualizer',
+  SETTINGS_GET_TIMER_SOUND: 'settings:getTimerSound',
+  SETTINGS_SET_TIMER_SOUND: 'settings:setTimerSound',
 
   // Display management
   DISPLAY_OPEN_SCREEN: 'display:openScreen',
