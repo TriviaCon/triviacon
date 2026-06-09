@@ -26,7 +26,7 @@ function safeSend(win: BrowserWindow | null, channel: string, ...args: unknown[]
 }
 
 function broadcastState(): void {
-  const state = engine.getState()
+  const state = { ...engine.getState(), quizDirty: store.isDirty() }
   safeSend(getControlPanelWindow(), IPC.STATE_UPDATE, state)
   safeSend(getGameScreenWindow(), IPC.STATE_UPDATE, state)
 }
