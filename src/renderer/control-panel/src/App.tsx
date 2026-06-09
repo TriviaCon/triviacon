@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import Header from './components/layout/Header'
 import ControlView from './components/layout/ControlView'
+import { CloseConfirmModal } from './components/layout/CloseConfirmModal'
 import {
   MutationCache,
   QueryClient,
@@ -65,6 +66,7 @@ function App() {
         <div className="flex-grow flex flex-col">
           <ControlView />
         </div>
+        <CloseConfirmModal />
       </QueryClientProvider>
     </div>
   )

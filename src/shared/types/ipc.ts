@@ -106,7 +106,11 @@ export const IPC = {
 
   // Display management
   DISPLAY_OPEN_SCREEN: 'display:openScreen',
-  DISPLAY_TOGGLE_FULLSCREEN: 'display:toggleFullscreen'
+  DISPLAY_TOGGLE_FULLSCREEN: 'display:toggleFullscreen',
+
+  // Close confirmation (main → renderer → main)
+  APP_CLOSE_REQUEST: 'app:closeRequest',
+  APP_CLOSE_RESPOND: 'app:closeRespond'
 } as const
 
 // Payload types
