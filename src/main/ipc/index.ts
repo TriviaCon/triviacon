@@ -211,6 +211,13 @@ export function registerIpcHandlers(): void {
     broadcastState()
   })
 
+  ipcMain.handle(IPC.QUIZ_META_UPDATE_TIMER, (_, timerSeconds: number) => {
+    store.metaUpdateTimer(timerSeconds)
+    engine.updateMeta(store.metaGet())
+    engine.timerReset()
+    broadcastState()
+  })
+
   // ── Media management ─────────────────────────────────────────────
 
   ipcMain.handle(IPC.QUIZ_MEDIA_PICK, async (_, questionId: number) => {
@@ -389,6 +396,27 @@ export function registerIpcHandlers(): void {
     engine.toggleDarkMode()
     broadcastState()
   })
+
+  // ── Timer control ───────────────────────────────────────────────
+
+  ipcMain.handle(IPC.TIMER_START, () => {
+    engine.timerStart()
+    broadcastState()
+  })
+
+  ipcMain.handle(IPC.TIMER_PAUSE, () => {
+    engine.timerPause()
+    broadcastState()
+  })
+
+  ipcMain.handle(IPC.TIMER_RESET, () => {
+    engine.timerReset()
+    broadcastState()
+  })
+
+  setInterval(() => {
+    if (engine.timerTick()) broadcastState()
+  }, 1000)
 
   // ── Settings ───────────────────────────────────────────────────
 

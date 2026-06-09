@@ -20,3 +20,9 @@ export const useUpdateAuthor = () => createMetaMutation(window.api.quizMetaUpdat
 export const useUpdateDate = () => createMetaMutation(window.api.quizMetaUpdateDate)
 export const useUpdateLocation = () => createMetaMutation(window.api.quizMetaUpdateLocation)
 export const useUpdateSplash = () => createMetaMutation(window.api.quizMetaUpdateSplash)
+
+export const useUpdateTimer = () =>
+  useMutation({
+    mutationFn: (v: number) => window.api.quizMetaUpdateTimer(v),
+    meta: { invalidateQueries: keys.meta() }
+  })

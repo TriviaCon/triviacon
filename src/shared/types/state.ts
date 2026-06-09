@@ -10,6 +10,13 @@ export enum GamePhase {
   Ranking = 'ranking'
 }
 
+export type TimerStatus = 'idle' | 'running' | 'paused' | 'expired'
+
+export interface TimerState {
+  status: TimerStatus
+  remaining: number
+}
+
 export interface ActiveQuestionState {
   question: Question
   answerOptions: AnswerOption[]
@@ -34,6 +41,7 @@ export interface GameState {
   gameScreenDarkMode: boolean
   selectedCategoryId: number | null
   selectedQuestionId: number | null
+  timer: TimerState
 }
 
 export const INITIAL_GAME_STATE: GameState = {
@@ -51,5 +59,6 @@ export const INITIAL_GAME_STATE: GameState = {
   questionCategoryMap: {},
   gameScreenDarkMode: false,
   selectedCategoryId: null,
-  selectedQuestionId: null
+  selectedQuestionId: null,
+  timer: { status: 'idle', remaining: 0 }
 }

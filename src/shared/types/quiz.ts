@@ -29,6 +29,7 @@ export interface QuizMeta {
   location: string
   date: string
   splash: string
+  timerSeconds: number
 }
 
 export interface Stats {

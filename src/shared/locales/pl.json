@@ -81,7 +81,9 @@
     "dropMedia": "Upuść plik multimedialny tutaj",
     "dropOneFileOnly": "Upuść tylko jeden plik.",
     "dropUnsupportedType": "Nieobsługiwany typ pliku.",
-    "replaceMedia": "Zastąpić bieżące media?"
+    "replaceMedia": "Zastąpić bieżące media?",
+    "timer": "Timer (s)",
+    "timerPlaceholder": "0 = wyłączony"
   },
 
   "runner": {
@@ -101,7 +103,11 @@
     "used": "Użyte",
     "reveal": "Pokaż",
     "yes": "Tak",
-    "no": "Nie"
+    "no": "Nie",
+    "timerStart": "Start",
+    "timerPause": "Pauza",
+    "timerReset": "Reset",
+    "timerDisabled": "Brak timera"
   },
 
   "gameScreen": {

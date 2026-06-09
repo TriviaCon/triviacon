@@ -81,7 +81,9 @@
     "dropMedia": "Drop media file here",
     "dropOneFileOnly": "Please drop only one file.",
     "dropUnsupportedType": "Unsupported file type.",
-    "replaceMedia": "Replace the current media attachment?"
+    "replaceMedia": "Replace the current media attachment?",
+    "timer": "Timer (s)",
+    "timerPlaceholder": "0 = disabled"
   },
 
   "runner": {
@@ -101,7 +103,11 @@
     "used": "Used",
     "reveal": "Reveal",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "timerStart": "Start",
+    "timerPause": "Pause",
+    "timerReset": "Reset",
+    "timerDisabled": "No timer set"
   },
 
   "gameScreen": {

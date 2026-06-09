@@ -12,7 +12,8 @@ import {
   useUpdateAuthor,
   useUpdateDate,
   useUpdateLocation,
-  useUpdateSplash
+  useUpdateSplash,
+  useUpdateTimer
 } from '@renderer/hooks/useQuizMeta'
 import { QueryLoading, QueryError } from '@renderer/components/ui/query-state'
 
@@ -26,6 +27,7 @@ export const QuizMeta = () => {
   const updateDate = useUpdateDate()
   const updateLocation = useUpdateLocation()
   const updateSplash = useUpdateSplash()
+  const updateTimer = useUpdateTimer()
   const [showStatsModal, setShowStatsModal] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -108,6 +110,22 @@ export const QuizMeta = () => {
                   placeholder={t('builder.locationPlaceholder')}
                   value={meta.data.location}
                   onChange={(e) => updateLocation.mutate(e.target.value)}
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <Label htmlFor="quiz-timer" className="w-16 text-right text-sm shrink-0">
+                  {t('builder.timer')}
+                </Label>
+                <Input
+                  id="quiz-timer"
+                  type="number"
+                  min={0}
+                  placeholder={t('builder.timerPlaceholder')}
+                  value={meta.data.timerSeconds || ''}
+                  onChange={(e) => {
+                    const v = parseInt(e.target.value, 10)
+                    updateTimer.mutate(isNaN(v) || v < 0 ? 0 : v)
+                  }}
                 />
               </div>
             </div>

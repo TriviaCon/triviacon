@@ -31,6 +31,7 @@ export const IPC = {
   QUIZ_META_UPDATE_DATE: 'quiz:meta:updateDate',
   QUIZ_META_UPDATE_LOCATION: 'quiz:meta:updateLocation',
   QUIZ_META_UPDATE_SPLASH: 'quiz:meta:updateSplash',
+  QUIZ_META_UPDATE_TIMER: 'quiz:meta:updateTimer',
 
   QUIZ_STATS: 'quiz:stats',
 
@@ -73,6 +74,11 @@ export const IPC = {
   MEDIA_SEEK: 'media:seek',
   MEDIA_SET_VOLUME: 'media:setVolume',
   MEDIA_STATE_UPDATE: 'media:stateUpdate',
+
+  // Timer control (control panel -> main)
+  TIMER_START: 'timer:start',
+  TIMER_PAUSE: 'timer:pause',
+  TIMER_RESET: 'timer:reset',
 
   // Game screen appearance
   GAME_TOGGLE_DARK_MODE: 'game:toggleDarkMode',
