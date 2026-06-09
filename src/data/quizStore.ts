@@ -25,6 +25,7 @@ export interface QuizDocument {
     location: string
     date: string
     splash: string
+    timerSeconds: number
   }
   nextIds: {
     category: number
@@ -78,7 +79,7 @@ export function clearDirty(): void {
 export function createEmptyDocument(): QuizDocument {
   return {
     version: 2,
-    meta: { name: '', author: '', location: '', date: '', splash: '' },
+    meta: { name: '', author: '', location: '', date: '', splash: '', timerSeconds: 0 },
     nextIds: { category: 1, question: 1, answerOption: 1 },
     categories: [],
     questions: [],
@@ -255,8 +256,8 @@ export function answerOptionRemove(id: number): void {
 // ── Meta ──────────────────────────────────────────────────────────
 
 export function metaGet(): QuizMeta {
-  if (!doc) return { name: '', author: '', location: '', date: '', splash: '' }
-  return { ...doc.meta }
+  if (!doc) return { name: '', author: '', location: '', date: '', splash: '', timerSeconds: 0 }
+  return { ...doc.meta, timerSeconds: doc.meta.timerSeconds ?? 0 }
 }
 
 export function metaUpdateName(name: string): void {
@@ -277,6 +278,10 @@ export function metaUpdateLocation(location: string): void {
 }
 export function metaUpdateSplash(splash: string): void {
   requireDoc().meta.splash = splash
+  markDirty()
+}
+export function metaUpdateTimer(timerSeconds: number): void {
+  requireDoc().meta.timerSeconds = timerSeconds
   markDirty()
 }
 

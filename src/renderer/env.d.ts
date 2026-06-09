@@ -59,6 +59,7 @@ declare global {
       quizMetaUpdateDate: (date: string) => Promise<void>
       quizMetaUpdateLocation: (location: string) => Promise<void>
       quizMetaUpdateSplash: (splash: string) => Promise<void>
+      quizMetaUpdateTimer: (timerSeconds: number) => Promise<void>
 
       // --- Stats ---
       quizStats: () => Promise<Stats>
@@ -126,6 +127,10 @@ declare global {
       openGameScreen: () => Promise<void>
       toggleGameFullscreen: () => Promise<boolean>
       toggleGameDarkMode: () => Promise<void>
+
+      timerStart: () => Promise<void>
+      timerPause: () => Promise<void>
+      timerReset: () => Promise<void>
 
       // --- App info ---
       platform: string

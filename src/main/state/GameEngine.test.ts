@@ -8,7 +8,8 @@ const meta: QuizMeta = {
   author: 'Author',
   location: 'Here',
   date: '2026-01-01',
-  splash: ''
+  splash: '',
+  timerSeconds: 0
 }
 
 const categories: Category[] = [

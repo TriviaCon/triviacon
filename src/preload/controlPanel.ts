@@ -71,6 +71,8 @@ const api = {
     ipcRenderer.invoke(IPC.QUIZ_META_UPDATE_LOCATION, location),
   quizMetaUpdateSplash: (splash: string): Promise<void> =>
     ipcRenderer.invoke(IPC.QUIZ_META_UPDATE_SPLASH, splash),
+  quizMetaUpdateTimer: (timerSeconds: number): Promise<void> =>
+    ipcRenderer.invoke(IPC.QUIZ_META_UPDATE_TIMER, timerSeconds),
 
   // ── Stats ──────────────────────────────────────────────────────
   quizStats: (): Promise<Stats> => ipcRenderer.invoke(IPC.QUIZ_STATS),
@@ -149,6 +151,10 @@ const api = {
   openGameScreen: (): Promise<void> => ipcRenderer.invoke(IPC.DISPLAY_OPEN_SCREEN),
   toggleGameFullscreen: (): Promise<boolean> => ipcRenderer.invoke(IPC.DISPLAY_TOGGLE_FULLSCREEN),
   toggleGameDarkMode: (): Promise<void> => ipcRenderer.invoke(IPC.GAME_TOGGLE_DARK_MODE),
+
+  timerStart: (): Promise<void> => ipcRenderer.invoke(IPC.TIMER_START),
+  timerPause: (): Promise<void> => ipcRenderer.invoke(IPC.TIMER_PAUSE),
+  timerReset: (): Promise<void> => ipcRenderer.invoke(IPC.TIMER_RESET),
 
   // ── App info ───────────────────────────────────────────────────
   platform: process.platform as string

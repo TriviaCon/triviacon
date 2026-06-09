@@ -49,6 +49,8 @@ function App() {
           categoryName={category?.name ?? null}
           questionIndex={questionIndex}
           currentTeamName={currentTeam?.name ?? null}
+          timer={gameState.timer}
+          timerDuration={gameState.quizMeta?.timerSeconds ?? 0}
         />
       )
     }

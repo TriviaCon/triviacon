@@ -203,6 +203,41 @@ export class GameEngine {
     }
   }
 
+  // ── Timer ────────────────────────────────────────────────────
+
+  timerStart(): void {
+    const duration = this.state.quizMeta?.timerSeconds ?? 0
+    if (duration <= 0) return
+    if (this.state.timer.status === 'running') return
+    if (this.state.timer.status === 'idle' || this.state.timer.status === 'expired') {
+      this.state.timer = { status: 'running', remaining: duration }
+    } else {
+      // resume from paused
+      this.state.timer = { ...this.state.timer, status: 'running' }
+    }
+  }
+
+  timerPause(): void {
+    if (this.state.timer.status === 'running') {
+      this.state.timer = { ...this.state.timer, status: 'paused' }
+    }
+  }
+
+  timerReset(): void {
+    this.state.timer = { status: 'idle', remaining: this.state.quizMeta?.timerSeconds ?? 0 }
+  }
+
+  timerTick(): boolean {
+    if (this.state.timer.status !== 'running') return false
+    const next = this.state.timer.remaining - 1
+    if (next <= 0) {
+      this.state.timer = { status: 'expired', remaining: 0 }
+    } else {
+      this.state.timer = { status: 'running', remaining: next }
+    }
+    return true
+  }
+
   // ── Game screen appearance ──────────────────────────────────
 
   toggleDarkMode(): void {

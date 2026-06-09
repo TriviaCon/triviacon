@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import type { ActiveQuestionState } from '@shared/types/state'
+import type { ActiveQuestionState, TimerState } from '@shared/types/state'
 import { detectMediaType } from '@shared/media'
 import { mediaUrl } from '@shared/mediaUrl'
 import { RichText } from '@shared/RichText'
 import AudioVisualizer from '@shared/AudioVisualizer'
+import PieTimer from './PieTimer'
 
 function optionClass(
   correct: boolean,
@@ -22,13 +23,17 @@ interface QuestionScreenProps {
   categoryName: string | null
   questionIndex: number
   currentTeamName: string | null
+  timer: TimerState
+  timerDuration: number
 }
 
 const QuestionScreen = ({
   activeQuestion,
   categoryName,
   questionIndex,
-  currentTeamName
+  currentTeamName,
+  timer,
+  timerDuration
 }: QuestionScreenProps) => {
   const { t } = useTranslation()
   const audioRef = useRef<HTMLAudioElement>(null)
@@ -173,11 +178,12 @@ const QuestionScreen = ({
           <div className="text-2xl font-semibold text-muted-foreground">
             {categoryName}
           </div>
-          <div className="text-2xl font-semibold text-center">
+          <div className="text-2xl font-semibold flex items-center justify-center gap-3">
             {currentTeamName && (
               <>
                 <span className="text-muted-foreground">{t('gameScreen.answering')}</span>{' '}
                 <span className="text-foreground">{currentTeamName}</span>
+                <PieTimer timer={timer} durationSeconds={timerDuration} size={48} />
               </>
             )}
           </div>
