@@ -222,13 +222,12 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
           {onDelete && (
             <Button
               variant="destructive"
-              size="icon"
               className="shrink-0 self-stretch h-auto"
               onClick={handleDeleteQuestion}
               disabled={deleting}
-              title={t('actions.delete')}
             >
               <Trash2 className="h-4 w-4" />
+              {t('actions.delete')}
             </Button>
           )}
         </div>
