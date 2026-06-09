@@ -37,6 +37,7 @@ export interface GameState {
   usedQuestions: number[]
   quizMeta: QuizMeta | null
   quizFilePath: string | null
+  quizDirty: boolean
   categories: Category[]
   questionCategoryMap: Record<number, number>
   gameScreenDarkMode: boolean
@@ -57,6 +58,7 @@ export const INITIAL_GAME_STATE: GameState = {
   usedQuestions: [],
   quizMeta: null,
   quizFilePath: null,
+  quizDirty: false,
   categories: [],
   questionCategoryMap: {},
   gameScreenDarkMode: false,
