@@ -30,13 +30,17 @@ declare global {
       categoryCreate: (name: string) => Promise<number>
       categoryUpdate: (id: number, name: string) => Promise<void>
       categoryRemove: (id: number) => Promise<void>
+      categoriesReorder: (orderedIds: number[]) => Promise<void>
+      categoryShuffle: (categoryId: number) => Promise<void>
 
       // --- Questions ---
       questionsByCategory: (categoryId: number) => Promise<Question[]>
       questionById: (id: number) => Promise<Question | null>
-      questionCreate: (question: Omit<Question, 'id'>) => Promise<number>
+      questionCreate: (question: Omit<Question, 'id' | 'sortOrder'>) => Promise<number>
       questionUpdate: (id: number, updates: Partial<Omit<Question, 'id'>>) => Promise<void>
       questionDelete: (id: number) => Promise<void>
+      questionsReorder: (orderedIds: number[]) => Promise<void>
+      questionsBulkMove: (questionIds: number[], targetCategoryId: number) => Promise<void>
 
       // --- Answer Options ---
       answerOptionsByQuestion: (questionId: number) => Promise<AnswerOption[]>

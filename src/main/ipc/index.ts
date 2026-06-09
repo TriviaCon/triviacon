@@ -137,6 +137,18 @@ export function registerIpcHandlers(): void {
     broadcastState()
   })
 
+  ipcMain.handle(IPC.QUIZ_CATEGORIES_REORDER, (_, orderedIds: number[]) => {
+    store.categoriesReorder(orderedIds)
+    engine.updateCategories(store.categoriesAll())
+    broadcastState()
+  })
+
+  ipcMain.handle(IPC.QUIZ_CATEGORY_SHUFFLE, (_, categoryId: number) => {
+    store.shuffleCategory(categoryId)
+    engine.updateQuestionCategoryMap(store.questionCategoryMap())
+    broadcastState()
+  })
+
   // ── Questions ────────────────────────────────────────────────────
 
   ipcMain.handle(IPC.QUIZ_QUESTIONS_BY_CATEGORY, (_, categoryId: number) =>
@@ -145,7 +157,7 @@ export function registerIpcHandlers(): void {
 
   ipcMain.handle(IPC.QUIZ_QUESTION_BY_ID, (_, id: number) => store.questionById(id))
 
-  ipcMain.handle(IPC.QUIZ_QUESTION_CREATE, (_, question: Omit<Question, 'id'>) =>
+  ipcMain.handle(IPC.QUIZ_QUESTION_CREATE, (_, question: Omit<Question, 'id' | 'sortOrder'>) =>
     store.questionCreate(question)
   )
 
@@ -159,6 +171,17 @@ export function registerIpcHandlers(): void {
       await quizFile.removeMedia(question.media)
     }
     store.questionDelete(id)
+  })
+
+  ipcMain.handle(IPC.QUIZ_QUESTIONS_REORDER, (_, orderedIds: number[]) => {
+    store.questionsReorder(orderedIds)
+  })
+
+  ipcMain.handle(IPC.QUIZ_QUESTIONS_BULK_MOVE, (_, questionIds: number[], targetCategoryId: number) => {
+    store.questionsBulkMove(questionIds, targetCategoryId)
+    engine.updateCategories(store.categoriesAll())
+    engine.updateQuestionCategoryMap(store.questionCategoryMap())
+    broadcastState()
   })
 
   // ── Answer Options ───────────────────────────────────────────────

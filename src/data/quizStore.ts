@@ -35,6 +35,7 @@ export interface QuizDocument {
   categories: Array<{
     id: number
     name: string
+    sortOrder: number
   }>
   questions: Array<{
     id: number
@@ -43,6 +44,7 @@ export interface QuizDocument {
     text: string
     media: string | null
     audioOnly?: boolean
+    sortOrder: number
   }>
   answerOptions: Array<{
     id: number
@@ -93,6 +95,9 @@ export function getDocument(): QuizDocument | null {
 }
 
 export function setDocument(d: QuizDocument): void {
+  // Backfill sortOrder for files saved before it was introduced
+  d.categories.forEach((c, i) => { if (c.sortOrder === undefined) c.sortOrder = i })
+  d.questions.forEach((q, i) => { if (q.sortOrder === undefined) q.sortOrder = i })
   doc = d
   dirty = false
 }
@@ -111,11 +116,15 @@ function requireDoc(): QuizDocument {
 
 export function categoriesAll(): Category[] {
   if (!doc) return []
-  return doc.categories.map((c) => ({
-    id: c.id,
-    name: c.name,
-    questionCount: doc!.questions.filter((q) => q.categoryId === c.id).length
-  }))
+  return doc.categories
+    .slice()
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+    .map((c) => ({
+      id: c.id,
+      name: c.name,
+      sortOrder: c.sortOrder,
+      questionCount: doc!.questions.filter((q) => q.categoryId === c.id).length
+    }))
 }
 
 export function categoryById(id: number): Category | null {
@@ -125,6 +134,7 @@ export function categoryById(id: number): Category | null {
   return {
     id: c.id,
     name: c.name,
+    sortOrder: c.sortOrder,
     questionCount: doc.questions.filter((q) => q.categoryId === c.id).length
   }
 }
@@ -132,9 +142,19 @@ export function categoryById(id: number): Category | null {
 export function categoryCreate(name: string): number {
   const d = requireDoc()
   const id = d.nextIds.category++
-  d.categories.push({ id, name })
+  const sortOrder = d.categories.length
+  d.categories.push({ id, name, sortOrder })
   markDirty()
   return id
+}
+
+export function categoriesReorder(orderedIds: number[]): void {
+  const d = requireDoc()
+  orderedIds.forEach((id, i) => {
+    const c = d.categories.find((c) => c.id === id)
+    if (c) c.sortOrder = i
+  })
+  markDirty()
 }
 
 export function categoryUpdate(id: number, name: string): void {
@@ -161,6 +181,8 @@ export function questionsAllByCategoryId(categoryId: number): Question[] {
   if (!doc) return []
   return doc.questions
     .filter((q) => q.categoryId === categoryId)
+    .slice()
+    .sort((a, b) => a.sortOrder - b.sortOrder)
     .map((q) => ({ ...q }))
 }
 
@@ -170,16 +192,18 @@ export function questionById(id: number): Question | null {
   return q ? { ...q } : null
 }
 
-export function questionCreate(question: Omit<Question, 'id'>): number {
+export function questionCreate(question: Omit<Question, 'id' | 'sortOrder'>): number {
   const d = requireDoc()
   const id = d.nextIds.question++
+  const sortOrder = d.questions.filter((q) => q.categoryId === question.categoryId).length
   d.questions.push({
     id,
     categoryId: question.categoryId,
     type: question.type,
     text: question.text,
     media: question.media,
-    audioOnly: question.audioOnly
+    audioOnly: question.audioOnly,
+    sortOrder
   })
   markDirty()
   return id
@@ -194,6 +218,43 @@ export function questionUpdate(id: number, updates: Partial<Omit<Question, 'id'>
   if (updates.text !== undefined) q.text = updates.text
   if (updates.media !== undefined) q.media = updates.media
   if (updates.audioOnly !== undefined) q.audioOnly = updates.audioOnly
+  if (updates.sortOrder !== undefined) q.sortOrder = updates.sortOrder
+  markDirty()
+}
+
+export function questionsReorder(orderedIds: number[]): void {
+  const d = requireDoc()
+  orderedIds.forEach((id, i) => {
+    const q = d.questions.find((q) => q.id === id)
+    if (q) q.sortOrder = i
+  })
+  markDirty()
+}
+
+export function shuffleCategory(categoryId: number): void {
+  const d = requireDoc()
+  const qs = d.questions.filter((q) => q.categoryId === categoryId)
+  // Fisher-Yates shuffle of sortOrder values
+  const orders = qs.map((_, i) => i)
+  for (let i = orders.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[orders[i], orders[j]] = [orders[j], orders[i]]
+  }
+  qs.forEach((q, i) => { q.sortOrder = orders[i] })
+  markDirty()
+}
+
+export function questionsBulkMove(questionIds: number[], targetCategoryId: number): void {
+  const d = requireDoc()
+  // Base sortOrder for appended questions
+  const base = d.questions.filter((q) => q.categoryId === targetCategoryId).length
+  questionIds.forEach((id, i) => {
+    const q = d.questions.find((q) => q.id === id)
+    if (q) {
+      q.categoryId = targetCategoryId
+      q.sortOrder = base + i
+    }
+  })
   markDirty()
 }
 

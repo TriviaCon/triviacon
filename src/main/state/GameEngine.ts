@@ -55,6 +55,10 @@ export class GameEngine {
     this.state.categories = categories
   }
 
+  updateQuestionCategoryMap(map: Record<number, number>): void {
+    this.state.questionCategoryMap = map
+  }
+
   updateMeta(meta: QuizMeta): void {
     this.state.quizMeta = meta
   }
