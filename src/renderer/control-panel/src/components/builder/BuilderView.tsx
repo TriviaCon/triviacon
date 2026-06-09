@@ -1,39 +1,97 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import QuestionView from './QuestionView'
-import { QuizMeta } from './QuizMeta'
-import QuizTree from './QuizTree'
+import {
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors
+} from '@dnd-kit/core'
+import { arrayMove } from '@dnd-kit/sortable'
+import { useQueryClient } from '@tanstack/react-query'
+import { CategorySidebar } from './CategorySidebar'
+import { QuestionList } from './QuestionList'
+import QuestionEditor from './QuestionEditor'
+import { QuizMetaModal } from './QuizMetaModal'
 import { useGameState } from '@renderer/hooks/useGameState'
-
-type View = { view: 'question'; id: number } | { view: 'category'; id: number } | null
+import keys from '@renderer/utils/keys'
 
 export const BuilderView = () => {
   const { t } = useTranslation()
-  const [view, setView] = useState<View>(null)
   const { categories, quizFilePath } = useGameState()
+  const queryClient = useQueryClient()
+
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null)
+  const [activeQuestionId, setActiveQuestionId] = useState<number | null>(null)
+  const [metaOpen, setMetaOpen] = useState(false)
+
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
 
   if (!quizFilePath) {
     return <span className="text-muted-foreground">{t('builder.noQuizLoaded')}</span>
   }
 
+  async function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+
+    const activeStr = String(active.id)
+    const overStr = String(over.id)
+
+    if (activeStr.startsWith('category:') && overStr.startsWith('category:')) {
+      const activeId = parseInt(activeStr.replace('category:', ''), 10)
+      const overId = parseInt(overStr.replace('category:', ''), 10)
+      const oldIndex = categories.findIndex((c) => c.id === activeId)
+      const newIndex = categories.findIndex((c) => c.id === overId)
+      if (oldIndex === -1 || newIndex === -1) return
+      const reordered = arrayMove(categories, oldIndex, newIndex)
+      await window.api.categoriesReorder(reordered.map((c) => c.id))
+      queryClient.invalidateQueries({ queryKey: keys.categories() })
+    }
+
+    if (activeStr.startsWith('question:') && overStr.startsWith('question:') && selectedCategoryId !== null) {
+      const activeQId = parseInt(activeStr.replace('question:', ''), 10)
+      const overQId = parseInt(overStr.replace('question:', ''), 10)
+      const questions = queryClient.getQueryData<{ id: number }[]>(keys.questions(selectedCategoryId)) ?? []
+      const oldIndex = questions.findIndex((q) => q.id === activeQId)
+      const newIndex = questions.findIndex((q) => q.id === overQId)
+      if (oldIndex === -1 || newIndex === -1) return
+      const reordered = arrayMove(questions, oldIndex, newIndex)
+      await window.api.questionsReorder(reordered.map((q) => q.id))
+      queryClient.invalidateQueries({ queryKey: keys.questions(selectedCategoryId) })
+    }
+  }
+
   return (
-    <div className="w-full h-full">
-      <div className="flex gap-4 flex-grow">
-        <div className="flex flex-col h-full w-1/3 min-w-[280px]">
-          <QuizMeta />
-          <QuizTree
-            categories={categories}
-            setSelectedCategory={(id) => (id ? setView({ view: 'category', id }) : setView(null))}
-            setSelectedQuestion={(id) => (id ? setView({ view: 'question', id }) : setView(null))}
-            editable={true}
-          />
-        </div>
-        <div className="flex-1 border-l border-border pl-4">
-          {view?.view === 'question' && (
-            <QuestionView id={view.id} onDelete={() => setView(null)} />
-          )}
-        </div>
+    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <div className="w-full h-full flex overflow-hidden">
+        <CategorySidebar
+          categories={categories}
+          selectedCategoryId={selectedCategoryId}
+          onSelect={setSelectedCategoryId}
+          onDeleted={() => queryClient.invalidateQueries({ queryKey: keys.categories() })}
+          onMetaOpen={() => setMetaOpen(true)}
+        />
+
+        <QuestionList
+          categories={categories}
+          selectedCategoryId={selectedCategoryId}
+          activeQuestionId={activeQuestionId}
+          onSelectQuestion={setActiveQuestionId}
+        />
+
+        {activeQuestionId !== null && (
+          <div className="w-[420px] shrink-0 border-l border-border overflow-y-auto p-4">
+            <QuestionEditor
+              id={activeQuestionId}
+              onDelete={() => setActiveQuestionId(null)}
+            />
+          </div>
+        )}
       </div>
-    </div>
+
+      <QuizMetaModal open={metaOpen} onOpenChange={setMetaOpen} />
+    </DndContext>
   )
 }

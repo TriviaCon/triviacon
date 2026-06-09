@@ -32,7 +32,8 @@
     "backCategories": "\u2190 Kategorie",
     "backQuestions": "\u2190 Pytania",
     "reveal": "Poka\u017c: {{name}}",
-    "revealNone": "Poka\u017c"
+    "revealNone": "Poka\u017c",
+    "cancel": "Anuluj"
   },
 
   "confirm": {
@@ -83,7 +84,16 @@
     "dropUnsupportedType": "Nieobsługiwany typ pliku.",
     "replaceMedia": "Zastąpić bieżące media?",
     "timer": "Timer (s)",
-    "timerPlaceholder": "0 = wyłączony"
+    "timerPlaceholder": "0 = wyłączony",
+    "deleteCategory": "Usunąć kategorię?",
+    "deleteCategoryWarning": "\"{{name}}\" zawiera {{count}} pytanie/pytań. Zostaną trwale usunięte.",
+    "deleteCategoryEmpty": "Usunąć \"{{name}}\"? Tego nie można cofnąć.",
+    "allQuestions": "Wszystkie pytania",
+    "questions": "pytań",
+    "selected": "zaznaczono",
+    "moveToCategory": "Przenieś do kategorii…",
+    "move": "Przenieś",
+    "selectCategoryToReorder": "Wybierz kategorię, aby zmienić kolejność"
   },
 
   "runner": {

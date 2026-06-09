@@ -58,7 +58,7 @@ const SingleAnswerField = ({
   )
 }
 
-const QuestionView = ({ id, onDelete }: { id: number; onDelete?: () => void }) => {
+const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void }) => {
   const { t } = useTranslation()
   const question = useQuestion(id)
   const answerOptions = useAnswerOptions(id)
@@ -334,4 +334,4 @@ const QuestionView = ({ id, onDelete }: { id: number; onDelete?: () => void }) =
   )
 }
 
-export default QuestionView
+export default QuestionEditor
