@@ -86,19 +86,11 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="outline"
-                  className={cn(
-                    'transition-colors',
-                    quizDirty
-                      ? 'text-amber-600 border-amber-500/60 hover:bg-amber-500/10'
-                      : 'text-green-600 border-green-600/50 hover:bg-green-600/10'
-                  )}
+                  className="text-green-600 border-green-600/50 hover:bg-green-600/10"
                   disabled={!quizFilePath}
                 >
                   <Save className="mr-1 h-4 w-4" />
                   {t('actions.saveQuiz')}
-                  {quizDirty && (
-                    <span className="ml-1.5 h-1.5 w-1.5 rounded-full bg-amber-500 shrink-0" />
-                  )}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
@@ -111,15 +103,25 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <span
-              className={cn(
-                'flex items-center gap-1 text-xs text-green-600 transition-opacity duration-500',
-                savedFlash ? 'opacity-100' : 'opacity-0'
-              )}
-            >
-              <Check className="h-3.5 w-3.5" />
-              {t('actions.saved')}
-            </span>
+            {/* Dirty / saved pill */}
+            {quizFilePath && (
+              <span
+                className={cn(
+                  'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium transition-opacity duration-500',
+                  savedFlash
+                    ? 'border-green-500/50 bg-green-500/10 text-green-600 opacity-100'
+                    : quizDirty
+                      ? 'border-red-500/50 bg-red-500/10 text-red-600 opacity-100'
+                      : 'opacity-0 pointer-events-none'
+                )}
+              >
+                {savedFlash ? (
+                  <><Check className="h-3 w-3" /> {t('actions.saved')}</>
+                ) : (
+                  <><span className="h-1.5 w-1.5 rounded-full bg-red-500" /> {t('actions.unsaved')}</>
+                )}
+              </span>
+            )}
           </div>
         </>
       ) : (
