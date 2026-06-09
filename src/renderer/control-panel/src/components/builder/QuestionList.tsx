@@ -36,9 +36,11 @@ const TYPE_CLASSES: Record<QuestionType, string> = {
   'list': 'bg-purple-100 text-purple-700 border-purple-200',
 }
 
-function MediaIcon({ media }: { media: string | null }) {
+function MediaIcon({ media, audioOnly }: { media: string | null; audioOnly?: boolean }) {
   const type = detectMediaType(media)
-  if (type === 'video') return <FileVideo className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+  if (type === 'video') return audioOnly
+    ? <FileAudio className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+    : <FileVideo className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
   if (type === 'audio') return <FileAudio className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
   if (type === 'image') return <Image className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
   return null
@@ -149,10 +151,7 @@ function QuestionCard({
             <span className={cn('inline-flex items-center rounded-full border px-1.5 py-0 text-[10px] font-medium shrink-0', TYPE_CLASSES[question.type])}>
               {TYPE_LABELS[question.type]}
             </span>
-            <MediaIcon media={question.media} />
-            {question.audioOnly && (
-              <span className="text-[10px] text-muted-foreground italic shrink-0">audio only</span>
-            )}
+            <MediaIcon media={question.media} audioOnly={question.audioOnly} />
             <div
               className="text-sm leading-snug line-clamp-2 [&_p]:m-0 [&_strong]:font-semibold [&_em]:italic [&_u]:underline min-w-0"
               dangerouslySetInnerHTML={{ __html: question.text || '&nbsp;' }}
