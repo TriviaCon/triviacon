@@ -259,6 +259,7 @@ export default {
   },
   saveTo: _saveTo,
   copyTo: _copyTo,
+  currentPath: () => quizFilePath,
   getFilePath,
   getMediaDir,
   getStats: () => storeGetStats(),

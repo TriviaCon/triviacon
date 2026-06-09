@@ -94,6 +94,9 @@ export function registerIpcHandlers(): void {
   ipcMain.handle(IPC.FILE_SAVE, async () => {
     try {
       await quizFile.save()
+      const path = quizFile.currentPath()
+      if (path) engine.setQuizFilePath(path)
+      broadcastState()
       return true
     } catch (err) {
       console.error('FILE_SAVE failed:', err)
@@ -108,6 +111,7 @@ export function registerIpcHandlers(): void {
     if (result.canceled || !result.filePath) return null
     try {
       await quizFile.saveTo(result.filePath)
+      engine.setQuizFilePath(result.filePath)
       broadcastState()
       return result.filePath
     } catch (err) {
