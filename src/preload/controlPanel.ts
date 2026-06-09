@@ -15,7 +15,7 @@ const api = {
   // ── State subscription ─────────────────────────────────────────
   onStateUpdate: (cb: (state: GameState) => void) => subscribeWith<GameState>(IPC.STATE_UPDATE, cb),
   onCloseRequest: (cb: () => void) => subscribeWith<void>(IPC.APP_CLOSE_REQUEST, cb),
-  closeRespond: (choice: 'save' | 'discard' | 'cancel'): Promise<void> =>
+  closeRespond: (choice: 'save' | 'saveAs' | 'discard' | 'cancel'): Promise<void> =>
     ipcRenderer.invoke(IPC.APP_CLOSE_RESPOND, choice),
 
   // ── File operations ────────────────────────────────────────────
