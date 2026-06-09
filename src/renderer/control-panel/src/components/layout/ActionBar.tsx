@@ -5,13 +5,13 @@ import {
   Upload,
   Save,
   Play,
-  LayoutGrid,
   Trophy,
   Maximize,
   Sun,
   Moon,
   Image,
-  Check
+  Check,
+  Info
 } from 'lucide-react'
 import { Button } from '@renderer/components/ui/button'
 import { Separator } from '@renderer/components/ui/separator'
@@ -24,6 +24,7 @@ import {
 import { ConfirmDialog } from '@renderer/components/ui/confirm-dialog'
 import { useGameState } from '@renderer/hooks/useGameState'
 import { OpenProgressModal } from './OpenProgressModal'
+import { QuizMetaModal } from '../builder/QuizMetaModal'
 import { cn } from '@renderer/lib/utils'
 
 type PendingAction = 'new' | 'load' | null
@@ -37,6 +38,7 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
   const [progressOpen, setProgressOpen] = useState(false)
   const [pending, setPending] = useState<PendingAction>(null)
   const [savedFlash, setSavedFlash] = useState(false)
+  const [metaOpen, setMetaOpen] = useState(false)
   const flashTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined)
   const { gameScreenDarkMode, quizDirty, quizFilePath } = useGameState()
 
@@ -71,7 +73,7 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
 
   return (
     <>
-    <div className="flex gap-1 mb-2 pb-2 border-b border-border">
+    <div className="flex gap-1 pb-2 pt-1 px-0.5">
       {activeTab === 'builder' ? (
         <>
           <Button onClick={() => setPending('new')}>
@@ -103,7 +105,12 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* Dirty / saved pill */}
+            <Separator orientation="vertical" className="mx-1 h-8" />
+          <Button variant="outline" onClick={() => setMetaOpen(true)}>
+            <Info className="mr-1 h-4 w-4" /> {t('builder.quizInfo')}
+          </Button>
+
+          {/* Dirty / saved pill */}
             {quizFilePath && (
               <span
                 className={cn(
@@ -134,9 +141,6 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
           <Button variant="outline" onClick={() => window.api.showSplash()}>
             <Image className="mr-1 h-4 w-4" /> {t('actions.splash')}
           </Button>
-          <Button variant="outline" onClick={() => window.api.showCategories()}>
-            <LayoutGrid className="mr-1 h-4 w-4" /> {t('actions.categories')}
-          </Button>
           <Button variant="outline" onClick={() => window.api.showRanking()}>
             <Trophy className="mr-1 h-4 w-4" /> {t('actions.ranking')}
           </Button>
@@ -165,6 +169,7 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
       onCancel={() => setPending(null)}
     />
     <OpenProgressModal open={progressOpen} onClose={() => setProgressOpen(false)} />
+    <QuizMetaModal open={metaOpen} onOpenChange={setMetaOpen} />
     </>
   )
 }
