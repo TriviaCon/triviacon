@@ -208,7 +208,7 @@ const QuestionView = ({ id, onDelete }: { id: number; onDelete?: () => void }) =
   )
 
   return (
-    <div className="h-full flex flex-col space-y-3">
+    <div className="h-full flex flex-col space-y-3 overflow-y-auto">
       <div className="space-y-1">
         <Label>{t('builder.question')}</Label>
         <RichTextEditor
