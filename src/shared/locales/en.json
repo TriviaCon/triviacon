@@ -32,7 +32,8 @@
     "backCategories": "\u2190 Categories",
     "backQuestions": "\u2190 Questions",
     "reveal": "Reveal: {{name}}",
-    "revealNone": "Reveal"
+    "revealNone": "Reveal",
+    "cancel": "Cancel"
   },
 
   "confirm": {
@@ -83,7 +84,16 @@
     "dropUnsupportedType": "Unsupported file type.",
     "replaceMedia": "Replace the current media attachment?",
     "timer": "Timer (s)",
-    "timerPlaceholder": "0 = disabled"
+    "timerPlaceholder": "0 = disabled",
+    "deleteCategory": "Delete category?",
+    "deleteCategoryWarning": "\"{{name}}\" contains {{count}} question(s). They will be permanently deleted.",
+    "deleteCategoryEmpty": "Delete \"{{name}}\"? This cannot be undone.",
+    "allQuestions": "All Questions",
+    "questions": "questions",
+    "selected": "selected",
+    "moveToCategory": "Move to category…",
+    "move": "Move",
+    "selectCategoryToReorder": "Select a category to reorder"
   },
 
   "runner": {
