@@ -16,7 +16,7 @@ import { useAddAnswerOptionMutation } from '@renderer/hooks/useAddAnswerOptionMu
 import { useDeleteQuestionMutation } from '@renderer/hooks/useDeleteQuestionMutation'
 import { QueryLoading, QueryError } from '@renderer/components/ui/query-state'
 import { MediaPreview } from '@renderer/components/ui/media-preview'
-import { detectMediaType, ALLOWED_MEDIA_EXTENSIONS } from '@shared/media'
+import { detectMediaType, mediaDisplayName, ALLOWED_MEDIA_EXTENSIONS } from '@shared/media'
 import { usePairQueryState } from '@renderer/hooks/usePairQueryState'
 
 /**
@@ -235,7 +235,14 @@ const QuestionView = ({ id, onDelete }: { id: number; onDelete?: () => void }) =
         onDrop={handleDrop}
       >
         <CardContent className="py-2 px-3 space-y-2">
-          <h6 className="text-sm font-semibold">{t('builder.media')}</h6>
+          <div className="flex items-baseline gap-2">
+            <h6 className="text-sm font-semibold shrink-0">{t('builder.media')}</h6>
+            {question.data!.media && (
+              <span className="text-sm text-muted-foreground truncate">
+                {mediaDisplayName(question.data!.media) ?? question.data!.media}
+              </span>
+            )}
+          </div>
           {dropError && (
             <p className="text-sm text-destructive">{dropError}</p>
           )}
