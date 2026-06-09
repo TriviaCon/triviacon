@@ -165,13 +165,16 @@ export function registerIpcHandlers(): void {
 
   ipcMain.handle(IPC.QUIZ_QUESTION_BY_ID, (_, id: number) => store.questionById(id))
 
-  ipcMain.handle(IPC.QUIZ_QUESTION_CREATE, (_, question: Omit<Question, 'id' | 'sortOrder'>) =>
-    store.questionCreate(question)
-  )
+  ipcMain.handle(IPC.QUIZ_QUESTION_CREATE, (_, question: Omit<Question, 'id' | 'sortOrder'>) => {
+    const id = store.questionCreate(question)
+    broadcastState()
+    return id
+  })
 
-  ipcMain.handle(IPC.QUIZ_QUESTION_UPDATE, (_, id: number, updates: Partial<Omit<Question, 'id'>>) =>
+  ipcMain.handle(IPC.QUIZ_QUESTION_UPDATE, (_, id: number, updates: Partial<Omit<Question, 'id'>>) => {
     store.questionUpdate(id, updates)
-  )
+    broadcastState()
+  })
 
   ipcMain.handle(IPC.QUIZ_QUESTION_DELETE, async (_, id: number) => {
     const question = store.questionById(id)
@@ -179,10 +182,12 @@ export function registerIpcHandlers(): void {
       await quizFile.removeMedia(question.media)
     }
     store.questionDelete(id)
+    broadcastState()
   })
 
   ipcMain.handle(IPC.QUIZ_QUESTIONS_REORDER, (_, orderedIds: number[]) => {
     store.questionsReorder(orderedIds)
+    broadcastState()
   })
 
   ipcMain.handle(IPC.QUIZ_QUESTIONS_BULK_MOVE, (_, questionIds: number[], targetCategoryId: number) => {
@@ -200,17 +205,25 @@ export function registerIpcHandlers(): void {
 
   ipcMain.handle(
     IPC.QUIZ_ANSWER_OPTION_CREATE,
-    (_, questionId: number, text?: string, correct?: boolean, sortOrder?: number) =>
-      store.answerOptionCreate(questionId, text, correct, sortOrder)
+    (_, questionId: number, text?: string, correct?: boolean, sortOrder?: number) => {
+      const id = store.answerOptionCreate(questionId, text, correct, sortOrder)
+      broadcastState()
+      return id
+    }
   )
 
   ipcMain.handle(
     IPC.QUIZ_ANSWER_OPTION_UPDATE,
-    (_, id: number, fields: Partial<Omit<AnswerOption, 'id' | 'questionId'>>) =>
+    (_, id: number, fields: Partial<Omit<AnswerOption, 'id' | 'questionId'>>) => {
       store.answerOptionUpdate(id, fields)
+      broadcastState()
+    }
   )
 
-  ipcMain.handle(IPC.QUIZ_ANSWER_OPTION_REMOVE, (_, id: number) => store.answerOptionRemove(id))
+  ipcMain.handle(IPC.QUIZ_ANSWER_OPTION_REMOVE, (_, id: number) => {
+    store.answerOptionRemove(id)
+    broadcastState()
+  })
 
   // ── Meta ─────────────────────────────────────────────────────────
 
@@ -267,6 +280,7 @@ export function registerIpcHandlers(): void {
     const filename = sourcePath.split(/[\\/]/).pop()!
     const mediaPath = await quizFile.attachMedia(sourcePath, filename)
     store.questionUpdate(questionId, { media: mediaPath })
+    broadcastState()
     return mediaPath
   })
 
@@ -274,6 +288,7 @@ export function registerIpcHandlers(): void {
     const filename = filePath.split(/[\\/]/).pop()!
     const mediaPath = await quizFile.attachMedia(filePath, filename)
     store.questionUpdate(questionId, { media: mediaPath })
+    broadcastState()
     return mediaPath
   })
 
@@ -283,6 +298,7 @@ export function registerIpcHandlers(): void {
       await quizFile.removeMedia(question.media)
     }
     store.questionUpdate(questionId, { media: null })
+    broadcastState()
   })
 
   // ── Stats ────────────────────────────────────────────────────────
