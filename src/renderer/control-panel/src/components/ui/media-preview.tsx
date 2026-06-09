@@ -14,40 +14,40 @@ function formatTime(seconds: number): string {
   return `${m}:${s.toString().padStart(2, '0')}`
 }
 
-// ── Playback controls (audio / video via IPC) ──────────────────────
-
-export const PlaybackControls = ({ mediaType }: { mediaType: 'audio' | 'video' }) => (
-  <div className="flex gap-1">
-    <Button size="sm" variant="outline" onClick={() => window.api.mediaPlay()}>
-      <Play className="h-4 w-4" />
-    </Button>
-    <Button size="sm" variant="outline" onClick={() => window.api.mediaPause()}>
-      <Pause className="h-4 w-4" />
-    </Button>
-    <Button size="sm" variant="outline" onClick={() => window.api.mediaStop()}>
-      <Square className="h-4 w-4" />
-    </Button>
-    {mediaType === 'video' && (
-      <Button size="sm" variant="outline" onClick={() => window.api.mediaToggleFullscreen()}>
-        <Maximize className="h-4 w-4" />
-      </Button>
-    )}
-  </div>
-)
+// ── IPC media controls (runner) ──────────────────────────────────
 
 export const MediaControls = ({ mediaType }: { mediaType: 'audio' | 'video' }) => {
   const { t } = useTranslation()
+  const [playing, setPlaying] = useState(false)
   const [state, setState] = useState<MediaPlaybackState>({
     currentTime: 0,
     duration: 0,
     volume: 0.1
   })
   const draggingRef = useRef(false)
+  const prevTimeRef = useRef(0)
 
   useEffect(() => {
     return window.api.onMediaStateUpdate((incoming) => {
       if (!draggingRef.current) setState(incoming)
+      setPlaying(incoming.currentTime !== prevTimeRef.current && incoming.currentTime > 0)
+      prevTimeRef.current = incoming.currentTime
     })
+  }, [])
+
+  const togglePlay = useCallback(() => {
+    if (playing) {
+      window.api.mediaPause()
+      setPlaying(false)
+    } else {
+      window.api.mediaPlay()
+      setPlaying(true)
+    }
+  }, [playing])
+
+  const stop = useCallback(() => {
+    window.api.mediaStop()
+    setPlaying(false)
   }, [])
 
   const startDrag = useCallback(() => { draggingRef.current = true }, [])
@@ -78,7 +78,19 @@ export const MediaControls = ({ mediaType }: { mediaType: 'audio' | 'video' }) =
       <span className="text-sm text-muted-foreground block">
         {mediaType === 'audio' ? t('runner.audioControls') : t('runner.videoControls')}
       </span>
-      <PlaybackControls mediaType={mediaType} />
+      <div className="flex gap-1">
+        <Button size="sm" variant="outline" onClick={togglePlay}>
+          {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+        </Button>
+        <Button size="sm" variant="outline" onClick={stop}>
+          <Square className="h-4 w-4" />
+        </Button>
+        {mediaType === 'video' && (
+          <Button size="sm" variant="outline" onClick={() => window.api.mediaToggleFullscreen()}>
+            <Maximize className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
       <div className="flex items-center gap-2">
         <span className="text-xs text-muted-foreground tabular-nums w-9 text-right">
           {formatTime(state.currentTime)}

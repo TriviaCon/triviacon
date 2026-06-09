@@ -5,6 +5,7 @@ import { MediaPreview } from '@renderer/components/ui/media-preview'
 import { RichText } from '@shared/RichText'
 import { cn } from '@renderer/lib/utils'
 import { mediaUrl } from '@shared/mediaUrl'
+import { mediaDisplayName } from '@shared/media'
 
 const BasicQuestionViewer = ({
   question,
@@ -47,6 +48,9 @@ const BasicQuestionViewer = ({
             <span className="text-sm text-muted-foreground">{t('runner.noMedia')}</span>
           ) : (
             <div className="rounded-lg border border-border p-3 space-y-2">
+              <span className="text-sm text-muted-foreground truncate block">
+                {mediaDisplayName(question.media) ?? question.media}
+              </span>
               <MediaPreview media={question.media} fullscreenButton playbackControls />
             </div>
           )}

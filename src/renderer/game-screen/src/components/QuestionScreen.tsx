@@ -195,7 +195,7 @@ const QuestionScreen = ({
           <video ref={videoRef} src={mediaSrc} preload="auto" className="hidden" />
         )}
 
-        <div className="flex-1 min-h-0 flex flex-col px-6 pb-4 pt-2">
+        <div className="flex-1 min-h-0 flex flex-col px-6 pb-4 pt-2 overflow-hidden">
           {/* Question text */}
           <div
             className={`shrink-0 text-center ${!hasMediaZone ? 'flex-1 flex items-center justify-center' : ''}`}
@@ -206,9 +206,9 @@ const QuestionScreen = ({
             />
           </div>
 
-          {/* Media — scales to fill remaining space */}
+          {/* Media — scales to fill remaining space, capped so answers aren't squeezed */}
           {hasVisualMedia && (
-            <div className="flex-1 min-h-0 flex items-center justify-center mt-2">
+            <div className="flex-1 min-h-0 max-h-[40vh] flex items-center justify-center mt-2">
               {mediaType === 'image' && (
                 <img
                   src={mediaSrc!}
@@ -229,7 +229,7 @@ const QuestionScreen = ({
 
           {/* Audio visualizer — fills the media zone for audio-only questions */}
           {hasAudioVisualizer && (
-            <div className="flex-1 min-h-0 mt-2 px-8">
+            <div className="flex-1 min-h-0 max-h-[40vh] mt-2 px-8">
               <AudioVisualizer audioRef={audioOnly ? videoRef : audioRef} />
             </div>
           )}

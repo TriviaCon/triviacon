@@ -3,10 +3,11 @@
  *
  * The quiz document (.tcq) is a ZIP containing:
  *   - quiz.json  — the quiz data (see QuizDocument in quizStore.ts)
- *   - media/     — attached media files (UUID-named)
+ *   - media/     — attached media files (originalname-uuid named)
  */
 
 import { readFile, copyFile, mkdir, rm, writeFile, readdir, access } from 'fs/promises'
+import { sanitizeFilename } from '@shared/media'
 import { constants, existsSync } from 'fs'
 import { join, dirname } from 'path'
 import { app } from 'electron'
@@ -161,8 +162,13 @@ const _copyTo = async (destPath: string): Promise<void> => {
 const _attachMedia = async (sourcePath: string, filename: string): Promise<string> => {
   if (!workDir) throw new Error('No quiz open')
   const uuid = crypto.randomUUID()
-  const ext = filename.split('.').pop() ?? ''
-  const mediaFilename = ext ? `${uuid}.${ext}` : uuid
+  const dotIdx = filename.lastIndexOf('.')
+  const baseName = dotIdx > 0 ? filename.slice(0, dotIdx) : filename
+  const ext = dotIdx > 0 ? filename.slice(dotIdx + 1) : ''
+  const sanitized = sanitizeFilename(baseName)
+  const mediaFilename = sanitized
+    ? ext ? `${sanitized}-${uuid}.${ext}` : `${sanitized}-${uuid}`
+    : ext ? `${uuid}.${ext}` : uuid
   const mediaDir = join(workDir, MEDIA_DIR)
   await mkdir(mediaDir, { recursive: true })
   await copyFile(sourcePath, join(mediaDir, mediaFilename))
