@@ -36,6 +36,16 @@
     "cancel": "Anuluj"
   },
 
+  "openProgress": {
+    "title": "Wczytywanie quizu",
+    "categories": "Kategorie:",
+    "questions": "Pytania:",
+    "extracting": "Wypakowywanie multimediów:",
+    "done": "Gotowe",
+    "close": "Zamknij",
+    "error": "Błąd wczytywania"
+  },
+
   "confirm": {
     "newQuiz": "Utworzyć nowy, pusty Quiz?\n\nNiezapisane zmiany zostaną utracone!",
     "loadQuiz": "Wczytać Quiz?\n\nNiezapisane zmiany zostaną utracone!",

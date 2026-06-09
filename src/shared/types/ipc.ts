@@ -88,6 +88,9 @@ export const IPC = {
   // Game screen appearance
   GAME_TOGGLE_DARK_MODE: 'game:toggleDarkMode',
 
+  // File open progress (main -> control panel)
+  FILE_OPEN_PROGRESS: 'file:open:progress',
+
   // State push (main -> both renderers)
   STATE_UPDATE: 'state:update',
 
@@ -135,6 +138,13 @@ export interface ShowQuestionPayload {
 }
 
 export type StateUpdatePayload = GameState
+
+export type FileOpenProgressPayload =
+  | { phase: 'metadata'; meta: { name: string; author: string; location: string; date: string } }
+  | { phase: 'structure'; categoryCount: number; questionCount: number }
+  | { phase: 'extracting'; current: number; total: number }
+  | { phase: 'done' }
+  | { phase: 'error'; message: string }
 
 export interface MediaPlaybackState {
   currentTime: number

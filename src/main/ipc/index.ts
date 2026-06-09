@@ -72,8 +72,11 @@ export function registerIpcHandlers(): void {
     })
     if (result.canceled || result.filePaths.length === 0) return null
     const filePath = result.filePaths[0]
+    const cpWin = getControlPanelWindow()
     try {
-      await quizFile.open(filePath)
+      await quizFile.open(filePath, (event) => {
+        if (cpWin) safeSend(cpWin, IPC.FILE_OPEN_PROGRESS, event)
+      })
       const quizMeta = store.metaGet()
       const cats = store.categoriesAll()
       const qMap = store.questionCategoryMap()
@@ -83,6 +86,7 @@ export function registerIpcHandlers(): void {
       return filePath
     } catch (err) {
       console.error('FILE_OPEN failed:', err)
+      if (cpWin) safeSend(cpWin, IPC.FILE_OPEN_PROGRESS, { phase: 'error', message: err instanceof Error ? err.message : String(err) })
       throw err
     }
   })

@@ -36,6 +36,16 @@
     "cancel": "Cancel"
   },
 
+  "openProgress": {
+    "title": "Loading Quiz",
+    "categories": "Categories:",
+    "questions": "Questions:",
+    "extracting": "Extracting multimedia:",
+    "done": "Done",
+    "close": "Close",
+    "error": "Load error"
+  },
+
   "confirm": {
     "newQuiz": "Create a new, empty Quiz?\n\nUnsaved changes will be lost!",
     "loadQuiz": "Load a Quiz?\n\nUnsaved changes will be lost!",
