@@ -3,7 +3,13 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@keyframes shimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}
+
 @theme inline {
+  --animate-shimmer: shimmer 1.5s ease-in-out infinite;
   --color-background: hsl(0 0% 100%);
   --color-foreground: hsl(240 10% 3.9%);
   --color-card: hsl(0 0% 100%);

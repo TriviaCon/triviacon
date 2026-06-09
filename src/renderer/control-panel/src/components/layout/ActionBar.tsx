@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   FilePlus,
@@ -20,6 +21,7 @@ import {
   DropdownMenuTrigger
 } from '@renderer/components/ui/dropdown-menu'
 import { useGameState } from '@renderer/hooks/useGameState'
+import { OpenProgressModal } from './OpenProgressModal'
 
 interface ActionBarProps {
   activeTab: string
@@ -27,9 +29,11 @@ interface ActionBarProps {
 
 const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
   const { t } = useTranslation()
+  const [progressOpen, setProgressOpen] = useState(false)
   const { gameScreenDarkMode } = useGameState()
 
   return (
+    <>
     <div className="flex gap-1 mb-2 pb-2 border-b border-border">
       {activeTab === 'builder' ? (
         <>
@@ -46,7 +50,9 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
             variant="secondary"
             onClick={async () => {
               if (confirm(t('confirm.loadQuiz'))) {
-                await window.api.fileOpen()
+                setProgressOpen(true)
+                const result = await window.api.fileOpen()
+                if (result === null) setProgressOpen(false)
               }
             }}
           >
@@ -102,6 +108,9 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
         </>
       )}
     </div>
+
+    <OpenProgressModal open={progressOpen} onClose={() => setProgressOpen(false)} />
+    </>
   )
 }
 

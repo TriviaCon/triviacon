@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer, webUtils } from 'electron'
 import { IPC } from '@shared/types/ipc'
-import type { MediaPlaybackState } from '@shared/types/ipc'
+import type { MediaPlaybackState, FileOpenProgressPayload } from '@shared/types/ipc'
 import type { GameState } from '@shared/types/state'
 import type { Category, Question, AnswerOption, QuizMeta, Stats } from '@shared/types/quiz'
 
@@ -18,6 +18,8 @@ const api = {
   // ── File operations ────────────────────────────────────────────
   fileNew: (): Promise<string | null> => ipcRenderer.invoke(IPC.FILE_NEW),
   fileOpen: (): Promise<string | null> => ipcRenderer.invoke(IPC.FILE_OPEN),
+  onOpenProgress: (cb: (event: FileOpenProgressPayload) => void) =>
+    subscribeWith<FileOpenProgressPayload>(IPC.FILE_OPEN_PROGRESS, cb),
   fileSave: (): Promise<boolean> => ipcRenderer.invoke(IPC.FILE_SAVE),
   fileSaveAs: (): Promise<string | null> => ipcRenderer.invoke(IPC.FILE_SAVE_AS),
 
