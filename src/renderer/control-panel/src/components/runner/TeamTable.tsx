@@ -1,4 +1,5 @@
 import { FormEvent, useState } from 'react'
+import { ConfirmDialog } from '@renderer/components/ui/confirm-dialog'
 import { useTranslation } from 'react-i18next'
 import { ChevronLeft, ChevronRight, UserPlus, UserX } from 'lucide-react'
 import { Button } from '@renderer/components/ui/button'
@@ -21,6 +22,7 @@ const TeamTable = () => {
 
   const [editingTeamId, setEditingTeamId] = useState<string | null>(null)
   const [editingTeamName, setEditingTeamName] = useState('')
+  const [deletingTeam, setDeletingTeam] = useState<{ id: string; name: string } | null>(null)
 
   const handleAddTeam = (event: FormEvent) => {
     event.preventDefault()
@@ -144,11 +146,7 @@ const TeamTable = () => {
                   variant="outline"
                   size="icon"
                   className="h-7 w-7 text-destructive border-destructive/50 hover:bg-destructive/10"
-                  onClick={() => {
-                    if (window.confirm(t('confirm.deleteTeam', { name: team.name }))) {
-                      window.api.removeTeam(team.id)
-                    }
-                  }}
+                  onClick={() => setDeletingTeam({ id: team.id, name: team.name })}
                 >
                   <UserX className="h-4 w-4" />
                 </Button>
@@ -164,6 +162,15 @@ const TeamTable = () => {
           )}
         </TableBody>
       </Table>
+      <ConfirmDialog
+        open={deletingTeam !== null}
+        title={t('confirm.deleteTeamTitle')}
+        description={t('confirm.deleteTeam', { name: deletingTeam?.name ?? '' })}
+        confirmLabel={t('actions.delete')}
+        destructive
+        onConfirm={() => { if (deletingTeam) window.api.removeTeam(deletingTeam.id) }}
+        onCancel={() => setDeletingTeam(null)}
+      />
     </div>
   )
 }

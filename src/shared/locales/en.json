@@ -33,7 +33,8 @@
     "backQuestions": "\u2190 Questions",
     "reveal": "Reveal: {{name}}",
     "revealNone": "Reveal",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "confirm": "Confirm"
   },
 
   "openProgress": {
@@ -52,7 +53,9 @@
     "newQuiz": "Create a new, empty Quiz?\n\nUnsaved changes will be lost!",
     "loadQuiz": "Load a Quiz?\n\nUnsaved changes will be lost!",
     "deleteCategory": "Are you sure you want to delete category \"{{name}}\" and all its questions?",
+    "deleteQuestionTitle": "Delete question?",
     "deleteQuestion": "Are you sure you want to delete this question and all its answers?",
+    "deleteTeamTitle": "Delete team?",
     "deleteTeam": "Are you sure you want to delete team '{{name}}'?"
   },
 
@@ -95,6 +98,7 @@
     "dropMedia": "Drop media file here",
     "dropOneFileOnly": "Please drop only one file.",
     "dropUnsupportedType": "Unsupported file type.",
+    "replaceMediaTitle": "Replace media?",
     "replaceMedia": "Replace the current media attachment?",
     "timer": "Timer (s)",
     "timerPlaceholder": "0 = disabled",
