@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { ConfirmDialog } from '@renderer/components/ui/confirm-dialog'
 import { useTranslation } from 'react-i18next'
 import { CloudUpload, Trash2, Volume2 } from 'lucide-react'
@@ -19,6 +20,7 @@ import { QueryLoading, QueryError } from '@renderer/components/ui/query-state'
 import { MediaPreview } from '@renderer/components/ui/media-preview'
 import { detectMediaType, mediaDisplayName, ALLOWED_MEDIA_EXTENSIONS } from '@shared/media'
 import { usePairQueryState } from '@renderer/hooks/usePairQueryState'
+import keys from '@renderer/utils/keys'
 
 /**
  * Single-answer editor. The question has exactly one answer option, which
@@ -61,6 +63,7 @@ const SingleAnswerField = ({
 
 const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void }) => {
   const { t } = useTranslation()
+  const qc = useQueryClient()
   const question = useQuestion(id)
   const answerOptions = useAnswerOptions(id)
   const addOption = useAddAnswerOptionMutation(id)
@@ -77,6 +80,13 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
   const dropTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   const update = (q: Partial<Question>) => updateQuestionMutation.mutate(q)
+
+  const refetchQuestion = () => {
+    question.refetch()
+    if (question.data?.categoryId !== undefined) {
+      qc.invalidateQueries({ queryKey: keys.questions(question.data.categoryId) })
+    }
+  }
 
   const showDropError = useCallback((msg: string) => {
     setDropError(msg)
@@ -125,9 +135,9 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
       }
 
       await window.api.mediaAttachFile(id, window.api.getFilePath(file))
-      question.refetch()
+      refetchQuestion()
     },
-    [id, question, t, showDropError]
+    [id, question, refetchQuestion, t, showDropError]
   )
 
   const guard = usePairQueryState(question, answerOptions)
@@ -279,7 +289,7 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
                     variant="outline"
                     onClick={async () => {
                       const path = await window.api.mediaPickFile(id)
-                      if (path) question.refetch()
+                      if (path) refetchQuestion()
                     }}
                   >
                     {t('actions.change')}
@@ -290,7 +300,7 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
                     className="text-destructive border-destructive/50 hover:bg-destructive/10"
                     onClick={async () => {
                       await window.api.mediaRemoveFile(id)
-                      question.refetch()
+                      refetchQuestion()
                     }}
                   >
                     <Trash2 className="h-4 w-4" />
@@ -316,7 +326,7 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
               className="w-full"
               onClick={async () => {
                 const path = await window.api.mediaPickFile(id)
-                if (path) question.refetch()
+                if (path) refetchQuestion()
               }}
             >
               <CloudUpload className="mr-2 h-4 w-4" /> {t('builder.attachMedia')}
@@ -357,7 +367,7 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
           if (pendingMediaPathRef.current) {
             await window.api.mediaAttachFile(id, pendingMediaPathRef.current)
             pendingMediaPathRef.current = null
-            question.refetch()
+            refetchQuestion()
           }
           setConfirmReplaceMedia(false)
         }}
