@@ -1,5 +1,6 @@
 import { join } from 'path'
-import { BrowserWindow, dialog, shell } from 'electron'
+import { BrowserWindow, ipcMain, shell } from 'electron'
+import { IPC } from '@shared/types/ipc'
 import { isDirty } from '../data/quizStore'
 import quizFile from '../data/quizFile'
 
@@ -37,27 +38,21 @@ export function createControlPanelWindow(): BrowserWindow {
     controlPanelWindow.loadFile(join(__dirname, '../renderer/control-panel/index.html'))
   }
 
+  let forceClose = false
+
   controlPanelWindow.on('close', (e) => {
-    if (!isDirty()) return
-    const choice = dialog.showMessageBoxSync(controlPanelWindow!, {
-      type: 'warning',
-      buttons: ['Save', "Don't Save", 'Cancel'],
-      defaultId: 0,
-      cancelId: 2,
-      title: 'Unsaved Changes',
-      message: 'You have unsaved changes. Do you want to save before closing?'
-    })
-    if (choice === 0) {
-      try {
-        quizFile.save()
-      } catch {
-        e.preventDefault()
-        return
-      }
-    } else if (choice === 2) {
-      e.preventDefault()
-      return
+    if (forceClose || !isDirty()) return
+    e.preventDefault()
+    controlPanelWindow!.webContents.send(IPC.APP_CLOSE_REQUEST)
+  })
+
+  ipcMain.handle(IPC.APP_CLOSE_RESPOND, async (_, choice: 'save' | 'discard' | 'cancel') => {
+    if (choice === 'cancel') return
+    if (choice === 'save') {
+      try { await quizFile.save() } catch { return }
     }
+    forceClose = true
+    controlPanelWindow?.close()
   })
 
   controlPanelWindow.on('closed', () => {

@@ -17,6 +17,8 @@ declare global {
     api: {
       // --- Shared (both windows) ---
       onStateUpdate: (callback: (state: GameState) => void) => () => void
+      onCloseRequest: (cb: () => void) => () => void
+      closeRespond: (choice: 'save' | 'discard' | 'cancel') => Promise<void>
 
       // --- File operations (control panel only) ---
       fileNew: () => Promise<string | null>
