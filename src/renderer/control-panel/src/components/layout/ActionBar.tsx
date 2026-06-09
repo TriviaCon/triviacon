@@ -20,8 +20,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@renderer/components/ui/dropdown-menu'
+import { ConfirmDialog } from '@renderer/components/ui/confirm-dialog'
 import { useGameState } from '@renderer/hooks/useGameState'
 import { OpenProgressModal } from './OpenProgressModal'
+
+type PendingAction = 'new' | 'load' | null
 
 interface ActionBarProps {
   activeTab: string
@@ -30,32 +33,29 @@ interface ActionBarProps {
 const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
   const { t } = useTranslation()
   const [progressOpen, setProgressOpen] = useState(false)
+  const [pending, setPending] = useState<PendingAction>(null)
   const { gameScreenDarkMode } = useGameState()
+
+  const handleConfirm = async () => {
+    if (pending === 'new') {
+      await window.api.fileNew()
+    } else if (pending === 'load') {
+      setProgressOpen(true)
+      const result = await window.api.fileOpen()
+      if (result === null) setProgressOpen(false)
+    }
+    setPending(null)
+  }
 
   return (
     <>
     <div className="flex gap-1 mb-2 pb-2 border-b border-border">
       {activeTab === 'builder' ? (
         <>
-          <Button
-            onClick={async () => {
-              if (confirm(t('confirm.newQuiz'))) {
-                await window.api.fileNew()
-              }
-            }}
-          >
+          <Button onClick={() => setPending('new')}>
             <FilePlus className="mr-1 h-4 w-4" /> {t('actions.newQuiz')}
           </Button>
-          <Button
-            variant="secondary"
-            onClick={async () => {
-              if (confirm(t('confirm.loadQuiz'))) {
-                setProgressOpen(true)
-                const result = await window.api.fileOpen()
-                if (result === null) setProgressOpen(false)
-              }
-            }}
-          >
+          <Button variant="secondary" onClick={() => setPending('load')}>
             <Upload className="mr-1 h-4 w-4" /> {t('actions.loadQuiz')}
           </Button>
           <DropdownMenu>
@@ -109,6 +109,14 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
       )}
     </div>
 
+    <ConfirmDialog
+      open={pending !== null}
+      title={pending === 'new' ? t('actions.newQuiz') : t('actions.loadQuiz')}
+      description={pending === 'new' ? t('confirm.newQuiz') : t('confirm.loadQuiz')}
+      confirmLabel={pending === 'new' ? t('actions.newQuiz') : t('actions.loadQuiz')}
+      onConfirm={handleConfirm}
+      onCancel={() => setPending(null)}
+    />
     <OpenProgressModal open={progressOpen} onClose={() => setProgressOpen(false)} />
     </>
   )

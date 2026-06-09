@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from 'react'
+import { ConfirmDialog } from '@renderer/components/ui/confirm-dialog'
 import { useTranslation } from 'react-i18next'
 import { CloudUpload, Trash2, Volume2 } from 'lucide-react'
 import { Button } from '@renderer/components/ui/button'
@@ -68,6 +69,9 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
   const updateQuestionMutation = useUpdateQuestionMutation(id)
   const deleteQuestionMutation = useDeleteQuestionMutation(question.data?.categoryId ?? 0)
   const [deleting, setDeleting] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [confirmReplaceMedia, setConfirmReplaceMedia] = useState(false)
+  const pendingMediaPathRef = useRef<string | null>(null)
   const [dragOver, setDragOver] = useState(false)
   const [dropError, setDropError] = useState<string | null>(null)
   const dropTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined)
@@ -114,7 +118,11 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
       }
 
       const hasExisting = !!question.data?.media
-      if (hasExisting && !window.confirm(t('builder.replaceMedia'))) return
+      if (hasExisting) {
+        pendingMediaPathRef.current = window.api.getFilePath(file)
+        setConfirmReplaceMedia(true)
+        return
+      }
 
       await window.api.mediaAttachFile(id, window.api.getFilePath(file))
       question.refetch()
@@ -133,7 +141,6 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
   const options = answerOptions.data!
 
   const handleDeleteQuestion = async () => {
-    if (!window.confirm(t('confirm.deleteQuestion'))) return
     setDeleting(true)
     try {
       await deleteQuestionMutation.mutateAsync(id)
@@ -223,7 +230,7 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
             <Button
               variant="destructive"
               className="shrink-0 self-stretch h-auto"
-              onClick={handleDeleteQuestion}
+              onClick={() => setConfirmDelete(true)}
               disabled={deleting}
             >
               <Trash2 className="h-4 w-4" />
@@ -333,6 +340,29 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
         renderOptionList(type === 'multiple-choice')
       )}
 
+      <ConfirmDialog
+        open={confirmDelete}
+        title={t('confirm.deleteQuestionTitle')}
+        description={t('confirm.deleteQuestion')}
+        confirmLabel={t('actions.delete')}
+        destructive
+        onConfirm={handleDeleteQuestion}
+        onCancel={() => setConfirmDelete(false)}
+      />
+      <ConfirmDialog
+        open={confirmReplaceMedia}
+        title={t('builder.replaceMediaTitle')}
+        description={t('builder.replaceMedia')}
+        onConfirm={async () => {
+          if (pendingMediaPathRef.current) {
+            await window.api.mediaAttachFile(id, pendingMediaPathRef.current)
+            pendingMediaPathRef.current = null
+            question.refetch()
+          }
+          setConfirmReplaceMedia(false)
+        }}
+        onCancel={() => { pendingMediaPathRef.current = null; setConfirmReplaceMedia(false) }}
+      />
     </div>
   )
 }

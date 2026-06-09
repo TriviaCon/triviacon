@@ -33,7 +33,8 @@
     "backQuestions": "\u2190 Pytania",
     "reveal": "Poka\u017c: {{name}}",
     "revealNone": "Poka\u017c",
-    "cancel": "Anuluj"
+    "cancel": "Anuluj",
+    "confirm": "Potwierdź"
   },
 
   "openProgress": {
@@ -52,7 +53,9 @@
     "newQuiz": "Utworzyć nowy, pusty Quiz?\n\nNiezapisane zmiany zostaną utracone!",
     "loadQuiz": "Wczytać Quiz?\n\nNiezapisane zmiany zostaną utracone!",
     "deleteCategory": "Czy na pewno chcesz usunąć kategorię \"{{name}}\" i wszystkie jej pytania?",
+    "deleteQuestionTitle": "Usunąć pytanie?",
     "deleteQuestion": "Czy na pewno chcesz usunąć to pytanie i wszystkie jego odpowiedzi?",
+    "deleteTeamTitle": "Usunąć drużynę?",
     "deleteTeam": "Czy na pewno chcesz usunąć drużynę '{{name}}'?"
   },
 
@@ -95,6 +98,7 @@
     "dropMedia": "Upuść plik multimedialny tutaj",
     "dropOneFileOnly": "Upuść tylko jeden plik.",
     "dropUnsupportedType": "Nieobsługiwany typ pliku.",
+    "replaceMediaTitle": "Zastąpić media?",
     "replaceMedia": "Zastąpić bieżące media?",
     "timer": "Timer (s)",
     "timerPlaceholder": "0 = wyłączony",
