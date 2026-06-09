@@ -4,6 +4,7 @@ export interface Category {
   id: number
   name: string
   questionCount: number
+  sortOrder: number
 }
 
 export interface Question {
@@ -13,6 +14,7 @@ export interface Question {
   text: string
   media: string | null
   audioOnly?: boolean
+  sortOrder: number
 }
 
 export interface AnswerOption {

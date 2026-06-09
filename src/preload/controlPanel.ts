@@ -30,17 +30,25 @@ const api = {
   categoryUpdate: (id: number, name: string): Promise<void> =>
     ipcRenderer.invoke(IPC.QUIZ_CATEGORY_UPDATE, id, name),
   categoryRemove: (id: number): Promise<void> => ipcRenderer.invoke(IPC.QUIZ_CATEGORY_REMOVE, id),
+  categoriesReorder: (orderedIds: number[]): Promise<void> =>
+    ipcRenderer.invoke(IPC.QUIZ_CATEGORIES_REORDER, orderedIds),
+  categoryShuffle: (categoryId: number): Promise<void> =>
+    ipcRenderer.invoke(IPC.QUIZ_CATEGORY_SHUFFLE, categoryId),
 
   // ── Questions ──────────────────────────────────────────────────
   questionsByCategory: (categoryId: number): Promise<Question[]> =>
     ipcRenderer.invoke(IPC.QUIZ_QUESTIONS_BY_CATEGORY, categoryId),
   questionById: (id: number): Promise<Question | null> =>
     ipcRenderer.invoke(IPC.QUIZ_QUESTION_BY_ID, id),
-  questionCreate: (question: Omit<Question, 'id'>): Promise<number> =>
+  questionCreate: (question: Omit<Question, 'id' | 'sortOrder'>): Promise<number> =>
     ipcRenderer.invoke(IPC.QUIZ_QUESTION_CREATE, question),
   questionUpdate: (id: number, updates: Partial<Omit<Question, 'id'>>): Promise<void> =>
     ipcRenderer.invoke(IPC.QUIZ_QUESTION_UPDATE, id, updates),
   questionDelete: (id: number): Promise<void> => ipcRenderer.invoke(IPC.QUIZ_QUESTION_DELETE, id),
+  questionsReorder: (orderedIds: number[]): Promise<void> =>
+    ipcRenderer.invoke(IPC.QUIZ_QUESTIONS_REORDER, orderedIds),
+  questionsBulkMove: (questionIds: number[], targetCategoryId: number): Promise<void> =>
+    ipcRenderer.invoke(IPC.QUIZ_QUESTIONS_BULK_MOVE, questionIds, targetCategoryId),
 
   // ── Answer Options ─────────────────────────────────────────────
   answerOptionsByQuestion: (questionId: number): Promise<AnswerOption[]> =>

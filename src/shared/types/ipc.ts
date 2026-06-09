@@ -33,6 +33,11 @@ export const IPC = {
   QUIZ_META_UPDATE_SPLASH: 'quiz:meta:updateSplash',
   QUIZ_META_UPDATE_TIMER: 'quiz:meta:updateTimer',
 
+  QUIZ_CATEGORIES_REORDER: 'quiz:categories:reorder',
+  QUIZ_QUESTIONS_REORDER: 'quiz:questions:reorder',
+  QUIZ_CATEGORY_SHUFFLE: 'quiz:category:shuffle',
+  QUIZ_QUESTIONS_BULK_MOVE: 'quiz:questions:bulkMove',
+
   QUIZ_STATS: 'quiz:stats',
 
   // Media management

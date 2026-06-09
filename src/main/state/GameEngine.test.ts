@@ -13,8 +13,8 @@ const meta: QuizMeta = {
 }
 
 const categories: Category[] = [
-  { id: 1, name: 'Science', questionCount: 2 },
-  { id: 2, name: 'History', questionCount: 1 }
+  { id: 1, name: 'Science', questionCount: 2, sortOrder: 0 },
+  { id: 2, name: 'History', questionCount: 1, sortOrder: 1 }
 ]
 
 const questionCategoryMap: Record<number, number> = { 10: 1, 11: 1, 20: 2 }
@@ -24,7 +24,8 @@ const question: Question = {
   categoryId: 1,
   type: 'multiple-choice',
   text: 'What is 2+2?',
-  media: null
+  media: null,
+  sortOrder: 0
 }
 
 const answerOptions: AnswerOption[] = [
