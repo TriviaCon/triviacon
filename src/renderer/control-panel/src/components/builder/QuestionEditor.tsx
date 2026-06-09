@@ -211,12 +211,27 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
     <div className="h-full flex flex-col space-y-3 overflow-y-auto">
       <div className="space-y-1">
         <Label>{t('builder.question')}</Label>
-        <RichTextEditor
-          key={`q-${id}`}
-          value={question.data!.text}
-          onChange={(html) => update({ text: html })}
-          ariaLabel={t('builder.question')}
-        />
+        <div className="flex items-stretch gap-2">
+          <RichTextEditor
+            key={`q-${id}`}
+            value={question.data!.text}
+            onChange={(html) => update({ text: html })}
+            ariaLabel={t('builder.question')}
+            className="flex-1"
+          />
+          {onDelete && (
+            <Button
+              variant="destructive"
+              size="icon"
+              className="shrink-0 self-stretch h-auto"
+              onClick={handleDeleteQuestion}
+              disabled={deleting}
+              title={t('actions.delete')}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
       </div>
 
       <div className="space-y-1">
@@ -319,17 +334,6 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
         renderOptionList(type === 'multiple-choice')
       )}
 
-      {onDelete && (
-        <Button
-          variant="outline"
-          className="w-full text-destructive border-destructive/50 hover:bg-destructive/10"
-          onClick={handleDeleteQuestion}
-          disabled={deleting}
-        >
-          <Trash2 className="mr-2 h-4 w-4" />
-          {t('actions.delete')}
-        </Button>
-      )}
     </div>
   )
 }
