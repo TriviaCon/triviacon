@@ -43,14 +43,17 @@ const QuestionScreen = ({
   const [mediaFullscreen, setMediaFullscreen] = useState(false)
   const savedTimeRef = useRef(0)
   const savedVolumeRef = useRef(0.1)
+  const savedPlayingRef = useRef(false)
 
   useEffect(() => {
     window.api.getDefaultVolume().then((v) => { savedVolumeRef.current = v })
   }, [])
 
-  // Reset fullscreen when the active question changes
+  // Reset fullscreen and playback bookkeeping when the active question changes
   useEffect(() => {
     setMediaFullscreen(false)
+    savedTimeRef.current = 0
+    savedPlayingRef.current = false
   }, [activeQuestion?.question.id])
 
   useEffect(() => {
@@ -86,6 +89,7 @@ const QuestionScreen = ({
         if (el) {
           savedTimeRef.current = el.currentTime
           savedVolumeRef.current = el.volume
+          savedPlayingRef.current = !el.paused
         }
         setMediaFullscreen((prev) => !prev)
       })
@@ -112,6 +116,7 @@ const QuestionScreen = ({
 
     if (savedTimeRef.current > 0) el.currentTime = savedTimeRef.current
     el.volume = savedVolumeRef.current
+    if (savedPlayingRef.current) void el.play().catch(() => {})
 
     const report = () => {
       savedTimeRef.current = el.currentTime
