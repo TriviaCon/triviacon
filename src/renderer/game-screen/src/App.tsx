@@ -56,7 +56,14 @@ function App() {
       )
     }
     case GamePhase.Ranking:
-      return <RankingScreen teams={gameState.teams} revealed={gameState.rankingRevealed} />
+      return (
+        <RankingScreen
+          teams={gameState.teams}
+          mode={gameState.rankingMode}
+          revealStep={gameState.rankingRevealStep}
+          tiebreakerTeamIds={gameState.tiebreakerTeamIds}
+        />
+      )
     case GamePhase.Splash:
     default:
       return <IdleScreen quizMeta={gameState.quizMeta} />

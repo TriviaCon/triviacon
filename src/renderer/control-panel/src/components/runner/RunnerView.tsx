@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LayoutGrid, Trophy } from 'lucide-react'
+import { LayoutGrid } from 'lucide-react'
 import { cn } from '@renderer/lib/utils'
-import { Button } from '@renderer/components/ui/button'
-import { ConfirmDialog } from '@renderer/components/ui/confirm-dialog'
 import TeamTable from './TeamTable'
+import { RankingModule } from './RankingModule'
 import QuestionPreview from './QuestionPreview'
 import { RunnerQuestionList } from './RunnerQuestionList'
 import { useGameState } from '@renderer/hooks/useGameState'
@@ -126,7 +125,6 @@ const PreviewColumn = ({
 // ── Runner view ─────────────────────────────────────────────────
 
 export const RunnerView = () => {
-  const { t } = useTranslation()
   const {
     categories,
     usedQuestions,
@@ -135,11 +133,9 @@ export const RunnerView = () => {
     activeQuestion,
     currentCategoryId,
     phase,
-    rankingRevealed,
   } = useGameState()
 
   const [stickyPreviewId, setStickyPreviewId] = useState<number | null>(null)
-  const [finishConfirmOpen, setFinishConfirmOpen] = useState(false)
 
   useEffect(() => {
     const currentId = selectedQuestionId ?? activeQuestion?.question.id ?? null
@@ -208,32 +204,7 @@ export const RunnerView = () => {
   const listCategoryId = selectedCategoryId ?? currentCategoryId
 
   if (phase === GamePhase.Ranking) {
-    return (
-      <div className="w-full h-full flex items-center justify-center">
-        {rankingRevealed ? (
-          <p className="text-muted-foreground text-lg">{t('actions.ranking')}</p>
-        ) : (
-          <div className="flex flex-col items-center gap-6">
-            <Button
-              size="lg"
-              className="text-2xl font-bold px-16 py-8 h-auto bg-amber-500 hover:bg-amber-400 text-white shadow-lg"
-              onClick={() => setFinishConfirmOpen(true)}
-            >
-              <Trophy className="mr-3 h-8 w-8" />
-              {t('actions.finishQuiz')}
-            </Button>
-          </div>
-        )}
-        <ConfirmDialog
-          open={finishConfirmOpen}
-          title={t('actions.finishQuiz')}
-          description={t('actions.finishQuizConfirm')}
-          confirmLabel={t('actions.finishQuiz')}
-          onConfirm={() => { setFinishConfirmOpen(false); window.api.revealRanking() }}
-          onCancel={() => setFinishConfirmOpen(false)}
-        />
-      </div>
-    )
+    return <RankingModule />
   }
 
   return (

@@ -147,7 +147,20 @@
     "timerDisabled": "Brak timera",
     "showOnScreen": "Pokaż na ekranie",
     "live": "Na żywo",
-    "showCategories": "Pokaż"
+    "showCategories": "Pokaż",
+    "finalResults": "Wyniki końcowe",
+    "tieGroups": "Remisy do rozstrzygnięcia",
+    "tiedForPlace": "Remis o miejsce {{place}}",
+    "runTiebreaker": "Dogrywka",
+    "tiebreakerActive": "Dogrywka w toku",
+    "tiebreakerHint": "Przełącz na Kategorie / Pytania, rozegraj ją i przyznaj punkty — licznik rund jest zatrzymany.",
+    "tiebreakerDone": "Zakończ dogrywkę",
+    "revealNext": "Odsłoń kolejne",
+    "stepBack": "Cofnij",
+    "revealWinnerTitle": "Odsłonić zwycięzcę?",
+    "revealWinnerConfirm": "Odsłoni to 1. miejsce z fanfarą i fajerwerkami.",
+    "revealAllDone": "Wszystkie miejsca odsłonięte",
+    "replayCelebration": "Powtórz fajerwerki"
   },
 
   "gameScreen": {
@@ -159,6 +172,8 @@
     "questionIndicator": "Pytanie {{current}}",
     "answering": "Odpowiada:",
     "ranking": "RANKING",
+    "finalResults": "WYNIKI KOŃCOWE",
+    "tiebreaker": "DOGRYWKA",
     "noTeams": "Brak drużyn w rankingu.",
     "points": "pkt",
     "byAuthor": "autorstwa {{author}}"

@@ -130,7 +130,7 @@ function SortableTeamRow({
 
 const TeamTable = () => {
   const { t } = useTranslation()
-  const { teams, currentTeamId } = useGameState()
+  const { teams, currentTeamId, tiebreakerTeamIds } = useGameState()
 
   const [orderedIds, setOrderedIds] = useState<string[]>(() => teams.map((t) => t.id))
   const [locked, setLocked] = useState(false)
@@ -156,13 +156,15 @@ const TeamTable = () => {
     prevTeamIdRef.current = currentTeamId
 
     if (!locked || !prev || !currentTeamId || orderedIds.length < 2) return
+    // Frozen during a tiebreaker sub-game (cycling tied teams isn't a real round).
+    if (tiebreakerTeamIds) return
 
     const prevIdx = orderedIds.indexOf(prev)
     const currIdx = orderedIds.indexOf(currentTeamId)
     if (prevIdx === orderedIds.length - 1 && currIdx === 0) {
       setRound((r) => r + 1)
     }
-  }, [currentTeamId, locked, orderedIds])
+  }, [currentTeamId, locked, orderedIds, tiebreakerTeamIds])
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
 

@@ -12,6 +12,7 @@ export enum GamePhase {
 
 export type TimerStatus = 'idle' | 'running' | 'paused' | 'expired'
 export type TimerSoundMode = 'beeps-and-buzz' | 'beeps' | 'buzz' | 'silent'
+export type RankingMode = 'regular' | 'final'
 
 export interface TimerState {
   status: TimerStatus
@@ -38,7 +39,9 @@ export interface GameState {
   quizMeta: QuizMeta | null
   quizFilePath: string | null
   quizDirty: boolean
-  rankingRevealed: boolean
+  rankingMode: RankingMode
+  rankingRevealStep: number
+  tiebreakerTeamIds: string[] | null
   categories: Category[]
   questionCategoryMap: Record<number, number>
   gameScreenDarkMode: boolean
@@ -60,7 +63,9 @@ export const INITIAL_GAME_STATE: GameState = {
   quizMeta: null,
   quizFilePath: null,
   quizDirty: false,
-  rankingRevealed: false,
+  rankingMode: 'regular',
+  rankingRevealStep: 0,
+  tiebreakerTeamIds: null,
   categories: [],
   questionCategoryMap: {},
   gameScreenDarkMode: false,

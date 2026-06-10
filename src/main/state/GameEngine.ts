@@ -1,5 +1,6 @@
 import { GamePhase, INITIAL_GAME_STATE, type GameState } from '@shared/types/state'
 import type { AnswerOption, Category, Question, QuizMeta, Team } from '@shared/types/quiz'
+import { totalRevealSteps } from '@shared/ranking'
 
 function createInitialState(): GameState {
   return { ...INITIAL_GAME_STATE }
@@ -145,15 +146,38 @@ export class GameEngine {
     this.clearSelection()
   }
 
+  /**
+   * Show the ranking screen. Preserves the finale sub-state (mode / reveal step /
+   * tiebreaker) so flipping Ranking → Questions → Ranking during a tiebreaker doesn't
+   * reset the finale. A fresh quiz resets these via createInitialState().
+   */
   showRanking(): void {
     this.state.phase = GamePhase.Ranking
     this.state.activeQuestion = null
-    this.state.rankingRevealed = false
     this.clearSelection()
   }
 
-  revealRanking(): void {
-    this.state.rankingRevealed = true
+  /** Enter the Final-mode finale (after the host confirms Finish). */
+  finishQuiz(): void {
+    this.state.phase = GamePhase.Ranking
+    this.state.rankingMode = 'final'
+    this.state.rankingRevealStep = 0
+    this.state.tiebreakerTeamIds = null
+    this.state.activeQuestion = null
+    this.clearSelection()
+  }
+
+  revealNext(): void {
+    const total = totalRevealSteps(this.state.teams.length)
+    this.state.rankingRevealStep = Math.min(this.state.rankingRevealStep + 1, total)
+  }
+
+  revealBack(): void {
+    this.state.rankingRevealStep = Math.max(this.state.rankingRevealStep - 1, 0)
+  }
+
+  setTiebreaker(teamIds: string[] | null): void {
+    this.state.tiebreakerTeamIds = teamIds && teamIds.length > 0 ? teamIds : null
   }
 
   // ── Selection (preview before reveal) ────────────────────────
