@@ -147,7 +147,20 @@
     "timerDisabled": "No timer set",
     "showOnScreen": "Show on Screen",
     "live": "Live",
-    "showCategories": "Show"
+    "showCategories": "Show",
+    "finalResults": "Final Results",
+    "tieGroups": "Resolve ties",
+    "tiedForPlace": "Tie for place {{place}}",
+    "runTiebreaker": "Tiebreaker",
+    "tiebreakerActive": "Tiebreaker in progress",
+    "tiebreakerHint": "Switch to Categories / Questions to play it out and award points — the round counter is frozen.",
+    "tiebreakerDone": "Finish tiebreaker",
+    "revealNext": "Reveal next",
+    "stepBack": "Step back",
+    "revealWinnerTitle": "Reveal the winner?",
+    "revealWinnerConfirm": "This reveals 1st place with fanfare and fireworks.",
+    "revealAllDone": "All positions revealed",
+    "replayCelebration": "Replay celebration"
   },
 
   "gameScreen": {
@@ -159,6 +172,8 @@
     "questionIndicator": "Question {{current}}",
     "answering": "Answering:",
     "ranking": "RANKING",
+    "finalResults": "FINAL RESULTS",
+    "tiebreaker": "TIEBREAKER",
     "noTeams": "No teams in ranking.",
     "points": "points",
     "byAuthor": "by {{author}}"

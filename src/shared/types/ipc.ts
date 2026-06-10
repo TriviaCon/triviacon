@@ -60,7 +60,10 @@ export const IPC = {
   GAME_SHOW_QUESTIONS: 'game:showQuestions',
   GAME_SHOW_QUESTION: 'game:showQuestion',
   GAME_SHOW_RANKING: 'game:showRanking',
-  GAME_REVEAL_RANKING: 'game:revealRanking',
+  GAME_FINISH_QUIZ: 'game:finishQuiz',
+  GAME_REVEAL_NEXT: 'game:revealNext',
+  GAME_REVEAL_BACK: 'game:revealBack',
+  GAME_SET_TIEBREAKER: 'game:setTiebreaker',
 
   // Selection (preview before reveal)
   GAME_SELECT_CATEGORY: 'game:selectCategory',

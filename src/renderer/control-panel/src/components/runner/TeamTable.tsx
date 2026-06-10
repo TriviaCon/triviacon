@@ -37,6 +37,7 @@ function SortableTeamRow({
   team,
   index,
   isCurrent,
+  isTiebreaker,
   locked,
   editing,
   editingName,
@@ -48,6 +49,7 @@ function SortableTeamRow({
   team: Team
   index: number
   isCurrent: boolean
+  isTiebreaker: boolean
   locked: boolean
   editing: boolean
   editingName: string
@@ -71,7 +73,10 @@ function SortableTeamRow({
     <TableRow
       ref={setNodeRef}
       style={style}
-      className={cn(isCurrent && 'bg-primary/10 font-semibold')}
+      className={cn(
+        isTiebreaker ? 'bg-amber-400/20' : isCurrent && 'bg-primary/10',
+        isCurrent && 'font-semibold'
+      )}
     >
       <TableCell className="w-8 pr-0">
         {locked ? (
@@ -130,7 +135,7 @@ function SortableTeamRow({
 
 const TeamTable = () => {
   const { t } = useTranslation()
-  const { teams, currentTeamId } = useGameState()
+  const { teams, currentTeamId, tiebreakerTeamIds } = useGameState()
 
   const [orderedIds, setOrderedIds] = useState<string[]>(() => teams.map((t) => t.id))
   const [locked, setLocked] = useState(false)
@@ -156,13 +161,15 @@ const TeamTable = () => {
     prevTeamIdRef.current = currentTeamId
 
     if (!locked || !prev || !currentTeamId || orderedIds.length < 2) return
+    // Frozen during a tiebreaker sub-game (cycling tied teams isn't a real round).
+    if (tiebreakerTeamIds) return
 
     const prevIdx = orderedIds.indexOf(prev)
     const currIdx = orderedIds.indexOf(currentTeamId)
     if (prevIdx === orderedIds.length - 1 && currIdx === 0) {
       setRound((r) => r + 1)
     }
-  }, [currentTeamId, locked, orderedIds])
+  }, [currentTeamId, locked, orderedIds, tiebreakerTeamIds])
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
 
@@ -268,6 +275,7 @@ const TeamTable = () => {
                   team={team}
                   index={index}
                   isCurrent={team.id === currentTeamId}
+                  isTiebreaker={tiebreakerTeamIds?.includes(team.id) ?? false}
                   locked={locked}
                   editing={editingTeamId === team.id}
                   editingName={editingTeamName}

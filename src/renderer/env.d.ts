@@ -86,7 +86,10 @@ declare global {
       showQuestions: (categoryId: number) => Promise<void>
       showQuestion: (questionId: number) => Promise<void>
       showRanking: () => Promise<void>
-      revealRanking: () => Promise<void>
+      finishQuiz: () => Promise<void>
+      revealNext: () => Promise<void>
+      revealBack: () => Promise<void>
+      setTiebreaker: (teamIds: string[] | null) => Promise<void>
 
       // --- Selection (preview before reveal) ---
       selectCategory: (id: number | null) => Promise<void>

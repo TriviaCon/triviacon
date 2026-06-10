@@ -378,8 +378,23 @@ export function registerIpcHandlers(): void {
     broadcastState()
   })
 
-  ipcMain.handle(IPC.GAME_REVEAL_RANKING, () => {
-    engine.revealRanking()
+  ipcMain.handle(IPC.GAME_FINISH_QUIZ, () => {
+    engine.finishQuiz()
+    broadcastState()
+  })
+
+  ipcMain.handle(IPC.GAME_REVEAL_NEXT, () => {
+    engine.revealNext()
+    broadcastState()
+  })
+
+  ipcMain.handle(IPC.GAME_REVEAL_BACK, () => {
+    engine.revealBack()
+    broadcastState()
+  })
+
+  ipcMain.handle(IPC.GAME_SET_TIEBREAKER, (_, teamIds: string[] | null) => {
+    engine.setTiebreaker(teamIds)
     broadcastState()
   })
 

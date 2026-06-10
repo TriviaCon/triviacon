@@ -110,7 +110,11 @@ const api = {
   showQuestion: (questionId: number): Promise<void> =>
     ipcRenderer.invoke(IPC.GAME_SHOW_QUESTION, questionId),
   showRanking: (): Promise<void> => ipcRenderer.invoke(IPC.GAME_SHOW_RANKING),
-  revealRanking: (): Promise<void> => ipcRenderer.invoke(IPC.GAME_REVEAL_RANKING),
+  finishQuiz: (): Promise<void> => ipcRenderer.invoke(IPC.GAME_FINISH_QUIZ),
+  revealNext: (): Promise<void> => ipcRenderer.invoke(IPC.GAME_REVEAL_NEXT),
+  revealBack: (): Promise<void> => ipcRenderer.invoke(IPC.GAME_REVEAL_BACK),
+  setTiebreaker: (teamIds: string[] | null): Promise<void> =>
+    ipcRenderer.invoke(IPC.GAME_SET_TIEBREAKER, teamIds),
 
   // ── Selection (preview before reveal) ──────────────────────────
   selectCategory: (id: number | null): Promise<void> =>
