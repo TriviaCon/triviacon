@@ -37,6 +37,7 @@ function SortableTeamRow({
   team,
   index,
   isCurrent,
+  isTiebreaker,
   locked,
   editing,
   editingName,
@@ -48,6 +49,7 @@ function SortableTeamRow({
   team: Team
   index: number
   isCurrent: boolean
+  isTiebreaker: boolean
   locked: boolean
   editing: boolean
   editingName: string
@@ -71,7 +73,10 @@ function SortableTeamRow({
     <TableRow
       ref={setNodeRef}
       style={style}
-      className={cn(isCurrent && 'bg-primary/10 font-semibold')}
+      className={cn(
+        isTiebreaker ? 'bg-amber-400/20' : isCurrent && 'bg-primary/10',
+        isCurrent && 'font-semibold'
+      )}
     >
       <TableCell className="w-8 pr-0">
         {locked ? (
@@ -270,6 +275,7 @@ const TeamTable = () => {
                   team={team}
                   index={index}
                   isCurrent={team.id === currentTeamId}
+                  isTiebreaker={tiebreakerTeamIds?.includes(team.id) ?? false}
                   locked={locked}
                   editing={editingTeamId === team.id}
                   editingName={editingTeamName}
