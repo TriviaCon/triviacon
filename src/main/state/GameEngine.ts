@@ -1,6 +1,6 @@
 import { GamePhase, INITIAL_GAME_STATE, type GameState } from '@shared/types/state'
 import type { AnswerOption, Category, Question, QuizMeta, Team } from '@shared/types/quiz'
-import { totalRevealSteps } from '@shared/ranking'
+import { placeGroups, totalRevealSteps } from '@shared/ranking'
 
 function createInitialState(): GameState {
   return { ...INITIAL_GAME_STATE }
@@ -168,7 +168,7 @@ export class GameEngine {
   }
 
   revealNext(): void {
-    const total = totalRevealSteps(this.state.teams.length)
+    const total = totalRevealSteps(placeGroups(this.state.teams).length)
     this.state.rankingRevealStep = Math.min(this.state.rankingRevealStep + 1, total)
   }
 

@@ -4,11 +4,63 @@ import { Trophy, ChevronLeft, Eye, Swords, Check } from 'lucide-react'
 import { cn } from '@renderer/lib/utils'
 import { Button } from '@renderer/components/ui/button'
 import { ConfirmDialog } from '@renderer/components/ui/confirm-dialog'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@renderer/components/ui/table'
 import { useGameState } from '@renderer/hooks/useGameState'
-import { tieGroups, totalRevealSteps, revealedIndices } from '@shared/ranking'
+import { placeGroups, totalRevealSteps, revealedGroups } from '@shared/ranking'
 import type { Team } from '@shared/types/quiz'
 
-// ── Tiebreaker panel (a group is being resolved) ────────────────────
+const MEDALS = ['🥇', '🥈', '🥉']
+
+const groupNames = (group: Team[]): string => group.map((tm) => tm.name).join(', ')
+
+// ── Standings table (ties share a row) ──────────────────────────────
+
+function StandingsTable({
+  groups,
+  revealed,
+  dimUnrevealed
+}: {
+  groups: Team[][]
+  revealed: Set<number>
+  dimUnrevealed: boolean
+}) {
+  const { t } = useTranslation()
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead className="w-14">#</TableHead>
+          <TableHead>{t('runner.teams')}</TableHead>
+          <TableHead className="w-20 text-right">{t('runner.score')}</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {groups.map((group, gi) => (
+          <TableRow
+            key={group[0].id}
+            className={cn(dimUnrevealed && !revealed.has(gi) && 'opacity-35')}
+          >
+            <TableCell className="font-semibold tabular-nums whitespace-nowrap">
+              {MEDALS[gi] ? `${MEDALS[gi]} ` : ''}
+              {gi + 1}
+            </TableCell>
+            <TableCell className="font-medium">{groupNames(group)}</TableCell>
+            <TableCell className="text-right tabular-nums">{group[0].score}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  )
+}
+
+// ── Tiebreaker panel (a tier is being resolved) ─────────────────────
 
 function TiebreakerPanel({ teams }: { teams: Team[] }) {
   const { t } = useTranslation()
@@ -48,21 +100,31 @@ export function RankingModule() {
   const [finishConfirm, setFinishConfirm] = useState(false)
   const [winnerConfirm, setWinnerConfirm] = useState(false)
 
-  const pts = t('gameScreen.points')
-  const sorted = [...teams].sort((a, b) => b.score - a.score)
+  const groups = placeGroups(teams)
+  const total = totalRevealSteps(groups.length)
+  const revealed = revealedGroups(groups.length, rankingRevealStep)
+  const isFinal = rankingMode === 'final'
 
-  // ── Regular mode: just the Finish gate ────────────────────────────
-  if (rankingMode === 'regular') {
+  const tableBlock = (
+    <StandingsTable groups={groups} revealed={revealed} dimUnrevealed={isFinal} />
+  )
+
+  // ── Regular mode: table + Finish gate ─────────────────────────────
+  if (!isFinal) {
     return (
-      <div className="w-full h-full flex items-center justify-center">
-        <Button
-          size="lg"
-          className="text-2xl font-bold px-16 py-8 h-auto bg-amber-500 hover:bg-amber-400 text-white shadow-lg"
-          onClick={() => setFinishConfirm(true)}
-        >
-          <Trophy className="mr-3 h-8 w-8" />
-          {t('actions.finishQuiz')}
-        </Button>
+      <div className="w-full h-full overflow-y-auto p-6">
+        <div className="mx-auto max-w-xl flex flex-col gap-6">
+          {tableBlock}
+          <Button
+            size="lg"
+            className="self-center text-2xl font-bold px-16 py-8 h-auto bg-amber-500 hover:bg-amber-400 text-white shadow-lg"
+            onClick={() => setFinishConfirm(true)}
+            disabled={teams.length === 0}
+          >
+            <Trophy className="mr-3 h-8 w-8" />
+            {t('actions.finishQuiz')}
+          </Button>
+        </div>
         <ConfirmDialog
           open={finishConfirm}
           title={t('actions.finishQuiz')}
@@ -79,19 +141,18 @@ export function RankingModule() {
   }
 
   // ── Final mode ────────────────────────────────────────────────────
-  const total = totalRevealSteps(teams.length)
-  const revealed = revealedIndices(teams.length, rankingRevealStep)
   const nextIsWinner = rankingRevealStep === total - 1
   const allRevealed = rankingRevealStep >= total
-  const ties = tieGroups(teams)
+
+  // Tie tiers (2+ teams) with their place number.
+  const tieEntries = groups
+    .map((group, i) => ({ group, place: i + 1 }))
+    .filter((e) => e.group.length >= 2)
 
   const activeTiebreakerTeams =
     tiebreakerTeamIds && tiebreakerTeamIds.length > 0
       ? teams.filter((tm) => tiebreakerTeamIds.includes(tm.id))
       : null
-
-  const placeOf = (group: Team[]): number =>
-    Math.min(...group.map((g) => sorted.findIndex((s) => s.id === g.id))) + 1
 
   const handleRevealNext = () => {
     if (nextIsWinner) setWinnerConfirm(true)
@@ -103,28 +164,27 @@ export function RankingModule() {
       <div className="mx-auto max-w-xl flex flex-col gap-5">
         <h2 className="text-xl font-bold">{t('runner.finalResults')}</h2>
 
+        {tableBlock}
+
         {activeTiebreakerTeams ? (
           <TiebreakerPanel teams={activeTiebreakerTeams} />
         ) : (
           <>
-            {/* Ties to resolve */}
-            {ties.length > 0 && (
+            {tieEntries.length > 0 && (
               <div className="space-y-2">
                 <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                   {t('runner.tieGroups')}
                 </h3>
-                {ties.map((group, i) => (
+                {tieEntries.map(({ group, place }) => (
                   <div
-                    key={i}
+                    key={group[0].id}
                     className="flex items-center gap-3 rounded-lg border border-border p-3"
                   >
                     <div className="flex-1 min-w-0">
                       <div className="text-xs text-muted-foreground">
-                        {t('runner.tiedForPlace', { place: placeOf(group) })}
+                        {t('runner.tiedForPlace', { place })}
                       </div>
-                      <div className="truncate font-medium">
-                        {group.map((g) => g.name).join(', ')}
-                      </div>
+                      <div className="truncate font-medium">{groupNames(group)}</div>
                     </div>
                     <Button
                       variant="outline"
@@ -140,7 +200,6 @@ export function RankingModule() {
               </div>
             )}
 
-            {/* Reveal stepper */}
             <div className="rounded-lg border border-border p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
@@ -170,26 +229,6 @@ export function RankingModule() {
                 </Button>
               </div>
             </div>
-
-            {/* Standings reference */}
-            <ol className="space-y-1">
-              {sorted.map((team, index) => (
-                <li
-                  key={team.id}
-                  className={cn(
-                    'flex items-center justify-between rounded px-2 py-1 text-sm',
-                    revealed.has(index) ? 'opacity-100' : 'opacity-40'
-                  )}
-                >
-                  <span className="truncate">
-                    {index + 1}. {team.name}
-                  </span>
-                  <span className="tabular-nums ml-3 shrink-0">
-                    {team.score} {pts}
-                  </span>
-                </li>
-              ))}
-            </ol>
           </>
         )}
       </div>

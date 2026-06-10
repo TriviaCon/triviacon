@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { Team } from '@shared/types/quiz'
 import type { RankingMode } from '@shared/types/state'
-import { totalRevealSteps, revealedIndices } from '@shared/ranking'
+import { placeGroups, totalRevealSteps, revealedGroups } from '@shared/ranking'
 
 import fanfareFF5 from '../assets/FF5_Victory_(Fanfare).ogg'
 import fanfareNFL from '../assets/NFL_FOX.mp3'
@@ -25,7 +25,7 @@ function Fireworks() {
   )
 }
 
-// ── Medal colours + sizes ────────────────────────────────────
+// ── Medal colours + sizes (by podium tier) ──────────────────
 
 const MEDAL_STYLES = [
   { emoji: '🥇', color: 'text-yellow-400' },
@@ -34,6 +34,8 @@ const MEDAL_STYLES = [
 ]
 
 const sizeClasses = ['text-[4.5rem]', 'text-[3.5rem]', 'text-[2.9rem]', 'text-[1.7rem]']
+
+const names = (group: Team[]): string => group.map((tm) => tm.name).join(', ')
 
 // ── RankingScreen ─────────────────────────────────────────────
 
@@ -47,16 +49,16 @@ interface Props {
 const RankingScreen = ({ teams, mode, revealStep, tiebreakerTeamIds }: Props) => {
   const { t } = useTranslation()
   const pts = t('gameScreen.points')
-  const sorted = [...teams].sort((a, b) => b.score - a.score)
 
-  const total = totalRevealSteps(teams.length)
+  const groups = placeGroups(teams)
+  const total = totalRevealSteps(groups.length)
   const isFinal = mode === 'final'
   const celebrate = isFinal && total > 0 && revealStep >= total
-  const revealed = revealedIndices(teams.length, revealStep)
+  const revealed = revealedGroups(groups.length, revealStep)
 
   const tiebreakerActive = !!(tiebreakerTeamIds && tiebreakerTeamIds.length > 0)
 
-  // Fanfare on the #1 reveal; cancelled/stopped on step-back or unmount.
+  // Fanfare on the winning-tier reveal; cancelled/stopped on step-back or unmount.
   useEffect(() => {
     if (!celebrate) return
     let cancelled = false
@@ -85,7 +87,7 @@ const RankingScreen = ({ teams, mode, revealStep, tiebreakerTeamIds }: Props) =>
   if (teams.length === 0) {
     body = <div className="text-[4rem]">{t('gameScreen.noTeams')}</div>
   } else if (tiebreakerActive) {
-    // Just the tied group, live scores
+    // The tied group only, individual live scores (the point is to separate them).
     const tied = teams
       .filter((tm) => tiebreakerTeamIds!.includes(tm.id))
       .sort((a, b) => b.score - a.score)
@@ -95,18 +97,18 @@ const RankingScreen = ({ teams, mode, revealStep, tiebreakerTeamIds }: Props) =>
       </p>
     ))
   } else if (isFinal) {
-    // Placeholder slots that fill bottom-up
-    const podium = [0, 1, 2].filter((i) => i < teams.length)
+    // Placeholder tiers that fill bottom-up; ties share a tier row.
+    const podium = [0, 1, 2].filter((i) => i < groups.length)
     body = (
       <>
         {podium.map((i) => {
           const medal = MEDAL_STYLES[i]
           const size = sizeClasses[i]
           if (revealed.has(i)) {
-            const team = sorted[i]
+            const group = groups[i]
             return (
               <p key={i} className={`${size} font-semibold text-center ${medal.color}`}>
-                {medal.emoji} {i + 1}. {team.name}: {team.score} {pts}
+                {medal.emoji} {i + 1}. {names(group)}: {group[0].score} {pts}
               </p>
             )
           }
@@ -117,12 +119,12 @@ const RankingScreen = ({ teams, mode, revealStep, tiebreakerTeamIds }: Props) =>
           )
         })}
 
-        {teams.length > 3 &&
+        {groups.length > 3 &&
           (revealed.has(3) ? (
             <div className="mt-4 flex flex-col items-center gap-1">
-              {sorted.slice(3).map((team, j) => (
-                <p key={team.id} className={`${sizeClasses[3]} font-semibold text-center`}>
-                  {j + 4}. {team.name}: {team.score} {pts}
+              {groups.slice(3).map((group, j) => (
+                <p key={group[0].id} className={`${sizeClasses[3]} font-semibold text-center`}>
+                  {j + 4}. {names(group)}: {group[0].score} {pts}
                 </p>
               ))}
             </div>
@@ -134,13 +136,13 @@ const RankingScreen = ({ teams, mode, revealStep, tiebreakerTeamIds }: Props) =>
       </>
     )
   } else {
-    // Regular mode: plain numbered list, top 3 larger, no medals
-    body = sorted.map((team, index) => (
-      <React.Fragment key={team.id}>
-        <p className={`${sizeClasses[Math.min(index, 3)]} font-semibold text-center`}>
-          {index + 1}. {team.name}: {team.score} {pts}
+    // Regular mode: plain tier list, top 3 larger, no medals; ties share a row.
+    body = groups.map((group, gi) => (
+      <React.Fragment key={group[0].id}>
+        <p className={`${sizeClasses[Math.min(gi, 3)]} font-semibold text-center`}>
+          {gi + 1}. {names(group)}: {group[0].score} {pts}
         </p>
-        {index === 2 && sorted.length > 3 && <div className="h-8" />}
+        {gi === 2 && groups.length > 3 && <div className="h-8" />}
       </React.Fragment>
     ))
   }
