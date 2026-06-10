@@ -9,6 +9,7 @@ import quizFile from '../../data/quizFile'
 import * as store from '../../data/quizStore'
 import { GameEngine } from '../state/GameEngine'
 import { getControlPanelWindow, getGameScreenWindow } from '../windows'
+import { exportQuizPdf } from '../export/pdfExport'
 
 const engine = new GameEngine()
 
@@ -305,6 +306,12 @@ export function registerIpcHandlers(): void {
   // ── Stats ────────────────────────────────────────────────────────
 
   ipcMain.handle(IPC.QUIZ_STATS, () => store.getStats())
+
+  ipcMain.handle(IPC.QUIZ_EXPORT_PDF, async () => {
+    const parent = getControlPanelWindow()
+    if (!parent) return
+    await exportQuizPdf(parent)
+  })
 
   // ── Team management ──────────────────────────────────────────────
 

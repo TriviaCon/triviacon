@@ -89,6 +89,7 @@ const api = {
 
   // ── Stats ──────────────────────────────────────────────────────
   quizStats: (): Promise<Stats> => ipcRenderer.invoke(IPC.QUIZ_STATS),
+  exportPdf: (): Promise<void> => ipcRenderer.invoke(IPC.QUIZ_EXPORT_PDF),
 
   // ── Team management ─────────────────────────────────────────────
   addTeam: (name: string): Promise<void> => ipcRenderer.invoke(IPC.GAME_ADD_TEAM, name),

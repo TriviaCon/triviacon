@@ -71,6 +71,7 @@
     "noQuizLoaded": "No quiz loaded.",
     "quizInfo": "Quiz Info",
     "stats": "Stats",
+    "exportPdf": "Export PDF",
     "loadingMeta": "Loading quiz metadata...",
     "name": "Name",
     "namePlaceholder": "Quiz Name",

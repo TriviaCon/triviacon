@@ -70,6 +70,7 @@ declare global {
 
       // --- Stats ---
       quizStats: () => Promise<Stats>
+      exportPdf: () => Promise<void>
 
       // --- Team management ---
       addTeam: (name: string) => Promise<void>

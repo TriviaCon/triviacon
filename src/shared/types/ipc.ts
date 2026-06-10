@@ -39,6 +39,7 @@ export const IPC = {
   QUIZ_QUESTIONS_BULK_MOVE: 'quiz:questions:bulkMove',
 
   QUIZ_STATS: 'quiz:stats',
+  QUIZ_EXPORT_PDF: 'quiz:exportPdf',
 
   // Media management
   QUIZ_MEDIA_PICK: 'quiz:media:pick',

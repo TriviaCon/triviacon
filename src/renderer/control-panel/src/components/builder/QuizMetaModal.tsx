@@ -1,6 +1,6 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BarChart3, ImagePlus, Trash2 } from 'lucide-react'
+import { BarChart3, FileDown, ImagePlus, Trash2 } from 'lucide-react'
 import { Button } from '@renderer/components/ui/button'
 import { Input } from '@renderer/components/ui/input'
 import { Label } from '@renderer/components/ui/label'
@@ -21,7 +21,6 @@ import {
   useUpdateTimer
 } from '@renderer/hooks/useQuizMeta'
 import { QueryLoading, QueryError } from '@renderer/components/ui/query-state'
-import { useState } from 'react'
 
 const ACCEPTED_IMAGE_TYPES = 'image/png,image/jpeg,image/gif,image/webp'
 
@@ -40,6 +39,7 @@ export const QuizMetaModal = ({ open, onOpenChange }: QuizMetaModalProps) => {
   const updateSplash = useUpdateSplash()
   const updateTimer = useUpdateTimer()
   const [showStats, setShowStats] = useState(false)
+  const [exporting, setExporting] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -122,7 +122,19 @@ export const QuizMetaModal = ({ open, onOpenChange }: QuizMetaModalProps) => {
                 </div>
               </div>
 
-              <div className="flex justify-end pt-2 border-t border-border">
+              <div className="flex justify-between pt-2 border-t border-border">
+                <Button
+                  variant="outline"
+                  disabled={exporting}
+                  onClick={async () => {
+                    setExporting(true)
+                    try { await window.api.exportPdf() }
+                    finally { setExporting(false) }
+                  }}
+                >
+                  <FileDown className="mr-2 h-4 w-4" />
+                  {exporting ? '…' : t('builder.exportPdf')}
+                </Button>
                 <Button variant="outline" onClick={() => setShowStats(true)}>
                   <BarChart3 className="mr-2 h-4 w-4" /> {t('builder.stats')}
                 </Button>

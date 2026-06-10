@@ -71,6 +71,7 @@
     "noQuizLoaded": "Nie wczytano quizu.",
     "quizInfo": "Informacje o quizie",
     "stats": "Statystyki",
+    "exportPdf": "Eksportuj PDF",
     "loadingMeta": "Wczytywanie metadanych quizu...",
     "name": "Nazwa",
     "namePlaceholder": "Nazwa quizu",
