@@ -56,7 +56,8 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  filter: brightness(1.6) saturate(1.4);
+  /* Light theme default: darken + deepen so neon sparks read against white. */
+  filter: brightness(0.6) saturate(1.7) contrast(1.15);
   box-shadow:
     -180px -328px #0040ff, 372px -25px #00ff84, 285px 25px #002bff,
     -170px -463px #ff009d, -164px -431px #ffb300, -75px -470px #ff006e,
@@ -84,6 +85,12 @@
 .pyro > .after {
   animation-delay: 1.25s, 1.25s, 1.25s;
   animation-duration: 1.25s, 1.25s, 6.25s;
+}
+
+/* Dark theme: brighten the sparks to pop against the dark sky. */
+.dark .pyro > .before,
+.dark .pyro > .after {
+  filter: brightness(1.6) saturate(1.4);
 }
 
 @keyframes bang {
