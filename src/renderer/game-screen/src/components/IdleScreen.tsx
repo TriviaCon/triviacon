@@ -69,28 +69,30 @@ const IdleScreen = ({ quizMeta }: { quizMeta: QuizMeta | null }) => {
   }, [visualSrc, audioSrc])
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen gap-10 bg-background text-foreground p-12">
-      {/* Contained hero */}
+    <div className="flex flex-col items-center justify-center h-screen gap-8 bg-background text-foreground p-8">
+      {/* Contained hero — grows to fill the space left above the metadata card */}
       {visualSrc && (
-        <div className="w-[58vw] max-w-[60vh] aspect-video rounded-xl overflow-hidden shadow-2xl shrink-0">
-          {visualType === 'video' ? (
-            <video
-              ref={videoRef}
-              src={visualSrc}
-              autoPlay
-              loop={loop}
-              muted={muted}
-              playsInline
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            <img src={visualSrc} alt="" className="h-full w-full object-contain" />
-          )}
+        <div className="flex-1 min-h-0 w-full flex items-center justify-center">
+          <div className="h-full aspect-video max-w-full rounded-xl overflow-hidden shadow-2xl">
+            {visualType === 'video' ? (
+              <video
+                ref={videoRef}
+                src={visualSrc}
+                autoPlay
+                loop={loop}
+                muted={muted}
+                playsInline
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <img src={visualSrc} alt="" className="h-full w-full object-contain" />
+            )}
+          </div>
         </div>
       )}
 
       {/* Metadata card — always present */}
-      <div className="text-center">
+      <div className="text-center shrink-0">
         {quizMeta?.name && <h1 className="text-[5rem] leading-none font-bold">{quizMeta.name}</h1>}
         {quizMeta?.location && <h2 className="text-[3rem] mt-4">{quizMeta.location}</h2>}
         {quizMeta?.date && <h3 className="text-[2rem] opacity-70 mt-2">{quizMeta.date}</h3>}
