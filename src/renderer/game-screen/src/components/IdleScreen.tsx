@@ -73,7 +73,11 @@ const IdleScreen = ({ quizMeta }: { quizMeta: QuizMeta | null }) => {
   }, [visualSrc, audioSrc])
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen gap-8 bg-background text-foreground p-8">
+    <div
+      className={`flex flex-col items-center justify-center h-screen bg-background text-foreground ${
+        grow ? 'gap-3 p-4' : 'gap-8 p-8'
+      }`}
+    >
       {/* Hero — grows to fill the space left above the metadata card */}
       {visualSrc && (
         <div className="flex-1 min-h-0 w-full flex items-center justify-center">
