@@ -122,9 +122,30 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({ show, onHide }) => {
             </div>
           </div>
 
+          {/* Audio credits */}
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-2">
+              Sound
+            </p>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Ranking fanfares are the property of their respective owners and are not
+              covered by this app’s license: “Victory” (Final Fantasy V) © Square Enix ·
+              Pokémon Gen 1 © Nintendo / Game Freak · NFL on Fox theme © Fox.
+            </p>
+          </div>
+
           {/* Footer */}
           <div className="flex items-center justify-between pt-1 border-t border-border">
-            <span className="text-xs text-muted-foreground">MIT License</span>
+            <a
+              href="#"
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+              onClick={(e) => {
+                e.preventDefault()
+                window.open('https://github.com/TriviaCon/triviacon/blob/main/LICENSE', '_blank')
+              }}
+            >
+              MIT License
+            </a>
             <div className="flex items-center gap-3">
               <a
                 href="#"

@@ -113,3 +113,13 @@ pnpm format       # Prettier
 - [TanStack Query](https://tanstack.com/query) — data fetching and cache
 - [i18next](https://www.i18next.com/) — internationalisation
 - [adm-zip](https://github.com/cthackers/adm-zip) — quiz file packaging
+
+---
+
+## License
+
+Triviacon's code is released under the [MIT License](LICENSE) — © 2026 Marcin "Aluś" Jędrecki. Use it, fork it, build on it.
+
+The *idea* of a trivia-night host isn't anyone's to own — others surely exist; this is just my take on it. If Triviacon inspired your own build, a nod back is appreciated, never required.
+
+**Third-party assets.** The bundled ranking fanfares — “Victory” (Final Fantasy V) © Square Enix, Pokémon Gen 1 © Nintendo / Game Freak, and the NFL on Fox theme © Fox — remain the property of their respective owners and are **not** covered by the MIT license.
