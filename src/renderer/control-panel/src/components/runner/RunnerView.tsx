@@ -4,6 +4,7 @@ import { LayoutGrid } from 'lucide-react'
 import { cn } from '@renderer/lib/utils'
 import TeamTable from './TeamTable'
 import { RankingModule } from './RankingModule'
+import { SplashRunnerPanel } from './SplashRunnerPanel'
 import QuestionPreview from './QuestionPreview'
 import { RunnerQuestionList } from './RunnerQuestionList'
 import { useGameState } from '@renderer/hooks/useGameState'
@@ -223,15 +224,20 @@ export const RunnerView = () => {
           onClick={handleCategoryClick}
         />
 
-        {/* Question list — flexes to fill remaining space between fixed columns */}
+        {/* Question list — flexes to fill remaining space. During Splash the list
+            is dead space, so the splash control panel takes over here instead. */}
         <div className="flex-1 min-w-0 flex flex-col min-h-0 border-r border-border overflow-hidden">
-          <RunnerQuestionList
-            categories={categories}
-            selectedCategoryId={listCategoryId}
-            activeQuestionId={stickyPreviewId}
-            usedQuestions={usedQuestions}
-            onSelect={handleQuestionClick}
-          />
+          {phase === GamePhase.Splash ? (
+            <SplashRunnerPanel />
+          ) : (
+            <RunnerQuestionList
+              categories={categories}
+              selectedCategoryId={listCategoryId}
+              activeQuestionId={stickyPreviewId}
+              usedQuestions={usedQuestions}
+              onSelect={handleQuestionClick}
+            />
+          )}
         </div>
 
         {/* Question preview */}

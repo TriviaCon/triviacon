@@ -87,6 +87,15 @@ const api = {
   quizMetaUpdateTimer: (timerSeconds: number): Promise<void> =>
     ipcRenderer.invoke(IPC.QUIZ_META_UPDATE_TIMER, timerSeconds),
 
+  // ── Splash media ───────────────────────────────────────────────
+  splashPickVisual: (): Promise<string | null> => ipcRenderer.invoke(IPC.SPLASH_PICK_VISUAL),
+  splashPickAudio: (): Promise<string | null> => ipcRenderer.invoke(IPC.SPLASH_PICK_AUDIO),
+  splashClearVisual: (): Promise<void> => ipcRenderer.invoke(IPC.SPLASH_CLEAR_VISUAL),
+  splashClearAudio: (): Promise<void> => ipcRenderer.invoke(IPC.SPLASH_CLEAR_AUDIO),
+  splashSetMuted: (muted: boolean): Promise<void> => ipcRenderer.invoke(IPC.SPLASH_SET_MUTED, muted),
+  splashSetLoop: (loop: boolean): Promise<void> => ipcRenderer.invoke(IPC.SPLASH_SET_LOOP, loop),
+  splashSetGrow: (grow: boolean): Promise<void> => ipcRenderer.invoke(IPC.SPLASH_SET_GROW, grow),
+
   // ── Stats ──────────────────────────────────────────────────────
   quizStats: (): Promise<Stats> => ipcRenderer.invoke(IPC.QUIZ_STATS),
 
