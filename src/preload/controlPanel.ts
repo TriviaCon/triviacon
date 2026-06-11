@@ -169,6 +169,9 @@ const api = {
     ipcRenderer.invoke(IPC.SETTINGS_SET_TIMER_SOUND, mode),
   getFanfare: (): Promise<string> => ipcRenderer.invoke(IPC.SETTINGS_GET_FANFARE),
   setFanfare: (sound: string): Promise<void> => ipcRenderer.invoke(IPC.SETTINGS_SET_FANFARE, sound),
+  getTheme: (): Promise<string> => ipcRenderer.invoke(IPC.SETTINGS_GET_THEME),
+  setTheme: (theme: string): Promise<void> => ipcRenderer.invoke(IPC.SETTINGS_SET_THEME, theme),
+  initialTheme: ipcRenderer.sendSync(IPC.SETTINGS_INITIAL_THEME) as string,
 
   // ── Display management ─────────────────────────────────────────
   openGameScreen: (): Promise<void> => ipcRenderer.invoke(IPC.DISPLAY_OPEN_SCREEN),

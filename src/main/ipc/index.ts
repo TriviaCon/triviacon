@@ -537,4 +537,15 @@ export function registerIpcHandlers(): void {
   ipcMain.handle(IPC.SETTINGS_SET_FANFARE, (_, sound: FanfareSound) => {
     setSetting('fanfareSound', sound)
   })
+
+  ipcMain.handle(IPC.SETTINGS_GET_THEME, () => getSetting('appTheme'))
+
+  ipcMain.handle(IPC.SETTINGS_SET_THEME, (_, theme: string) => {
+    setSetting('appTheme', theme)
+  })
+
+  // Synchronous getter used by the preload to avoid FOUC on startup
+  ipcMain.on(IPC.SETTINGS_INITIAL_THEME, (event) => {
+    event.returnValue = getSetting('appTheme')
+  })
 }

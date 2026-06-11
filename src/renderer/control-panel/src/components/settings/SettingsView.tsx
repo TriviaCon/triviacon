@@ -4,6 +4,8 @@ import { AVAILABLE_LANGUAGES } from '@shared/locales'
 import { Label } from '@renderer/components/ui/label'
 import { NativeSelect } from '@renderer/components/ui/native-select'
 import { Card, CardContent, CardHeader, CardTitle } from '@renderer/components/ui/card'
+import { THEMES, applyTheme } from '@renderer/lib/theme'
+import { setCurrentTheme } from '../../main'
 
 const COLOR_MODES = ['heatmap', 'rainbow', 'gradient'] as const
 const TIMER_SOUND_MODES = ['beeps-and-buzz', 'beeps', 'buzz', 'silent'] as const
@@ -16,6 +18,7 @@ export const SettingsView = () => {
   const [barCount, setBarCount] = useState(48)
   const [timerSound, setTimerSound] = useState('beeps-and-buzz')
   const [fanfare, setFanfare] = useState('ff5')
+  const [theme, setTheme] = useState('system')
 
   useEffect(() => {
     window.api.getDefaultVolume().then(setVolume)
@@ -25,6 +28,7 @@ export const SettingsView = () => {
     })
     window.api.getTimerSound().then(setTimerSound)
     window.api.getFanfare?.().then(setFanfare)
+    window.api.getTheme().then(setTheme)
   }, [])
 
   const handleLanguageChange = async (lang: string) => {
@@ -38,6 +42,13 @@ export const SettingsView = () => {
     window.api.setDefaultVolume(v)
   }
 
+  const handleThemeChange = (id: string) => {
+    setTheme(id)
+    setCurrentTheme(id)
+    applyTheme(id)
+    window.api.setTheme(id)
+  }
+
   return (
     <div className="max-w-xl">
       <Card>
@@ -45,6 +56,17 @@ export const SettingsView = () => {
           <CardTitle>{t('settings.title')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
+          <div className="flex items-center gap-4">
+            <Label className="w-24 text-right shrink-0">{t('settings.theme')}</Label>
+            <NativeSelect value={theme} onChange={(e) => handleThemeChange(e.target.value)}>
+              {THEMES.map((entry) => (
+                <option key={entry.id} value={entry.id}>
+                  {t(entry.labelKey as 'settings.themeSystem')}
+                </option>
+              ))}
+            </NativeSelect>
+          </div>
+
           <div className="flex items-center gap-4">
             <Label className="w-24 text-right shrink-0">{t('settings.language')}</Label>
             <NativeSelect

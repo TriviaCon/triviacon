@@ -8,8 +8,9 @@
   100% { transform: translateX(300%); }
 }
 
-@theme inline {
+@theme {
   --animate-shimmer: shimmer 1.5s ease-in-out infinite;
+  /* Default Light — these are the base fallback values */
   --color-background: hsl(0 0% 100%);
   --color-foreground: hsl(240 10% 3.9%);
   --color-card: hsl(0 0% 100%);
@@ -40,7 +41,31 @@
   --radius-xl: 0.75rem;
 }
 
-.dark {
+/* ── Default Light ────────────────────────────────────────────────── */
+[data-theme="default-light"] {
+  --color-background: hsl(0 0% 100%);
+  --color-foreground: hsl(240 10% 3.9%);
+  --color-card: hsl(0 0% 100%);
+  --color-card-foreground: hsl(240 10% 3.9%);
+  --color-popover: hsl(0 0% 100%);
+  --color-popover-foreground: hsl(240 10% 3.9%);
+  --color-primary: hsl(240 5.9% 10%);
+  --color-primary-foreground: hsl(0 0% 98%);
+  --color-secondary: hsl(240 4.8% 95.9%);
+  --color-secondary-foreground: hsl(240 5.9% 10%);
+  --color-muted: hsl(240 4.8% 95.9%);
+  --color-muted-foreground: hsl(240 3.8% 46.1%);
+  --color-accent: hsl(240 4.8% 95.9%);
+  --color-accent-foreground: hsl(240 5.9% 10%);
+  --color-destructive: hsl(0 84.2% 60.2%);
+  --color-destructive-foreground: hsl(0 0% 98%);
+  --color-border: hsl(240 5.9% 90%);
+  --color-input: hsl(240 5.9% 90%);
+  --color-ring: hsl(240 5.9% 10%);
+}
+
+/* ── Default Dark ─────────────────────────────────────────────────── */
+[data-theme="default-dark"] {
   --color-background: hsl(240 10% 3.9%);
   --color-foreground: hsl(0 0% 98%);
   --color-card: hsl(240 10% 3.9%);
@@ -60,11 +85,190 @@
   --color-border: hsl(240 3.7% 15.9%);
   --color-input: hsl(240 3.7% 15.9%);
   --color-ring: hsl(240 4.9% 83.9%);
-  --color-chart-1: hsl(220 70% 50%);
-  --color-chart-2: hsl(160 60% 45%);
-  --color-chart-3: hsl(30 80% 55%);
-  --color-chart-4: hsl(280 65% 60%);
-  --color-chart-5: hsl(340 75% 55%);
+}
+
+/* ── Solarized Light ──────────────────────────────────────────────── */
+[data-theme="solarized-light"] {
+  --color-background: #fdf6e3;
+  --color-foreground: #586e75;
+  --color-card: #eee8d5;
+  --color-card-foreground: #586e75;
+  --color-popover: #fdf6e3;
+  --color-popover-foreground: #586e75;
+  --color-primary: #268bd2;
+  --color-primary-foreground: #fdf6e3;
+  --color-secondary: #eee8d5;
+  --color-secondary-foreground: #586e75;
+  --color-muted: #eee8d5;
+  --color-muted-foreground: #93a1a1;
+  --color-accent: #eee8d5;
+  --color-accent-foreground: #586e75;
+  --color-destructive: hsl(0 84.2% 60.2%);
+  --color-destructive-foreground: #fdf6e3;
+  --color-border: #d9d3bf;
+  --color-input: #d9d3bf;
+  --color-ring: #268bd2;
+}
+
+/* ── Solarized Dark ───────────────────────────────────────────────── */
+[data-theme="solarized-dark"] {
+  --color-background: #002b36;
+  --color-foreground: #839496;
+  --color-card: #073642;
+  --color-card-foreground: #839496;
+  --color-popover: #002b36;
+  --color-popover-foreground: #839496;
+  --color-primary: #268bd2;
+  --color-primary-foreground: #002b36;
+  --color-secondary: #073642;
+  --color-secondary-foreground: #839496;
+  --color-muted: #073642;
+  --color-muted-foreground: #586e75;
+  --color-accent: #073642;
+  --color-accent-foreground: #93a1a1;
+  --color-destructive: hsl(0 62.8% 30.6%);
+  --color-destructive-foreground: #fdf6e3;
+  --color-border: #073642;
+  --color-input: #073642;
+  --color-ring: #268bd2;
+}
+
+/* ── Catppuccin Latte ─────────────────────────────────────────────── */
+[data-theme="catppuccin-latte"] {
+  --color-background: #eff1f5;
+  --color-foreground: #4c4f69;
+  --color-card: #e6e9ef;
+  --color-card-foreground: #4c4f69;
+  --color-popover: #eff1f5;
+  --color-popover-foreground: #4c4f69;
+  --color-primary: #1e66f5;
+  --color-primary-foreground: #eff1f5;
+  --color-secondary: #ccd0da;
+  --color-secondary-foreground: #4c4f69;
+  --color-muted: #ccd0da;
+  --color-muted-foreground: #8c8fa1;
+  --color-accent: #ccd0da;
+  --color-accent-foreground: #4c4f69;
+  --color-destructive: hsl(0 84.2% 60.2%);
+  --color-destructive-foreground: #eff1f5;
+  --color-border: #bcc0cc;
+  --color-input: #bcc0cc;
+  --color-ring: #1e66f5;
+}
+
+/* ── Catppuccin Mocha ─────────────────────────────────────────────── */
+[data-theme="catppuccin-mocha"] {
+  --color-background: #1e1e2e;
+  --color-foreground: #cdd6f4;
+  --color-card: #181825;
+  --color-card-foreground: #cdd6f4;
+  --color-popover: #1e1e2e;
+  --color-popover-foreground: #cdd6f4;
+  --color-primary: #cba6f7;
+  --color-primary-foreground: #1e1e2e;
+  --color-secondary: #313244;
+  --color-secondary-foreground: #cdd6f4;
+  --color-muted: #313244;
+  --color-muted-foreground: #7f849c;
+  --color-accent: #313244;
+  --color-accent-foreground: #cdd6f4;
+  --color-destructive: hsl(0 62.8% 30.6%);
+  --color-destructive-foreground: #cdd6f4;
+  --color-border: #45475a;
+  --color-input: #45475a;
+  --color-ring: #cba6f7;
+}
+
+/* ── Dracula ──────────────────────────────────────────────────────── */
+[data-theme="dracula"] {
+  --color-background: #282a36;
+  --color-foreground: #f8f8f2;
+  --color-card: #21222c;
+  --color-card-foreground: #f8f8f2;
+  --color-popover: #282a36;
+  --color-popover-foreground: #f8f8f2;
+  --color-primary: #bd93f9;
+  --color-primary-foreground: #282a36;
+  --color-secondary: #44475a;
+  --color-secondary-foreground: #f8f8f2;
+  --color-muted: #44475a;
+  --color-muted-foreground: #6272a4;
+  --color-accent: #44475a;
+  --color-accent-foreground: #f8f8f2;
+  --color-destructive: hsl(0 62.8% 30.6%);
+  --color-destructive-foreground: #f8f8f2;
+  --color-border: #44475a;
+  --color-input: #44475a;
+  --color-ring: #bd93f9;
+}
+
+/* ── Alucard (Dracula Light) ──────────────────────────────────────── */
+[data-theme="alucard"] {
+  --color-background: #f8f8f2;
+  --color-foreground: #2b2d3a;
+  --color-card: #ededf4;
+  --color-card-foreground: #2b2d3a;
+  --color-popover: #f8f8f2;
+  --color-popover-foreground: #2b2d3a;
+  --color-primary: #7950d1;
+  --color-primary-foreground: #f8f8f2;
+  --color-secondary: #e4e4f0;
+  --color-secondary-foreground: #2b2d3a;
+  --color-muted: #e4e4f0;
+  --color-muted-foreground: #7970a9;
+  --color-accent: #e4e4f0;
+  --color-accent-foreground: #2b2d3a;
+  --color-destructive: hsl(0 84.2% 60.2%);
+  --color-destructive-foreground: #f8f8f2;
+  --color-border: #d5d5e8;
+  --color-input: #d5d5e8;
+  --color-ring: #7950d1;
+}
+
+/* ── Borland (novelty) ────────────────────────────────────────────── */
+[data-theme="borland"] {
+  --color-background: #0000aa;
+  --color-foreground: #ffffff;
+  --color-card: #000077;
+  --color-card-foreground: #ffffff;
+  --color-popover: #000077;
+  --color-popover-foreground: #ffffff;
+  --color-primary: #00aaaa;
+  --color-primary-foreground: #000000;
+  --color-secondary: #000077;
+  --color-secondary-foreground: #aaaaaa;
+  --color-muted: #000077;
+  --color-muted-foreground: #aaaaaa;
+  --color-accent: #000077;
+  --color-accent-foreground: #ffffff;
+  --color-destructive: hsl(0 62.8% 30.6%);
+  --color-destructive-foreground: #ffffff;
+  --color-border: #0055cc;
+  --color-input: #000077;
+  --color-ring: #00aaaa;
+}
+
+/* ── Matrix (novelty) ─────────────────────────────────────────────── */
+[data-theme="matrix"] {
+  --color-background: #000000;
+  --color-foreground: #00ff41;
+  --color-card: #0a0a0a;
+  --color-card-foreground: #00cc33;
+  --color-popover: #0a0a0a;
+  --color-popover-foreground: #00ff41;
+  --color-primary: #00ff41;
+  --color-primary-foreground: #000000;
+  --color-secondary: #001a00;
+  --color-secondary-foreground: #00cc33;
+  --color-muted: #001a00;
+  --color-muted-foreground: #005000;
+  --color-accent: #001a00;
+  --color-accent-foreground: #00ff41;
+  --color-destructive: hsl(0 62.8% 30.6%);
+  --color-destructive-foreground: #00ff41;
+  --color-border: #003300;
+  --color-input: #001a00;
+  --color-ring: #00ff41;
 }
 
 @layer base {

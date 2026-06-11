@@ -109,6 +109,9 @@ export const IPC = {
   SETTINGS_SET_TIMER_SOUND: 'settings:setTimerSound',
   SETTINGS_GET_FANFARE: 'settings:getFanfare',
   SETTINGS_SET_FANFARE: 'settings:setFanfare',
+  SETTINGS_GET_THEME: 'settings:getTheme',
+  SETTINGS_SET_THEME: 'settings:setTheme',
+  SETTINGS_INITIAL_THEME: 'settings:initialTheme',
 
   // Display management
   DISPLAY_OPEN_SCREEN: 'display:openScreen',

@@ -14,6 +14,7 @@ export interface AppSettings {
   visualizerBarCount: number
   timerSound: TimerSoundMode
   fanfareSound: FanfareSound
+  appTheme: string
 }
 
 const DEFAULTS: AppSettings = {
@@ -22,7 +23,8 @@ const DEFAULTS: AppSettings = {
   visualizerColorMode: 'heatmap',
   visualizerBarCount: 48,
   timerSound: 'beeps-and-buzz',
-  fanfareSound: 'ff5'
+  fanfareSound: 'ff5',
+  appTheme: 'system'
 }
 
 const SETTINGS_FILENAME = 'triviacon-settings.json'

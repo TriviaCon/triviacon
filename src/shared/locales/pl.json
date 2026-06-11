@@ -211,7 +211,19 @@
     "fanfare_ff5": "FF5 Victory",
     "fanfare_nfl": "NFL Fox",
     "fanfare_pokemon": "Pokémon Gen 1",
-    "fanfareDescription": "Odtwarzana przy ogłoszeniu wyników."
+    "fanfareDescription": "Odtwarzana przy ogłoszeniu wyników.",
+    "theme": "Wygląd",
+    "themeSystem": "Systemowy",
+    "themeDefaultLight": "Domyślny · Jasny",
+    "themeDefaultDark": "Domyślny · Ciemny",
+    "themeSolarizedLight": "Solarized · Light",
+    "themeSolarizedDark": "Solarized · Dark",
+    "themeCatppuccinLatte": "Catppuccin · Latte",
+    "themeCatppuccinMocha": "Catppuccin · Mocha",
+    "themeDracula": "Dracula",
+    "themeAlucard": "Alucard",
+    "themeBorland": "Borland",
+    "themeMatrix": "Matrix"
   },
 
   "languages": {

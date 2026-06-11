@@ -143,6 +143,9 @@ declare global {
       setTimerSound: (mode: string) => Promise<void>
       getFanfare: () => Promise<string>
       setFanfare: (sound: string) => Promise<void>
+      getTheme: () => Promise<string>
+      setTheme: (theme: string) => Promise<void>
+      initialTheme: string
 
       timerStart: () => Promise<void>
       timerPause: () => Promise<void>
