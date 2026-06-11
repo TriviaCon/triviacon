@@ -26,3 +26,18 @@ export const useUpdateTimer = () =>
     mutationFn: (v: number) => window.api.quizMetaUpdateTimer(v),
     meta: { invalidateQueries: keys.meta() }
   })
+
+// ── Splash media ──────────────────────────────────────────────────
+
+const splashMutation = <A,>(fn: (arg: A) => Promise<unknown>) =>
+  useMutation({
+    mutationFn: (arg: A) => fn(arg),
+    meta: { invalidateQueries: keys.meta() }
+  })
+
+export const useSplashPickVisual = () => splashMutation<void>(() => window.api.splashPickVisual())
+export const useSplashPickAudio = () => splashMutation<void>(() => window.api.splashPickAudio())
+export const useSplashClearVisual = () => splashMutation<void>(() => window.api.splashClearVisual())
+export const useSplashClearAudio = () => splashMutation<void>(() => window.api.splashClearAudio())
+export const useSplashSetMuted = () => splashMutation<boolean>((m) => window.api.splashSetMuted(m))
+export const useSplashSetLoop = () => splashMutation<boolean>((l) => window.api.splashSetLoop(l))

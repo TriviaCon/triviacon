@@ -33,6 +33,14 @@ export const IPC = {
   QUIZ_META_UPDATE_SPLASH: 'quiz:meta:updateSplash',
   QUIZ_META_UPDATE_TIMER: 'quiz:meta:updateTimer',
 
+  // Splash media (two-slot model)
+  SPLASH_PICK_VISUAL: 'quiz:splash:pickVisual',
+  SPLASH_PICK_AUDIO: 'quiz:splash:pickAudio',
+  SPLASH_CLEAR_VISUAL: 'quiz:splash:clearVisual',
+  SPLASH_CLEAR_AUDIO: 'quiz:splash:clearAudio',
+  SPLASH_SET_MUTED: 'quiz:splash:setMuted',
+  SPLASH_SET_LOOP: 'quiz:splash:setLoop',
+
   QUIZ_CATEGORIES_REORDER: 'quiz:categories:reorder',
   QUIZ_QUESTIONS_REORDER: 'quiz:questions:reorder',
   QUIZ_CATEGORY_SHUFFLE: 'quiz:category:shuffle',

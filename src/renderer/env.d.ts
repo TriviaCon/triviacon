@@ -68,6 +68,14 @@ declare global {
       quizMetaUpdateSplash: (splash: string) => Promise<void>
       quizMetaUpdateTimer: (timerSeconds: number) => Promise<void>
 
+      // --- Splash media ---
+      splashPickVisual: () => Promise<string | null>
+      splashPickAudio: () => Promise<string | null>
+      splashClearVisual: () => Promise<void>
+      splashClearAudio: () => Promise<void>
+      splashSetMuted: (muted: boolean) => Promise<void>
+      splashSetLoop: (loop: boolean) => Promise<void>
+
       // --- Stats ---
       quizStats: () => Promise<Stats>
 
