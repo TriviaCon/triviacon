@@ -1,6 +1,6 @@
 # Theming — design note
 
-Status: **design, pre-implementation**
+Status: **implemented** — shipping in 0.9.9 ("Fresh Coat of Paint")
 Branch: `feat/theming`
 
 ## Motivation
