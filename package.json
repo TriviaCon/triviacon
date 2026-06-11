@@ -5,6 +5,7 @@
   "main": "./out/main/index.js",
   "author": "Marcin \"Aluś\" Jędrecki",
   "homepage": "https://github.com/TriviaCon/triviacon",
+  "license": "MIT",
   "scripts": {
     "preinstall": "npx --yes only-allow pnpm",
     "format": "prettier --write .",
