@@ -70,24 +70,22 @@ const IdleScreen = ({ quizMeta }: { quizMeta: QuizMeta | null }) => {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen gap-8 bg-background text-foreground p-8">
-      {/* Contained hero — grows to fill the space left above the metadata card */}
+      {/* Hero — grows to fill the space left above the metadata card */}
       {visualSrc && (
         <div className="flex-1 min-h-0 w-full flex items-center justify-center">
-          <div className="h-full aspect-video max-w-full rounded-xl overflow-hidden shadow-2xl">
-            {visualType === 'video' ? (
-              <video
-                ref={videoRef}
-                src={visualSrc}
-                autoPlay
-                loop={loop}
-                muted={muted}
-                playsInline
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <img src={visualSrc} alt="" className="h-full w-full object-contain" />
-            )}
-          </div>
+          {visualType === 'video' ? (
+            <video
+              ref={videoRef}
+              src={visualSrc}
+              autoPlay
+              loop={loop}
+              muted={muted}
+              playsInline
+              className="max-h-full max-w-full object-contain rounded-lg"
+            />
+          ) : (
+            <img src={visualSrc} alt="" className="max-h-full max-w-full object-contain rounded-lg" />
+          )}
         </div>
       )}
 
