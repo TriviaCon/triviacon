@@ -1,7 +1,7 @@
 {
   "name": "triviacon-app",
   "version": "0.9.9",
-  "description": "An Electron application with React and TypeScript",
+  "description": "Portable dual-screen desktop app for hosting live trivia nights.",
   "main": "./out/main/index.js",
   "author": "Marcin \"Aluś\" Jędrecki",
   "homepage": "https://github.com/TriviaCon/triviacon",
