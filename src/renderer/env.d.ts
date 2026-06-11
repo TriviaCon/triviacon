@@ -75,6 +75,7 @@ declare global {
       splashClearAudio: () => Promise<void>
       splashSetMuted: (muted: boolean) => Promise<void>
       splashSetLoop: (loop: boolean) => Promise<void>
+      splashSetGrow: (grow: boolean) => Promise<void>
 
       // --- Stats ---
       quizStats: () => Promise<Stats>

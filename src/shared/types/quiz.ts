@@ -40,6 +40,8 @@ export interface QuizMeta {
   splashMuted?: boolean
   /** Loop the splash video (default true). */
   splashLoop?: boolean
+  /** Upscale the splash visual to fill the available space (default false). */
+  splashGrow?: boolean
 }
 
 export interface Stats {

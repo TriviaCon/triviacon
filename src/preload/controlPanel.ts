@@ -94,6 +94,7 @@ const api = {
   splashClearAudio: (): Promise<void> => ipcRenderer.invoke(IPC.SPLASH_CLEAR_AUDIO),
   splashSetMuted: (muted: boolean): Promise<void> => ipcRenderer.invoke(IPC.SPLASH_SET_MUTED, muted),
   splashSetLoop: (loop: boolean): Promise<void> => ipcRenderer.invoke(IPC.SPLASH_SET_LOOP, loop),
+  splashSetGrow: (grow: boolean): Promise<void> => ipcRenderer.invoke(IPC.SPLASH_SET_GROW, grow),
 
   // ── Stats ──────────────────────────────────────────────────────
   quizStats: (): Promise<Stats> => ipcRenderer.invoke(IPC.QUIZ_STATS),

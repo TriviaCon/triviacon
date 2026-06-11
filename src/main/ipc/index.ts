@@ -342,6 +342,12 @@ export function registerIpcHandlers(): void {
     broadcastState()
   })
 
+  ipcMain.handle(IPC.SPLASH_SET_GROW, (_, grow: boolean) => {
+    store.metaSetSplashGrow(grow)
+    engine.updateMeta(store.metaGet())
+    broadcastState()
+  })
+
   // ── Media management ─────────────────────────────────────────────
 
   ipcMain.handle(IPC.QUIZ_MEDIA_PICK, async (_, questionId: number) => {

@@ -40,6 +40,7 @@ export const IPC = {
   SPLASH_CLEAR_AUDIO: 'quiz:splash:clearAudio',
   SPLASH_SET_MUTED: 'quiz:splash:setMuted',
   SPLASH_SET_LOOP: 'quiz:splash:setLoop',
+  SPLASH_SET_GROW: 'quiz:splash:setGrow',
 
   QUIZ_CATEGORIES_REORDER: 'quiz:categories:reorder',
   QUIZ_QUESTIONS_REORDER: 'quiz:questions:reorder',

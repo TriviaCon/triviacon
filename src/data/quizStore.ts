@@ -30,6 +30,7 @@ export interface QuizDocument {
     splashAudio?: string | null
     splashMuted?: boolean
     splashLoop?: boolean
+    splashGrow?: boolean
   }
   nextIds: {
     category: number
@@ -85,7 +86,7 @@ export function clearDirty(): void {
 export function createEmptyDocument(): QuizDocument {
   return {
     version: 2,
-    meta: { name: '', author: '', location: '', date: '', splash: '', timerSeconds: 0, splashVisual: null, splashAudio: null, splashMuted: false, splashLoop: true },
+    meta: { name: '', author: '', location: '', date: '', splash: '', timerSeconds: 0, splashVisual: null, splashAudio: null, splashMuted: false, splashLoop: true, splashGrow: false },
     nextIds: { category: 1, question: 1, answerOption: 1 },
     categories: [],
     questions: [],
@@ -324,7 +325,7 @@ export function metaGet(): QuizMeta {
   if (!doc) {
     return {
       name: '', author: '', location: '', date: '', splash: '', timerSeconds: 0,
-      splashVisual: null, splashAudio: null, splashMuted: false, splashLoop: true
+      splashVisual: null, splashAudio: null, splashMuted: false, splashLoop: true, splashGrow: false
     }
   }
   return {
@@ -333,7 +334,8 @@ export function metaGet(): QuizMeta {
     splashVisual: doc.meta.splashVisual ?? null,
     splashAudio: doc.meta.splashAudio ?? null,
     splashMuted: doc.meta.splashMuted ?? false,
-    splashLoop: doc.meta.splashLoop ?? true
+    splashLoop: doc.meta.splashLoop ?? true,
+    splashGrow: doc.meta.splashGrow ?? false
   }
 }
 
@@ -375,6 +377,10 @@ export function metaSetSplashMuted(muted: boolean): void {
 }
 export function metaSetSplashLoop(loop: boolean): void {
   requireDoc().meta.splashLoop = loop
+  markDirty()
+}
+export function metaSetSplashGrow(grow: boolean): void {
+  requireDoc().meta.splashGrow = grow
   markDirty()
 }
 

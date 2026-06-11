@@ -1,22 +1,25 @@
 import { useTranslation } from 'react-i18next'
-import { Image as ImageIcon, Repeat, Music, Film } from 'lucide-react'
+import { Image as ImageIcon, Maximize2, Repeat, Music, Film } from 'lucide-react'
 import { detectMediaType, mediaDisplayName } from '@shared/media'
 import { mediaUrl } from '@shared/mediaUrl'
 import { MediaControls } from '@renderer/components/ui/media-preview'
 import { Toggle } from '@renderer/components/ui/toggle'
 import { useGameState } from '@renderer/hooks/useGameState'
-import { useSplashSetLoop } from '@renderer/hooks/useQuizMeta'
+import { useSplashSetLoop, useSplashSetGrow } from '@renderer/hooks/useQuizMeta'
 
 export function SplashRunnerPanel() {
   const { t } = useTranslation()
   const { quizMeta } = useGameState()
   const setLoop = useSplashSetLoop()
+  const setGrow = useSplashSetGrow()
 
   const visual = quizMeta?.splashVisual ?? null
   const legacyImage = quizMeta?.splash && quizMeta.splash.length > 0 ? quizMeta.splash : null
   const visualType = visual ? detectMediaType(visual) : legacyImage ? 'image' : null
   const audio = quizMeta?.splashAudio ?? null
   const loop = quizMeta?.splashLoop ?? true
+  const grow = quizMeta?.splashGrow ?? false
+  const hasVisual = !!(visual || legacyImage)
 
   // The single controllable element: a video visual, else a soundtrack.
   const controlType: 'video' | 'audio' | null =
@@ -58,7 +61,20 @@ export function SplashRunnerPanel() {
           )}
         </div>
 
-        {/* Controls */}
+        {/* Grow toggle — applies to any visual, even a static image */}
+        {hasVisual && (
+          <Toggle
+            variant="outline"
+            pressed={grow}
+            onPressedChange={(v) => setGrow.mutate(v)}
+            className="w-full gap-2"
+          >
+            <Maximize2 className="h-4 w-4" />
+            {t('builder.splashGrow')}
+          </Toggle>
+        )}
+
+        {/* Playback controls */}
         {controlType ? (
           <div className="space-y-3">
             <MediaControls key={controlName} mediaType={controlType} showFullscreen={false} />
@@ -73,7 +89,9 @@ export function SplashRunnerPanel() {
             </Toggle>
           </div>
         ) : (
-          <p className="text-sm text-muted-foreground italic">{t('runner.splashStatic')}</p>
+          !hasVisual && (
+            <p className="text-sm text-muted-foreground italic">{t('runner.splashStatic')}</p>
+          )
         )}
       </div>
     </div>

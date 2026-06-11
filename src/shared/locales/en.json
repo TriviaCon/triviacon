@@ -88,6 +88,7 @@
     "splashAudioHint": "audio or video",
     "muteVideoAudio": "Mute",
     "loopVideo": "Loop",
+    "splashGrow": "Grow to fill",
     "splashAudioDisabled": "A video plays its own audio — remove it to add a separate soundtrack.",
     "splashSummaryLabel": "Audience sees:",
     "splashSummary_card": "the info card on a plain background.",

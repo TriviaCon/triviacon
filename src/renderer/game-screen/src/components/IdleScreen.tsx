@@ -18,6 +18,10 @@ const IdleScreen = ({ quizMeta }: { quizMeta: QuizMeta | null }) => {
 
   const muted = quizMeta?.splashMuted ?? false
   const loop = quizMeta?.splashLoop ?? true
+  const grow = quizMeta?.splashGrow ?? false
+
+  // Grow: upscale to fill the region. Otherwise cap at the media's natural size.
+  const fitClass = grow ? 'h-full w-full' : 'max-h-full max-w-full'
 
   // Soundtrack only applies when the visual isn't a video (a video carries its own audio).
   const audioName = quizMeta?.splashAudio ?? null
@@ -81,10 +85,10 @@ const IdleScreen = ({ quizMeta }: { quizMeta: QuizMeta | null }) => {
               loop={loop}
               muted={muted}
               playsInline
-              className="max-h-full max-w-full object-contain rounded-lg"
+              className={`${fitClass} object-contain rounded-lg`}
             />
           ) : (
-            <img src={visualSrc} alt="" className="max-h-full max-w-full object-contain rounded-lg" />
+            <img src={visualSrc} alt="" className={`${fitClass} object-contain rounded-lg`} />
           )}
         </div>
       )}

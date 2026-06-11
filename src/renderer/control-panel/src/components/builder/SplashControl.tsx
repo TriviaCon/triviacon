@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { Film, ImagePlus, Music, Repeat, VolumeX, X } from 'lucide-react'
+import { Film, ImagePlus, Maximize2, Music, Repeat, VolumeX, X } from 'lucide-react'
 import { Toggle } from '@renderer/components/ui/toggle'
 import { cn } from '@renderer/lib/utils'
 import { mediaUrl } from '@shared/mediaUrl'
@@ -12,6 +12,7 @@ import {
   useSplashClearAudio,
   useSplashSetMuted,
   useSplashSetLoop,
+  useSplashSetGrow,
   useUpdateSplash
 } from '@renderer/hooks/useQuizMeta'
 
@@ -94,6 +95,7 @@ export function SplashControl({ meta }: { meta: QuizMeta }) {
   const clearAudio = useSplashClearAudio()
   const setMuted = useSplashSetMuted()
   const setLoop = useSplashSetLoop()
+  const setGrow = useSplashSetGrow()
   const updateSplash = useUpdateSplash()
 
   // Resolve current visual: new field wins; legacy base64 splash is a fallback image.
@@ -105,6 +107,8 @@ export function SplashControl({ meta }: { meta: QuizMeta }) {
   const audio = meta.splashAudio ?? null
   const muted = meta.splashMuted ?? false
   const loop = meta.splashLoop ?? true
+  const grow = meta.splashGrow ?? false
+  const hasVisual = !!(visual || legacyImage)
 
   // Plain-language summary of what the audience will see.
   const summary = (() => {
@@ -148,28 +152,42 @@ export function SplashControl({ meta }: { meta: QuizMeta }) {
             />
           )}
 
-          {isVideo && (
-            <div className="flex gap-1.5 pt-0.5">
+          {hasVisual && (
+            <div className="flex flex-wrap gap-1.5 pt-0.5">
               <Toggle
                 size="sm"
                 variant="outline"
-                pressed={muted}
-                onPressedChange={(v) => setMuted.mutate(v)}
+                pressed={grow}
+                onPressedChange={(v) => setGrow.mutate(v)}
                 className="text-xs gap-1"
               >
-                <VolumeX className="h-3.5 w-3.5" />
-                {t('builder.muteVideoAudio')}
+                <Maximize2 className="h-3.5 w-3.5" />
+                {t('builder.splashGrow')}
               </Toggle>
-              <Toggle
-                size="sm"
-                variant="outline"
-                pressed={loop}
-                onPressedChange={(v) => setLoop.mutate(v)}
-                className="text-xs gap-1"
-              >
-                <Repeat className="h-3.5 w-3.5" />
-                {t('builder.loopVideo')}
-              </Toggle>
+              {isVideo && (
+                <>
+                  <Toggle
+                    size="sm"
+                    variant="outline"
+                    pressed={muted}
+                    onPressedChange={(v) => setMuted.mutate(v)}
+                    className="text-xs gap-1"
+                  >
+                    <VolumeX className="h-3.5 w-3.5" />
+                    {t('builder.muteVideoAudio')}
+                  </Toggle>
+                  <Toggle
+                    size="sm"
+                    variant="outline"
+                    pressed={loop}
+                    onPressedChange={(v) => setLoop.mutate(v)}
+                    className="text-xs gap-1"
+                  >
+                    <Repeat className="h-3.5 w-3.5" />
+                    {t('builder.loopVideo')}
+                  </Toggle>
+                </>
+              )}
             </div>
           )}
         </div>

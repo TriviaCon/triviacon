@@ -41,3 +41,4 @@ export const useSplashClearVisual = () => splashMutation<void>(() => window.api.
 export const useSplashClearAudio = () => splashMutation<void>(() => window.api.splashClearAudio())
 export const useSplashSetMuted = () => splashMutation<boolean>((m) => window.api.splashSetMuted(m))
 export const useSplashSetLoop = () => splashMutation<boolean>((l) => window.api.splashSetLoop(l))
+export const useSplashSetGrow = () => splashMutation<boolean>((g) => window.api.splashSetGrow(g))
