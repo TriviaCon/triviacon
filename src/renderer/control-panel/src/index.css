@@ -275,6 +275,10 @@
   * {
     @apply border-border;
   }
+  select option {
+    background-color: var(--color-popover);
+    color: var(--color-popover-foreground);
+  }
   body {
     @apply bg-background text-foreground;
     font-family:
