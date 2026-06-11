@@ -16,7 +16,13 @@ function formatTime(seconds: number): string {
 
 // ── IPC media controls (runner) ──────────────────────────────────
 
-export const MediaControls = ({ mediaType }: { mediaType: 'audio' | 'video' }) => {
+export const MediaControls = ({
+  mediaType,
+  showFullscreen = true
+}: {
+  mediaType: 'audio' | 'video'
+  showFullscreen?: boolean
+}) => {
   const { t } = useTranslation()
   const [playing, setPlaying] = useState(false)
   const [state, setState] = useState<MediaPlaybackState>({
@@ -85,7 +91,7 @@ export const MediaControls = ({ mediaType }: { mediaType: 'audio' | 'video' }) =
         <Button size="sm" variant="outline" onClick={stop}>
           <Square className="h-4 w-4" />
         </Button>
-        {mediaType === 'video' && (
+        {mediaType === 'video' && showFullscreen && (
           <Button size="sm" variant="outline" onClick={() => window.api.mediaToggleFullscreen()}>
             <Maximize className="h-4 w-4" />
           </Button>

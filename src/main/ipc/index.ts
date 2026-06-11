@@ -267,6 +267,87 @@ export function registerIpcHandlers(): void {
     broadcastState()
   })
 
+  // ── Splash media (two-slot model) ────────────────────────────────
+
+  const IMAGE_VIDEO_EXTS = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'mp4', 'webm', 'mov']
+  const AUDIO_VIDEO_EXTS = ['mp3', 'wav', 'ogg', 'aac', 'm4a', 'mp4', 'webm', 'mov']
+
+  ipcMain.handle(IPC.SPLASH_PICK_VISUAL, async () => {
+    const result = await dialog.showOpenDialog({
+      filters: [{ name: 'Image or video', extensions: IMAGE_VIDEO_EXTS }],
+      properties: ['openFile']
+    })
+    if (result.canceled || result.filePaths.length === 0) return null
+    const sourcePath = result.filePaths[0]
+    const prev = store.metaGet().splashVisual
+    if (prev) await quizFile.removeMedia(prev)
+    const filename = sourcePath.split(/[\\/]/).pop()!
+    const mediaPath = await quizFile.attachMedia(sourcePath, filename)
+    store.metaSetSplashVisual(mediaPath)
+    // A video brings its own audio — a separate soundtrack is mutually exclusive.
+    if (/\.(mp4|webm|mov)$/i.test(mediaPath)) {
+      const prevAudio = store.metaGet().splashAudio
+      if (prevAudio) await quizFile.removeMedia(prevAudio)
+      store.metaSetSplashAudio(null)
+      store.metaSetSplashMuted(false)
+    }
+    engine.updateMeta(store.metaGet())
+    broadcastState()
+    return mediaPath
+  })
+
+  ipcMain.handle(IPC.SPLASH_PICK_AUDIO, async () => {
+    const result = await dialog.showOpenDialog({
+      filters: [{ name: 'Audio or video', extensions: AUDIO_VIDEO_EXTS }],
+      properties: ['openFile']
+    })
+    if (result.canceled || result.filePaths.length === 0) return null
+    const sourcePath = result.filePaths[0]
+    const prev = store.metaGet().splashAudio
+    if (prev) await quizFile.removeMedia(prev)
+    const filename = sourcePath.split(/[\\/]/).pop()!
+    const mediaPath = await quizFile.attachMedia(sourcePath, filename)
+    store.metaSetSplashAudio(mediaPath)
+    engine.updateMeta(store.metaGet())
+    broadcastState()
+    return mediaPath
+  })
+
+  ipcMain.handle(IPC.SPLASH_CLEAR_VISUAL, async () => {
+    const prev = store.metaGet().splashVisual
+    if (prev) await quizFile.removeMedia(prev)
+    store.metaSetSplashVisual(null)
+    store.metaSetSplashMuted(false)
+    engine.updateMeta(store.metaGet())
+    broadcastState()
+  })
+
+  ipcMain.handle(IPC.SPLASH_CLEAR_AUDIO, async () => {
+    const prev = store.metaGet().splashAudio
+    if (prev) await quizFile.removeMedia(prev)
+    store.metaSetSplashAudio(null)
+    engine.updateMeta(store.metaGet())
+    broadcastState()
+  })
+
+  ipcMain.handle(IPC.SPLASH_SET_MUTED, (_, muted: boolean) => {
+    store.metaSetSplashMuted(muted)
+    engine.updateMeta(store.metaGet())
+    broadcastState()
+  })
+
+  ipcMain.handle(IPC.SPLASH_SET_LOOP, (_, loop: boolean) => {
+    store.metaSetSplashLoop(loop)
+    engine.updateMeta(store.metaGet())
+    broadcastState()
+  })
+
+  ipcMain.handle(IPC.SPLASH_SET_GROW, (_, grow: boolean) => {
+    store.metaSetSplashGrow(grow)
+    engine.updateMeta(store.metaGet())
+    broadcastState()
+  })
+
   // ── Media management ─────────────────────────────────────────────
 
   ipcMain.handle(IPC.QUIZ_MEDIA_PICK, async (_, questionId: number) => {
@@ -536,5 +617,16 @@ export function registerIpcHandlers(): void {
 
   ipcMain.handle(IPC.SETTINGS_SET_FANFARE, (_, sound: FanfareSound) => {
     setSetting('fanfareSound', sound)
+  })
+
+  ipcMain.handle(IPC.SETTINGS_GET_THEME, () => getSetting('appTheme'))
+
+  ipcMain.handle(IPC.SETTINGS_SET_THEME, (_, theme: string) => {
+    setSetting('appTheme', theme)
+  })
+
+  // Synchronous getter used by the preload to avoid FOUC on startup
+  ipcMain.on(IPC.SETTINGS_INITIAL_THEME, (event) => {
+    event.returnValue = getSetting('appTheme')
   })
 }
