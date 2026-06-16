@@ -1,10 +1,10 @@
 import { useTranslation } from 'react-i18next'
-import { Eye } from 'lucide-react'
+import { Eye, StickyNote } from 'lucide-react'
 import { AnswerOption, Question } from '@shared/types/quiz'
 import { Label } from '@renderer/components/ui/label'
 import { Button } from '@renderer/components/ui/button'
 import { MediaPreview } from '@renderer/components/ui/media-preview'
-import { RichText } from '@shared/RichText'
+import { RichText, richTextToPlain } from '@shared/RichText'
 import { cn } from '@renderer/lib/utils'
 import { mediaUrl } from '@shared/mediaUrl'
 import { mediaDisplayName } from '@shared/media'
@@ -54,6 +54,15 @@ const QuestionPreview = ({
         html={question.text}
         className="text-xl font-semibold [&_p]:m-0 [&_p+p]:mt-1"
       />
+
+      {question.notes && richTextToPlain(question.notes).trim().length > 0 && (
+        <div className="rounded-md border border-border bg-muted/40 px-3 py-2">
+          <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">
+            <StickyNote className="h-3.5 w-3.5" /> {t('runner.notes')}
+          </div>
+          <RichText html={question.notes} className="text-sm [&_p]:m-0 [&_p+p]:mt-1" />
+        </div>
+      )}
 
       <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 items-start">
         <span className="font-semibold text-sm text-right">{t('runner.media')}</span>

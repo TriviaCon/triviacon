@@ -7,6 +7,8 @@ import {
   categoriesReorder,
   shuffleCategory,
   questionCreate,
+  questionUpdate,
+  questionById,
   questionsAllByCategoryId,
   questionsReorder,
   questionsBulkMove,
@@ -15,6 +17,27 @@ import {
 function setup() {
   setDocument(createEmptyDocument())
 }
+
+describe('question notes', () => {
+  beforeEach(setup)
+
+  it('persists notes through questionUpdate and reads them back', () => {
+    const catId = categoryCreate('Cat')
+    const qId = questionCreate({ categoryId: catId, type: 'single-answer', text: 'Q', media: null })
+    expect(questionById(qId)?.notes).toBeUndefined()
+
+    questionUpdate(qId, { notes: '<p>host anecdote</p>' })
+    expect(questionById(qId)?.notes).toBe('<p>host anecdote</p>')
+  })
+
+  it('clears notes when set to an empty string', () => {
+    const catId = categoryCreate('Cat')
+    const qId = questionCreate({ categoryId: catId, type: 'single-answer', text: 'Q', media: null })
+    questionUpdate(qId, { notes: '<p>x</p>' })
+    questionUpdate(qId, { notes: '' })
+    expect(questionById(qId)?.notes).toBe('')
+  })
+})
 
 describe('category sortOrder', () => {
   beforeEach(setup)
