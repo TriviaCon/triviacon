@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect } from 'vitest'
-import { sanitizeRichText, looksLikeHtml, richTextToPlain } from './RichText'
+import { sanitizeRichText, fillEmptyParagraphs, looksLikeHtml, richTextToPlain } from './RichText'
 
 describe('sanitizeRichText', () => {
   it('keeps allowed B/I/U + paragraph/break tags', () => {
@@ -28,6 +28,20 @@ describe('sanitizeRichText', () => {
     const heading = sanitizeRichText('<h1>Title</h1>')
     expect(heading).not.toContain('<h1')
     expect(heading).toContain('Title')
+  })
+})
+
+describe('fillEmptyParagraphs', () => {
+  it('turns blank-line paragraphs into a line break so they render', () => {
+    expect(fillEmptyParagraphs('<p>a</p><p></p><p>b</p>')).toBe('<p>a</p><p><br></p><p>b</p>')
+  })
+
+  it('treats whitespace-only paragraphs as blank lines', () => {
+    expect(fillEmptyParagraphs('<p>a</p><p>   </p><p>b</p>')).toBe('<p>a</p><p><br></p><p>b</p>')
+  })
+
+  it('leaves paragraphs with content untouched', () => {
+    expect(fillEmptyParagraphs('<p>a</p><p>b</p>')).toBe('<p>a</p><p>b</p>')
   })
 })
 
