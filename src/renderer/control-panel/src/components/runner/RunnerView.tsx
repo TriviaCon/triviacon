@@ -13,6 +13,7 @@ import { useAnswerOptions } from '@renderer/hooks/useAnswerOptions'
 import { QueryLoading, QueryError } from '@renderer/components/ui/query-state'
 import { usePairQueryState } from '@renderer/hooks/usePairQueryState'
 import { GamePhase } from '@shared/types/state'
+import { canRevealQuestions, resolveQuestionClick } from './runnerActions'
 
 // ── Category sidebar (runner two-step: first click selects, second reveals) ──
 
@@ -104,7 +105,7 @@ const PreviewColumn = ({
 
   const isActiveOnScreen = activeQuestion?.question.id === id
   const isPending = selectedQuestionId === id && !isActiveOnScreen
-  const canShow = phase === GamePhase.Questions && isPending
+  const canShow = canRevealQuestions(phase) && isPending
 
   return (
     <QuestionPreview
@@ -161,7 +162,7 @@ export const RunnerView = () => {
       const tag = (document.activeElement as HTMLElement | null)?.tagName
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
       if (e.key === 'Enter') {
-        if (selectedQuestionId !== null && phase === GamePhase.Questions) {
+        if (selectedQuestionId !== null && canRevealQuestions(phase)) {
           e.preventDefault()
           window.api.showQuestion(selectedQuestionId)
         } else if (selectedCategoryId !== null && selectedCategoryId !== currentCategoryId) {
@@ -193,10 +194,11 @@ export const RunnerView = () => {
   }
 
   const handleQuestionClick = (id: number) => {
-    if (selectedQuestionId === id && phase === GamePhase.Questions) {
-      window.api.showQuestion(id)
+    const action = resolveQuestionClick(id, selectedQuestionId, phase)
+    if (action.type === 'show') {
+      window.api.showQuestion(action.id)
     } else {
-      window.api.selectQuestion(selectedQuestionId === id ? null : id)
+      window.api.selectQuestion(action.id)
     }
   }
 
