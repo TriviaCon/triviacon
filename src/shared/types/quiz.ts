@@ -12,6 +12,8 @@ export interface Question {
   categoryId: number
   type: QuestionType
   text: string
+  /** Host-only rich-text notes (anecdotes, fact-checks). Never shown on the game screen. */
+  notes?: string
   media: string | null
   audioOnly?: boolean
   sortOrder: number

@@ -47,6 +47,7 @@ export interface QuizDocument {
     categoryId: number
     type: QuestionType
     text: string
+    notes?: string
     media: string | null
     audioOnly?: boolean
     sortOrder: number
@@ -221,6 +222,7 @@ export function questionUpdate(id: number, updates: Partial<Omit<Question, 'id'>
   if (updates.categoryId !== undefined) q.categoryId = updates.categoryId
   if (updates.type !== undefined) q.type = updates.type
   if (updates.text !== undefined) q.text = updates.text
+  if (updates.notes !== undefined) q.notes = updates.notes
   if (updates.media !== undefined) q.media = updates.media
   if (updates.audioOnly !== undefined) q.audioOnly = updates.audioOnly
   if (updates.sortOrder !== undefined) q.sortOrder = updates.sortOrder

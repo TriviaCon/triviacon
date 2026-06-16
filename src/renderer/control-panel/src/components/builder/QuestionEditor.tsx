@@ -8,6 +8,7 @@ import { Label } from '@renderer/components/ui/label'
 import { Card, CardContent } from '@renderer/components/ui/card'
 import { ToggleGroup, ToggleGroupItem } from '@renderer/components/ui/toggle-group'
 import { RichTextEditor } from '@renderer/components/ui/rich-text-editor'
+import { richTextToPlain } from '@shared/RichText'
 import { useQuestion } from '@renderer/hooks/useQuestion'
 import { AnswerOption, Question } from '@shared/types/quiz'
 import { useUpdateQuestionMutation } from '@renderer/hooks/useUpdateQuestionMutation'
@@ -149,6 +150,7 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
 
   const type = question.data!.type
   const options = answerOptions.data!
+  const questionLength = richTextToPlain(question.data!.text).length
 
   const handleDeleteQuestion = async () => {
     setDeleting(true)
@@ -227,7 +229,21 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
   return (
     <div className="h-full flex flex-col space-y-3 overflow-y-auto">
       <div className="space-y-1">
-        <Label>{t('builder.question')}</Label>
+        <div className="flex items-center justify-between">
+          <Label>{t('builder.question')}</Label>
+          <span
+            className={`text-xs tabular-nums ${
+              questionLength >= 300
+                ? 'text-red-500'
+                : questionLength >= 200
+                  ? 'text-amber-500'
+                  : 'text-muted-foreground'
+            }`}
+            title={t('builder.questionLengthHint')}
+          >
+            {questionLength}
+          </span>
+        </div>
         <div className="flex items-stretch gap-2">
           <RichTextEditor
             key={`q-${id}`}
@@ -349,6 +365,21 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
       ) : (
         renderOptionList(type === 'multiple-choice')
       )}
+
+      <Card>
+        <CardContent className="py-2 px-3 space-y-2">
+          <div>
+            <h6 className="text-sm font-semibold">{t('builder.notes')}</h6>
+            <p className="text-xs text-muted-foreground">{t('builder.notesHint')}</p>
+          </div>
+          <RichTextEditor
+            key={`notes-${id}`}
+            value={question.data!.notes ?? ''}
+            onChange={(html) => update({ notes: html })}
+            ariaLabel={t('builder.notes')}
+          />
+        </CardContent>
+      </Card>
 
       <ConfirmDialog
         open={confirmDelete}
