@@ -4,6 +4,7 @@ import type { ActiveQuestionState, TimerSoundMode, TimerState } from '@shared/ty
 import { detectMediaType } from '@shared/media'
 import { mediaUrl } from '@shared/mediaUrl'
 import { RichText } from '@shared/RichText'
+import AutoFitText from './AutoFitText'
 import AudioVisualizer from '@shared/AudioVisualizer'
 import PieTimer from './PieTimer'
 
@@ -154,7 +155,6 @@ const QuestionScreen = ({
   const hasVisualMedia =
     mediaSrc && (mediaType === 'image' || (mediaType === 'video' && !audioOnly)) && !mediaFullscreen
   const hasAudioVisualizer = (mediaSrc && mediaType === 'audio') || audioOnly
-  const hasMediaZone = hasVisualMedia || hasAudioVisualizer
   const type = question.type
 
   return (
@@ -209,14 +209,16 @@ const QuestionScreen = ({
         )}
 
         <div className="flex-1 min-h-0 flex flex-col px-6 pb-4 pt-2 overflow-hidden">
-          {/* Question text */}
-          <div
-            className={`shrink-0 text-center ${!hasMediaZone ? 'flex-1 flex items-center justify-center' : ''}`}
-          >
-            <RichText
-              html={question.text}
-              className="text-6xl [&_p]:m-0 [&_p+p]:mt-3"
-            />
+          {/* Question text — auto-fits so long questions shrink to fit instead of clipping */}
+          <div className="flex-1 min-h-0">
+            <AutoFitText
+              maxPx={60}
+              minPx={24}
+              resetKey={question.id}
+              className="text-center [&_p]:m-0 [&_p+p]:mt-3 [overflow-wrap:anywhere]"
+            >
+              <RichText html={question.text} />
+            </AutoFitText>
           </div>
 
           {/* Media — scales to fill remaining space, capped so answers aren't squeezed */}
