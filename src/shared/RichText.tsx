@@ -28,6 +28,15 @@ export function sanitizeRichText(html: string): string {
   return DOMPurify.sanitize(html, { ALLOWED_TAGS, ALLOWED_ATTR: [] })
 }
 
+/**
+ * Give blank-line paragraphs a line box. The editor stores an empty line as an
+ * empty `<p></p>`, which collapses to zero height on render; a `<br>` inside
+ * restores the line so an intentional blank line actually shows.
+ */
+export function fillEmptyParagraphs(html: string): string {
+  return html.replace(/<p>\s*<\/p>/g, '<p><br></p>')
+}
+
 type RichTextProps = {
   html: string | null | undefined
   className?: string
@@ -43,7 +52,7 @@ export function RichText({ html, className, as = 'div' }: RichTextProps): JSX.El
     return as === 'span' ? <span className={className}>{html}</span> : <div className={className}>{html}</div>
   }
 
-  const clean = sanitizeRichText(html)
+  const clean = fillEmptyParagraphs(sanitizeRichText(html))
   return as === 'span' ? (
     <span className={className} dangerouslySetInnerHTML={{ __html: clean }} />
   ) : (
