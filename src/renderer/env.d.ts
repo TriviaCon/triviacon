@@ -115,6 +115,9 @@ declare global {
       mediaPickFile: (questionId: number) => Promise<string | null>
       mediaAttachFile: (questionId: number, filePath: string) => Promise<string>
       mediaRemoveFile: (questionId: number) => Promise<void>
+      answerMediaPickFile: (questionId: number) => Promise<string | null>
+      answerMediaAttachFile: (questionId: number, filePath: string) => Promise<string>
+      answerMediaRemoveFile: (questionId: number) => Promise<void>
 
       // --- Media playback ---
       mediaPlay: () => Promise<void>

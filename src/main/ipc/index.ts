@@ -183,6 +183,9 @@ export function registerIpcHandlers(): void {
     if (question?.media) {
       await quizFile.removeMedia(question.media)
     }
+    if (question?.answerMedia) {
+      await quizFile.removeMedia(question.answerMedia)
+    }
     store.questionDelete(id)
     broadcastState()
   })
@@ -381,6 +384,41 @@ export function registerIpcHandlers(): void {
       await quizFile.removeMedia(question.media)
     }
     store.questionUpdate(questionId, { media: null })
+    broadcastState()
+  })
+
+  // ── Answer media management ──────────────────────────────────────
+
+  ipcMain.handle(IPC.QUIZ_ANSWER_MEDIA_PICK, async (_, questionId: number) => {
+    const result = await dialog.showOpenDialog({
+      filters: [
+        { name: 'Media', extensions: ['mp3', 'wav', 'ogg', 'aac', 'm4a', 'mp4', 'webm', 'mov', 'png', 'jpg', 'jpeg', 'gif', 'webp'] }
+      ],
+      properties: ['openFile']
+    })
+    if (result.canceled || result.filePaths.length === 0) return null
+    const sourcePath = result.filePaths[0]
+    const filename = sourcePath.split(/[\\/]/).pop()!
+    const mediaPath = await quizFile.attachMedia(sourcePath, filename)
+    store.questionUpdate(questionId, { answerMedia: mediaPath })
+    broadcastState()
+    return mediaPath
+  })
+
+  ipcMain.handle(IPC.QUIZ_ANSWER_MEDIA_ATTACH, async (_, questionId: number, filePath: string) => {
+    const filename = filePath.split(/[\\/]/).pop()!
+    const mediaPath = await quizFile.attachMedia(filePath, filename)
+    store.questionUpdate(questionId, { answerMedia: mediaPath })
+    broadcastState()
+    return mediaPath
+  })
+
+  ipcMain.handle(IPC.QUIZ_ANSWER_MEDIA_REMOVE, async (_, questionId: number) => {
+    const question = store.questionById(questionId)
+    if (question?.answerMedia) {
+      await quizFile.removeMedia(question.answerMedia)
+    }
+    store.questionUpdate(questionId, { answerMedia: null, answerMediaAudioOnly: undefined })
     broadcastState()
   })
 

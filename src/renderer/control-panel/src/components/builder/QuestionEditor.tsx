@@ -351,6 +351,76 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
         </CardContent>
       </Card>
 
+      {type !== 'list' && question.data!.media && (
+        <Card>
+          <CardContent className="py-2 px-3 space-y-2">
+            <div className="flex items-baseline gap-2">
+              <h6 className="text-sm font-semibold shrink-0">{t('builder.answerMedia')}</h6>
+              {question.data!.answerMedia && (
+                <span className="text-sm text-muted-foreground truncate">
+                  {mediaDisplayName(question.data!.answerMedia) ?? question.data!.answerMedia}
+                </span>
+              )}
+            </div>
+            {question.data!.answerMedia ? (
+              <>
+                <div className="flex items-center gap-3">
+                  <div className="flex-1 border border-border rounded p-2">
+                    <MediaPreview media={question.data!.answerMedia} localPlayer />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={async () => {
+                        const path = await window.api.answerMediaPickFile(id)
+                        if (path) refetchQuestion()
+                      }}
+                    >
+                      {t('actions.change')}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="text-destructive border-destructive/50 hover:bg-destructive/10"
+                      onClick={async () => {
+                        await window.api.answerMediaRemoveFile(id)
+                        refetchQuestion()
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+                {detectMediaType(question.data!.answerMedia) === 'video' && (
+                  <label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={question.data!.answerMediaAudioOnly ?? false}
+                      onChange={(e) => update({ answerMediaAudioOnly: e.target.checked })}
+                      className="h-4 w-4 rounded border-input"
+                    />
+                    <Volume2 className="h-4 w-4" />
+                    {t('builder.audioOnly')}
+                  </label>
+                )}
+              </>
+            ) : (
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={async () => {
+                  const path = await window.api.answerMediaPickFile(id)
+                  if (path) refetchQuestion()
+                }}
+              >
+                <CloudUpload className="mr-2 h-4 w-4" /> {t('builder.attachAnswerMedia')}
+              </Button>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
       {type === 'single-answer' ? (
         <Card>
           <CardContent className="py-2 px-3 space-y-2">

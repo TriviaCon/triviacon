@@ -16,6 +16,8 @@ export interface Question {
   notes?: string
   media: string | null
   audioOnly?: boolean
+  answerMedia?: string | null
+  answerMediaAudioOnly?: boolean
   sortOrder: number
 }
 
