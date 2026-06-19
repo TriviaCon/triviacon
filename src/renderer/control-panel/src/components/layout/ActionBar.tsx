@@ -4,6 +4,7 @@ import {
   FilePlus,
   Upload,
   Save,
+  ChevronDown,
   Play,
   Trophy,
   Maximize,
@@ -84,26 +85,34 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
           </Button>
 
           <div className="flex items-center gap-1.5">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="text-green-600 border-green-600/50 hover:bg-green-600/10"
-                  disabled={!quizFilePath}
-                >
-                  <Save className="mr-1 h-4 w-4" />
-                  {t('actions.saveQuiz')}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem onClick={handleSave}>
-                  <Save className="mr-2 h-4 w-4" /> {t('actions.save')}
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleSaveAs}>
-                  <Save className="mr-2 h-4 w-4" /> {t('actions.saveAs')}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <div className="flex">
+              <Button
+                variant="outline"
+                className="rounded-r-none border-r-0 text-green-600 border-green-600/50 hover:bg-green-600/10"
+                disabled={!quizFilePath}
+                onClick={handleSave}
+              >
+                <Save className="mr-1 h-4 w-4" />
+                {t('actions.saveQuiz')}
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="rounded-l-none text-green-600 border-green-600/50 hover:bg-green-600/10"
+                    disabled={!quizFilePath}
+                  >
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={handleSaveAs}>
+                    <Save className="mr-2 h-4 w-4" /> {t('actions.saveAs')}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
 
             <Separator orientation="vertical" className="mx-1 h-8" />
           <Button variant="outline" onClick={() => setMetaOpen(true)}>
