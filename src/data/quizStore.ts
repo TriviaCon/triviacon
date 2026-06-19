@@ -391,6 +391,7 @@ export function metaSetSplashGrow(grow: boolean): void {
 export function teamsAll(): Team[] {
   if (!doc) return []
   return doc.teams
+    .slice()
     .sort((a, b) => a.sortOrder - b.sortOrder)
     .map(({ id, name, score }) => ({ id, name, score }))
 }
