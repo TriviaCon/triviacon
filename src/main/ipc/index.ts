@@ -11,6 +11,7 @@ import { GameEngine } from '../state/GameEngine'
 import { getControlPanelWindow, getGameScreenWindow } from '../windows'
 
 const engine = new GameEngine()
+let timerInterval: ReturnType<typeof setInterval> | null = null
 
 export function getEngine(): GameEngine {
   return engine
@@ -567,9 +568,11 @@ export function registerIpcHandlers(): void {
     broadcastState()
   })
 
-  setInterval(() => {
-    if (engine.timerTick()) broadcastState()
-  }, 1000)
+  if (!timerInterval) {
+    timerInterval = setInterval(() => {
+      if (engine.timerTick()) broadcastState()
+    }, 1000)
+  }
 
   // ── Settings ───────────────────────────────────────────────────
 

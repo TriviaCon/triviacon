@@ -125,6 +125,12 @@ const _open = async (path: string, onProgress?: OpenProgressCallback) => {
 
   const raw = jsonEntry.getData().toString('utf-8')
   const doc: QuizDocument = JSON.parse(raw)
+  if ((doc as { version?: unknown }).version !== 2) {
+    throw new Error(
+      `Unsupported quiz version (${(doc as { version?: unknown }).version ?? 'unknown'}). ` +
+        'This file may have been created with a newer version of Triviacon.'
+    )
+  }
 
   onProgress?.({ phase: 'metadata', meta: { name: doc.meta.name, author: doc.meta.author, location: doc.meta.location, date: doc.meta.date } })
 
@@ -178,7 +184,7 @@ const _saveTo = async (destPath: string): Promise<void> => {
     zip.addLocalFolder(mediaDir, MEDIA_DIR)
   }
 
-  zip.writeZip(destPath)
+  await zip.writeZipPromise(destPath)
   quizFilePath = destPath
   clearDirty()
 }
