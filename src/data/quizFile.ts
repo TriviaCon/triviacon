@@ -9,7 +9,7 @@
 import { readFile, copyFile, mkdir, rm, writeFile, readdir, access } from 'fs/promises'
 import { sanitizeFilename } from '@shared/media'
 import { constants, existsSync } from 'fs'
-import { join } from 'path'
+import { join, sep } from 'path'
 import { app } from 'electron'
 import { getPortableRoot } from '../main/portablePath'
 import AdmZip from 'adm-zip'
@@ -146,6 +146,8 @@ const _open = async (path: string, onProgress?: OpenProgressCallback) => {
     for (let i = 0; i < mediaEntries.length; i++) {
       const entry = mediaEntries[i]
       const destPath = join(workDir, entry.entryName)
+      // Reject paths that escape the media directory (e.g. media/../../etc/passwd)
+      if (!destPath.startsWith(mediaDir + sep)) continue
       await writeFile(destPath, entry.getData())
       onProgress?.({ phase: 'extracting', current: i + 1, total })
     }
