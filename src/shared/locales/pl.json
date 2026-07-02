@@ -153,6 +153,7 @@
     "lockOrder": "Zablokuj",
     "unlockOrder": "Odblokuj",
     "media": "Media",
+    "answerMedia": "Media odpowiedzi",
     "noMedia": "Brak mediów",
     "audioControls": "Sterowanie audio",
     "videoControls": "Sterowanie wideo",

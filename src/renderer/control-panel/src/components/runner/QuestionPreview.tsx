@@ -36,6 +36,7 @@ const QuestionPreview = ({
 }) => {
   const { t } = useTranslation()
   const mediaSrc = mediaUrl(question.media)
+  const answerMediaSrc = mediaUrl(question.answerMedia)
   const type = question.type
 
   return (
@@ -75,6 +76,20 @@ const QuestionPreview = ({
                 {mediaDisplayName(question.media) ?? question.media}
               </span>
               <MediaPreview media={question.media} fullscreenButton playbackControls />
+            </div>
+          )}
+        </div>
+
+        <span className="font-semibold text-sm text-right">{t('runner.answerMedia')}</span>
+        <div>
+          {!answerMediaSrc ? (
+            <span className="text-sm text-muted-foreground">{t('runner.noMedia')}</span>
+          ) : (
+            <div className="rounded-lg border border-border p-3 space-y-2">
+              <span className="text-sm text-muted-foreground truncate block">
+                {mediaDisplayName(question.answerMedia) ?? question.answerMedia}
+              </span>
+              <MediaPreview media={question.answerMedia} fullscreenButton playbackControls />
             </div>
           )}
         </div>

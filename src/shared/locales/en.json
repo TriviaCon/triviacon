@@ -153,6 +153,7 @@
     "lockOrder": "Lock",
     "unlockOrder": "Unlock",
     "media": "Media",
+    "answerMedia": "Answer Media",
     "noMedia": "No media",
     "audioControls": "Audio Controls",
     "videoControls": "Video Controls",
