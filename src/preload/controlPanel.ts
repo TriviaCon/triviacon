@@ -149,6 +149,12 @@ const api = {
     ipcRenderer.invoke(IPC.QUIZ_MEDIA_ATTACH, questionId, filePath),
   mediaRemoveFile: (questionId: number): Promise<void> =>
     ipcRenderer.invoke(IPC.QUIZ_MEDIA_REMOVE, questionId),
+  answerMediaPickFile: (questionId: number): Promise<string | null> =>
+    ipcRenderer.invoke(IPC.QUIZ_ANSWER_MEDIA_PICK, questionId),
+  answerMediaAttachFile: (questionId: number, filePath: string): Promise<string> =>
+    ipcRenderer.invoke(IPC.QUIZ_ANSWER_MEDIA_ATTACH, questionId, filePath),
+  answerMediaRemoveFile: (questionId: number): Promise<void> =>
+    ipcRenderer.invoke(IPC.QUIZ_ANSWER_MEDIA_REMOVE, questionId),
 
   // ── Media playback ─────────────────────────────────────────────
   mediaPlay: (): Promise<void> => ipcRenderer.invoke(IPC.MEDIA_PLAY),

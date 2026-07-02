@@ -50,12 +50,16 @@ const QuestionScreen = ({
     window.api.getDefaultVolume().then((v) => { savedVolumeRef.current = v })
   }, [])
 
-  // Reset fullscreen and playback bookkeeping when the active question changes
+  // Reset fullscreen and playback bookkeeping when the active question or active media changes
+  const activeMediaFile =
+    activeQuestion?.answerRevealed && activeQuestion.question.answerMedia
+      ? activeQuestion.question.answerMedia
+      : activeQuestion?.question.media ?? null
   useEffect(() => {
     setMediaFullscreen(false)
     savedTimeRef.current = 0
     savedPlayingRef.current = false
-  }, [activeQuestion?.question.id])
+  }, [activeMediaFile])
 
   useEffect(() => {
     const cleanups: (() => void)[] = []
@@ -137,7 +141,7 @@ const QuestionScreen = ({
       el.removeEventListener('loadedmetadata', report)
       el.removeEventListener('volumechange', report)
     }
-  }, [activeQuestion?.question.id, mediaFullscreen])
+  }, [activeMediaFile, mediaFullscreen])
 
   if (!activeQuestion) {
     return (
@@ -149,9 +153,13 @@ const QuestionScreen = ({
 
   const { question, answerOptions, answerRevealed, markedAnswerId, revealedOptionIds } = activeQuestion
   const correctOptions = answerOptions.filter((opt) => opt.correct)
-  const mediaType = detectMediaType(question.media)
-  const mediaSrc = mediaUrl(question.media)
-  const audioOnly = question.audioOnly && mediaType === 'video'
+  const showAnswerMedia = answerRevealed && !!question.answerMedia
+  const activeAudioOnly = showAnswerMedia
+    ? (question.answerMediaAudioOnly ?? false)
+    : (question.audioOnly ?? false)
+  const mediaType = detectMediaType(activeMediaFile)
+  const mediaSrc = mediaUrl(activeMediaFile)
+  const audioOnly = activeAudioOnly && mediaType === 'video'
   const hasVisualMedia =
     mediaSrc && (mediaType === 'image' || (mediaType === 'video' && !audioOnly)) && !mediaFullscreen
   const hasAudioVisualizer = (mediaSrc && mediaType === 'audio') || audioOnly
