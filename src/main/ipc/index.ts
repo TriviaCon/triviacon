@@ -13,6 +13,18 @@ import { getControlPanelWindow, getGameScreenWindow } from '../windows'
 const engine = new GameEngine()
 let timerInterval: ReturnType<typeof setInterval> | null = null
 
+// Parent native dialogs to the control panel window. An unparented modal can
+// hang the app on Linux, especially when the dialog is cancelled.
+function showOpenDialog(options: Electron.OpenDialogOptions): Promise<Electron.OpenDialogReturnValue> {
+  const parent = getControlPanelWindow()
+  return parent ? dialog.showOpenDialog(parent, options) : dialog.showOpenDialog(options)
+}
+
+function showSaveDialog(options: Electron.SaveDialogOptions): Promise<Electron.SaveDialogReturnValue> {
+  const parent = getControlPanelWindow()
+  return parent ? dialog.showSaveDialog(parent, options) : dialog.showSaveDialog(options)
+}
+
 export function getEngine(): GameEngine {
   return engine
 }
@@ -49,7 +61,7 @@ export function registerIpcHandlers(): void {
   // ── File operations ──────────────────────────────────────────────
 
   ipcMain.handle(IPC.FILE_NEW, async () => {
-    const result = await dialog.showSaveDialog({
+    const result = await showSaveDialog({
       filters: [QUIZ_FILE_FILTER]
     })
     if (result.canceled || !result.filePath) return null
@@ -68,7 +80,7 @@ export function registerIpcHandlers(): void {
   })
 
   ipcMain.handle(IPC.FILE_OPEN, async () => {
-    const result = await dialog.showOpenDialog({
+    const result = await showOpenDialog({
       filters: [QUIZ_FILE_FILTER],
       properties: ['openFile']
     })
@@ -107,7 +119,7 @@ export function registerIpcHandlers(): void {
   })
 
   ipcMain.handle(IPC.FILE_SAVE_AS, async () => {
-    const result = await dialog.showSaveDialog({
+    const result = await showSaveDialog({
       filters: [QUIZ_FILE_FILTER]
     })
     if (result.canceled || !result.filePath) return null
@@ -277,7 +289,7 @@ export function registerIpcHandlers(): void {
   const AUDIO_VIDEO_EXTS = ['mp3', 'wav', 'ogg', 'aac', 'm4a', 'mp4', 'webm', 'mov']
 
   ipcMain.handle(IPC.SPLASH_PICK_VISUAL, async () => {
-    const result = await dialog.showOpenDialog({
+    const result = await showOpenDialog({
       filters: [{ name: 'Image or video', extensions: IMAGE_VIDEO_EXTS }],
       properties: ['openFile']
     })
@@ -301,7 +313,7 @@ export function registerIpcHandlers(): void {
   })
 
   ipcMain.handle(IPC.SPLASH_PICK_AUDIO, async () => {
-    const result = await dialog.showOpenDialog({
+    const result = await showOpenDialog({
       filters: [{ name: 'Audio or video', extensions: AUDIO_VIDEO_EXTS }],
       properties: ['openFile']
     })
@@ -355,7 +367,7 @@ export function registerIpcHandlers(): void {
   // ── Media management ─────────────────────────────────────────────
 
   ipcMain.handle(IPC.QUIZ_MEDIA_PICK, async (_, questionId: number) => {
-    const result = await dialog.showOpenDialog({
+    const result = await showOpenDialog({
       filters: [
         { name: 'Media', extensions: ['mp3', 'wav', 'ogg', 'aac', 'm4a', 'mp4', 'webm', 'mov', 'png', 'jpg', 'jpeg', 'gif', 'webp'] }
       ],
@@ -390,7 +402,7 @@ export function registerIpcHandlers(): void {
   // ── Answer media management ──────────────────────────────────────
 
   ipcMain.handle(IPC.QUIZ_ANSWER_MEDIA_PICK, async (_, questionId: number) => {
-    const result = await dialog.showOpenDialog({
+    const result = await showOpenDialog({
       filters: [
         { name: 'Media', extensions: ['mp3', 'wav', 'ogg', 'aac', 'm4a', 'mp4', 'webm', 'mov', 'png', 'jpg', 'jpeg', 'gif', 'webp'] }
       ],
