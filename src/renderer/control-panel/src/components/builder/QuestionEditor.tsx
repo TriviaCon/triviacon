@@ -19,8 +19,9 @@ import { useAddAnswerOptionMutation } from '@renderer/hooks/useAddAnswerOptionMu
 import { useDeleteQuestionMutation } from '@renderer/hooks/useDeleteQuestionMutation'
 import { QueryLoading, QueryError } from '@renderer/components/ui/query-state'
 import { MediaPreview } from '@renderer/components/ui/media-preview'
-import { detectMediaType, mediaDisplayName, ALLOWED_MEDIA_EXTENSIONS } from '@shared/media'
+import { detectMediaType, mediaDisplayName } from '@shared/media'
 import { usePairQueryState } from '@renderer/hooks/usePairQueryState'
+import { useMediaDrop } from '@renderer/hooks/useMediaDrop'
 import keys from '@renderer/utils/keys'
 
 /**
@@ -74,72 +75,21 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
   const deleteQuestionMutation = useDeleteQuestionMutation(question.data?.categoryId ?? 0)
   const [deleting, setDeleting] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
-  const [confirmReplaceMedia, setConfirmReplaceMedia] = useState(false)
-  const pendingMediaPathRef = useRef<string | null>(null)
-  const [dragOver, setDragOver] = useState(false)
-  const [dropError, setDropError] = useState<string | null>(null)
-  const dropTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   const update = (q: Partial<Question>) => updateQuestionMutation.mutate(q)
 
-  const refetchQuestion = () => {
+  const refetchQuestion = useCallback(() => {
     question.refetch()
     if (question.data?.categoryId !== undefined) {
       qc.invalidateQueries({ queryKey: keys.questions(question.data.categoryId) })
     }
-  }
+  }, [question, qc])
 
-  const showDropError = useCallback((msg: string) => {
-    setDropError(msg)
-    clearTimeout(dropTimerRef.current)
-    dropTimerRef.current = setTimeout(() => setDropError(null), 3000)
-  }, [])
+  const attachPrimary = useCallback((path: string) => window.api.mediaAttachFile(id, path), [id])
+  const attachAnswer = useCallback((path: string) => window.api.answerMediaAttachFile(id, path), [id])
 
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setDragOver(true)
-  }, [])
-
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setDragOver(false)
-  }, [])
-
-  const handleDrop = useCallback(
-    async (e: React.DragEvent) => {
-      e.preventDefault()
-      e.stopPropagation()
-      setDragOver(false)
-      setDropError(null)
-
-      const files = e.dataTransfer.files
-      if (files.length > 1) {
-        showDropError(t('builder.dropOneFileOnly'))
-        return
-      }
-      if (files.length === 0) return
-
-      const file = files[0]
-      const ext = file.name.split('.').pop()?.toLowerCase()
-      if (!ext || !ALLOWED_MEDIA_EXTENSIONS.includes(ext)) {
-        showDropError(t('builder.dropUnsupportedType'))
-        return
-      }
-
-      const hasExisting = !!question.data?.media
-      if (hasExisting) {
-        pendingMediaPathRef.current = window.api.getFilePath(file)
-        setConfirmReplaceMedia(true)
-        return
-      }
-
-      await window.api.mediaAttachFile(id, window.api.getFilePath(file))
-      refetchQuestion()
-    },
-    [id, question, refetchQuestion, t, showDropError]
-  )
+  const primaryDrop = useMediaDrop(!!question.data?.media, attachPrimary, refetchQuestion)
+  const answerDrop = useMediaDrop(!!question.data?.answerMedia, attachAnswer, refetchQuestion)
 
   const guard = usePairQueryState(question, answerOptions)
   if (!guard.ok) {
@@ -276,10 +226,8 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
       </div>
 
       <Card
-        className={dragOver ? 'border-dashed border-primary border-2' : ''}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
+        className={primaryDrop.dragOver ? 'border-dashed border-primary border-2' : ''}
+        {...primaryDrop.dropProps}
       >
         <CardContent className="py-2 px-3 space-y-2">
           <div className="flex items-baseline gap-2">
@@ -290,8 +238,8 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
               </span>
             )}
           </div>
-          {dropError && (
-            <p className="text-sm text-destructive">{dropError}</p>
+          {primaryDrop.dropError && (
+            <p className="text-sm text-destructive">{primaryDrop.dropError}</p>
           )}
           {question.data!.media ? (
             <>
@@ -351,7 +299,10 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
         </CardContent>
       </Card>
 
-      <Card>
+      <Card
+        className={answerDrop.dragOver ? 'border-dashed border-primary border-2' : ''}
+        {...answerDrop.dropProps}
+      >
         <CardContent className="py-2 px-3 space-y-2">
           <div className="flex items-baseline gap-2">
             <h6 className="text-sm font-semibold shrink-0">{t('builder.answerMedia')}</h6>
@@ -361,6 +312,9 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
               </span>
             )}
           </div>
+          {answerDrop.dropError && (
+            <p className="text-sm text-destructive">{answerDrop.dropError}</p>
+          )}
           {question.data!.answerMedia ? (
             <>
               <div className="flex items-center gap-3">
@@ -459,18 +413,18 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
         onCancel={() => setConfirmDelete(false)}
       />
       <ConfirmDialog
-        open={confirmReplaceMedia}
+        open={primaryDrop.replaceOpen}
         title={t('builder.replaceMediaTitle')}
         description={t('builder.replaceMedia')}
-        onConfirm={async () => {
-          if (pendingMediaPathRef.current) {
-            await window.api.mediaAttachFile(id, pendingMediaPathRef.current)
-            pendingMediaPathRef.current = null
-            refetchQuestion()
-          }
-          setConfirmReplaceMedia(false)
-        }}
-        onCancel={() => { pendingMediaPathRef.current = null; setConfirmReplaceMedia(false) }}
+        onConfirm={primaryDrop.confirmReplace}
+        onCancel={primaryDrop.cancelReplace}
+      />
+      <ConfirmDialog
+        open={answerDrop.replaceOpen}
+        title={t('builder.replaceMediaTitle')}
+        description={t('builder.replaceMedia')}
+        onConfirm={answerDrop.confirmReplace}
+        onCancel={answerDrop.cancelReplace}
       />
     </div>
   )
