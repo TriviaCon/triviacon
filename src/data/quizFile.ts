@@ -13,7 +13,7 @@ import { join, sep } from 'path'
 import { app } from 'electron'
 import { getPortableRoot } from '../main/portablePath'
 import AdmZip from 'adm-zip'
-import { writeZipArchive, type ArchiveEntry, type SaveProgressCallback } from './zipArchive'
+import { writeZipArchive, updateArchiveJson, type ArchiveEntry, type SaveProgressCallback } from './zipArchive'
 import {
   type QuizDocument,
   createEmptyDocument,
@@ -178,19 +178,38 @@ const _saveTo = async (destPath: string, onProgress?: SaveProgressCallback): Pro
   const jsonBuffer = Buffer.from(JSON.stringify(doc, null, 2), 'utf-8')
   await writeFile(join(workDir, JSON_FILENAME), jsonBuffer)
 
-  const entries: ArchiveEntry[] = [
-    { name: JSON_FILENAME, buffer: jsonBuffer, size: jsonBuffer.length }
-  ]
-
+  // Enumerate current media once (shared by both save paths).
   const mediaDir = join(workDir, MEDIA_DIR)
+  const mediaFiles: Array<{ name: string; path: string; size: number }> = []
   if (existsSync(mediaDir)) {
     for (const name of await readdir(mediaDir)) {
       const full = join(mediaDir, name)
       const s = await stat(full)
-      if (s.isFile()) entries.push({ name: `${MEDIA_DIR}/${name}`, path: full, size: s.size })
+      if (s.isFile()) mediaFiles.push({ name: `${MEDIA_DIR}/${name}`, path: full, size: s.size })
     }
   }
 
+  // C2 — incremental: saving over the same archive when the media set is
+  // unchanged only needs the tiny quiz.json appended, not the whole (possibly
+  // hundreds of MB) archive rewritten. Any failure — media changed, zip64,
+  // bloat, a parse hiccup — falls back to the safe full rewrite below.
+  if (destPath === quizFilePath && existsSync(destPath)) {
+    const expectedMedia = new Map(mediaFiles.map((m) => [m.name, m.size]))
+    try {
+      await updateArchiveJson(destPath, JSON_FILENAME, jsonBuffer, expectedMedia, onProgress)
+      clearDirty()
+      onProgress?.({ phase: 'done' })
+      return
+    } catch (err) {
+      dbg('incremental save fallback:', err)
+    }
+  }
+
+  // Full rewrite — streams every entry and compacts any accumulated dead bytes.
+  const entries: ArchiveEntry[] = [
+    { name: JSON_FILENAME, buffer: jsonBuffer, size: jsonBuffer.length },
+    ...mediaFiles.map((m) => ({ name: m.name, path: m.path, size: m.size }))
+  ]
   await writeZipArchive(destPath, entries, onProgress)
 
   quizFilePath = destPath

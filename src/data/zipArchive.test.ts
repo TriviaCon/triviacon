@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { mkdtemp, rm, writeFile, readdir, readFile } from 'fs/promises'
+import { mkdtemp, rm, writeFile, readdir, readFile, open } from 'fs/promises'
 import { existsSync } from 'fs'
 import { tmpdir } from 'os'
 import { join } from 'path'
 import AdmZip from 'adm-zip'
-import { writeZipArchive, type ArchiveEntry, type SaveProgressCallback } from './zipArchive'
+import { writeZipArchive, updateArchiveJson, type ArchiveEntry, type SaveProgressCallback } from './zipArchive'
 import type { FileSaveProgressPayload } from '@shared/types/ipc'
 
 let dir: string
@@ -87,5 +87,93 @@ describe('writeZipArchive', () => {
     expect([...(await readFile(dest))]).toEqual([...before])
     const leftovers = (await readdir(dir)).filter((f) => f.includes('.tmp'))
     expect(leftovers).toEqual([])
+  })
+})
+
+describe('updateArchiveJson (incremental)', () => {
+  const buildBase = async (dest: string) => {
+    const a = join(dir, 'a.png')
+    const b = join(dir, 'b.mp3')
+    await writeFile(a, Buffer.from([10, 20, 30]))
+    await writeFile(b, Buffer.from([40, 50, 60, 70]))
+    await writeZipArchive(dest, [
+      { name: 'quiz.json', buffer: Buffer.from('{"v":1}'), size: 7 },
+      { name: 'media/a.png', path: a, size: 3 },
+      { name: 'media/b.mp3', path: b, size: 4 }
+    ])
+    return new Map([['media/a.png', 3], ['media/b.mp3', 4]])
+  }
+
+  it('updates quiz.json in place while preserving media bytes', async () => {
+    const dest = join(dir, 'out.tcq')
+    const media = await buildBase(dest)
+
+    const next = Buffer.from(JSON.stringify({ v: 2, note: 'changed' }))
+    await updateArchiveJson(dest, 'quiz.json', next, media)
+
+    const zip = new AdmZip(dest)
+    expect(zip.getEntry('quiz.json')?.getData().toString('utf-8')).toBe(next.toString('utf-8'))
+    expect([...zip.getEntry('media/a.png')!.getData()]).toEqual([10, 20, 30])
+    expect([...zip.getEntry('media/b.mp3')!.getData()]).toEqual([40, 50, 60, 70])
+    expect(zip.getEntries().filter((e) => !e.isDirectory).length).toBe(3)
+  })
+
+  it('survives repeated incremental updates', async () => {
+    const dest = join(dir, 'out.tcq')
+    const media = await buildBase(dest)
+
+    for (let i = 2; i <= 6; i++) {
+      await updateArchiveJson(dest, 'quiz.json', Buffer.from(JSON.stringify({ v: i })), media)
+    }
+    const zip = new AdmZip(dest)
+    expect(JSON.parse(zip.getEntry('quiz.json')!.getData().toString('utf-8'))).toEqual({ v: 6 })
+    expect([...zip.getEntry('media/a.png')!.getData()]).toEqual([10, 20, 30])
+  })
+
+  it('is crash-safe: a torn append still reads the previous state', async () => {
+    const dest = join(dir, 'out.tcq')
+    const media = await buildBase(dest)
+    // A committed incremental update to v2...
+    await updateArchiveJson(dest, 'quiz.json', Buffer.from(JSON.stringify({ v: 2 })), media)
+
+    // ...then simulate a crash during the *next* update by truncating its new EOCD.
+    const full = await readFile(dest)
+    const beforeThird = full.length
+    await updateArchiveJson(dest, 'quiz.json', Buffer.from(JSON.stringify({ v: 3 })), media)
+    // Chop off everything appended by the third write (its EOCD included).
+    const fd = await open(dest, 'r+')
+    await fd.truncate(beforeThird)
+    await fd.close()
+
+    // The reader falls back to the last intact EOCD → v2, media intact.
+    const zip = new AdmZip(dest)
+    expect(JSON.parse(zip.getEntry('quiz.json')!.getData().toString('utf-8'))).toEqual({ v: 2 })
+    expect([...zip.getEntry('media/a.png')!.getData()]).toEqual([10, 20, 30])
+  })
+
+  it('rejects when the media set changed (added file)', async () => {
+    const dest = join(dir, 'out.tcq')
+    await buildBase(dest)
+    const changed = new Map([['media/a.png', 3], ['media/b.mp3', 4], ['media/c.gif', 9]])
+    await expect(
+      updateArchiveJson(dest, 'quiz.json', Buffer.from('{"v":2}'), changed)
+    ).rejects.toThrow(/media set changed/)
+  })
+
+  it('rejects when a media size changed', async () => {
+    const dest = join(dir, 'out.tcq')
+    await buildBase(dest)
+    const changed = new Map([['media/a.png', 999], ['media/b.mp3', 4]])
+    await expect(
+      updateArchiveJson(dest, 'quiz.json', Buffer.from('{"v":2}'), changed)
+    ).rejects.toThrow(/media set changed/)
+  })
+
+  it('rejects a non-zip file', async () => {
+    const dest = join(dir, 'notzip.tcq')
+    await writeFile(dest, Buffer.from('this is definitely not a zip archive'))
+    await expect(
+      updateArchiveJson(dest, 'quiz.json', Buffer.from('{}'), new Map())
+    ).rejects.toThrow(/EOCD not found/)
   })
 })
