@@ -421,6 +421,71 @@ main section:last-child {
   font-size: 0.9rem;
 }
 
+/* ── Is / Isn't ─────────────────────────────────────────────────── */
+
+.is-isnt-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-top: 1.4rem;
+}
+
+@media (min-width: 640px) {
+  .is-isnt-grid { grid-template-columns: 1fr 1fr; }
+}
+
+.is-col, .isnt-col {
+  background: var(--bg-card-alt);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.35rem;
+}
+
+.is-col { border-color: rgba(108, 142, 247, 0.35); }
+
+.is-isnt-head {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.9rem;
+  color: var(--text-muted);
+}
+
+.is-col .is-isnt-head { color: var(--accent-hover); }
+
+.is-isnt-grid ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.is-isnt-grid li {
+  position: relative;
+  padding-left: 1.6rem;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.is-isnt-grid li::before {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-weight: 700;
+}
+
+.is-col li::before  { content: '✓'; color: var(--accent); }
+.isnt-col li::before { content: '×'; color: var(--text-muted); font-size: 1.1em; }
+
+.is-isnt-summary {
+  margin-top: 1.6rem;
+  text-align: center;
+  font-size: 1.02rem;
+  font-style: italic;
+  color: var(--text);
+}
+
 /* ── CTA ─────────────────────────────────────────────────────────── */
 
 .cta {
