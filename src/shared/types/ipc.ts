@@ -54,6 +54,11 @@ export const IPC = {
   QUIZ_MEDIA_ATTACH: 'quiz:media:attach',
   QUIZ_MEDIA_REMOVE: 'quiz:media:remove',
 
+  // Answer media management
+  QUIZ_ANSWER_MEDIA_PICK: 'quiz:answerMedia:pick',
+  QUIZ_ANSWER_MEDIA_ATTACH: 'quiz:answerMedia:attach',
+  QUIZ_ANSWER_MEDIA_REMOVE: 'quiz:answerMedia:remove',
+
   // Team management
   GAME_ADD_TEAM: 'game:addTeam',
   GAME_REMOVE_TEAM: 'game:removeTeam',

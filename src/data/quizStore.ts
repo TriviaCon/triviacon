@@ -50,6 +50,8 @@ export interface QuizDocument {
     notes?: string
     media: string | null
     audioOnly?: boolean
+    answerMedia?: string | null
+    answerMediaAudioOnly?: boolean
     sortOrder: number
   }>
   answerOptions: Array<{
@@ -209,6 +211,8 @@ export function questionCreate(question: Omit<Question, 'id' | 'sortOrder'>): nu
     text: question.text,
     media: question.media,
     audioOnly: question.audioOnly,
+    answerMedia: question.answerMedia,
+    answerMediaAudioOnly: question.answerMediaAudioOnly,
     sortOrder
   })
   markDirty()
@@ -225,6 +229,8 @@ export function questionUpdate(id: number, updates: Partial<Omit<Question, 'id'>
   if (updates.notes !== undefined) q.notes = updates.notes
   if (updates.media !== undefined) q.media = updates.media
   if (updates.audioOnly !== undefined) q.audioOnly = updates.audioOnly
+  if (updates.answerMedia !== undefined) q.answerMedia = updates.answerMedia
+  if (updates.answerMediaAudioOnly !== undefined) q.answerMediaAudioOnly = updates.answerMediaAudioOnly
   if (updates.sortOrder !== undefined) q.sortOrder = updates.sortOrder
   markDirty()
 }
