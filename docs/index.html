@@ -35,8 +35,8 @@
       <p class="version-chip" data-version-chip>
         <span class="dot"></span>
         <span data-i18n="newIn">Nowość</span>
-        <span data-version-tag>v0.9.3</span>
-        <span data-i18n="newInFeature">— dwustopniowe wybieranie pytań</span>
+        <span data-version-tag>v0.9.10</span>
+        <span data-i18n="newInFeature">— media odpowiedzi i szybszy, pewny zapis</span>
       </p>
       <a href="#download" class="btn btn-primary btn-lg">
         <span data-i18n="ctaDownload">Pobierz najnowszą wersję</span>
@@ -54,12 +54,14 @@
         na osobnym ekranie — idealnym do wyświetlenia na projektorze lub telewizorze.
       </p>
       <ul class="features">
-        <li data-i18n="feature1">Tworzenie quizów z kategoriami, pytaniami i odpowiedziami wielokrotnego wyboru</li>
-        <li data-i18n="feature2">Załączanie mediów — obrazy, audio, wideo — bezpośrednio do pytań</li>
-        <li data-i18n="feature3">Zarządzanie drużynami i punktacją w czasie rzeczywistym</li>
-        <li data-i18n="feature4" data-i18n-html>Pliki quizów (<code>.tcq</code>) — samodzielne archiwa, łatwe do udostępniania</li>
-        <li data-i18n="feature5">Interfejs w języku polskim i angielskim</li>
-        <li data-i18n="feature6">W pełni przenośna — nie wymaga instalacji, działa z pendrive'a</li>
+        <li data-i18n="feature1">Trzy typy pytań — jedna odpowiedź, wielokrotny wybór i lista — z formatowaniem tekstu</li>
+        <li data-i18n="feature2">Załączanie mediów (obraz, audio, wideo) do pytań oraz osobny slot na media odsłaniane wraz z odpowiedzią</li>
+        <li data-i18n="feature3">Motywy panelu kontrolnego i konfigurowalny ekran powitalny z grafiką i muzyką</li>
+        <li data-i18n="feature4">Zarządzanie drużynami i punktacją na żywo, z finałowym rankingiem — etapowe odsłanianie i dogrywki</li>
+        <li data-i18n="feature5">Odliczanie czasu dla pytań i notatki widoczne tylko dla prowadzącego</li>
+        <li data-i18n="feature6" data-i18n-html>Pliki quizów (<code>.tcq</code>) — samodzielne archiwa, łatwe do udostępniania; szybki, odporny na awarie zapis</li>
+        <li data-i18n="feature7">Interfejs w języku polskim i angielskim</li>
+        <li data-i18n="feature8">W pełni przenośna — nie wymaga instalacji, działa z pendrive'a</li>
       </ul>
     </section>
 
@@ -168,6 +170,33 @@
       </ol>
     </section>
 
+    <section class="is-isnt container">
+      <h2 data-i18n="isntTitle">Czym Triviacon jest — a czym nie</h2>
+      <div class="is-isnt-grid">
+        <div class="is-col">
+          <h3 class="is-isnt-head" data-i18n="isHead">Jest</h3>
+          <ul>
+            <li data-i18n="is1">Jedna maszyna, dwa ekrany — panel prowadzącego i ekran dla publiczności</li>
+            <li data-i18n="is2">Przenośny — bez instalacji, działa z pendrive'a, w pełni offline</li>
+            <li data-i18n="is3">Ty prowadzisz — Ty liczysz punkty, Ty nawigujesz, Ty decydujesz</li>
+            <li data-i18n="is4" data-i18n-html>Samodzielne pliki <code>.tcq</code>, które posiadasz i udostępniasz</li>
+            <li data-i18n="is5">AI pomaga budować i prezentować — quiz piszesz Ty</li>
+          </ul>
+        </div>
+        <div class="isnt-col">
+          <h3 class="is-isnt-head" data-i18n="isntHead">Nie jest</h3>
+          <ul>
+            <li data-i18n="isnt1">Nie działa online — nic, co mogłoby zawieść przy słabym WiFi</li>
+            <li data-i18n="isnt2">Nie wymaga konta — bez rejestracji, bez chmury, nic śledzonego</li>
+            <li data-i18n="isnt3">Nie liczy punktów za Ciebie — quizy żyją ludzką oceną</li>
+            <li data-i18n="isnt4">Nie narzuca ścieżki — przełączaj się między etapami, kiedy chcesz</li>
+            <li data-i18n="isnt5">Nie pisze Twojego quizu — tworzy szkielet; pytania, trudność i media są Twoje</li>
+          </ul>
+        </div>
+      </div>
+      <p class="is-isnt-summary" data-i18n="isntSummary">Samochód tam, gdzie był rower — ale nigdy nie prowadzi sam. Kierownica zawsze jest w Twoich rękach.</p>
+    </section>
+
     <section class="container cta">
       <h2 data-i18n="osTitle">Open source</h2>
       <p data-i18n="osBody" data-i18n-html>
@@ -199,16 +228,32 @@
         pageDescription: "Triviacon to darmowa, przenośna aplikacja desktopowa do prowadzenia quizów wiedzy na żywo. Dla Windows, Linux i macOS.",
         tagline: "Przenośna aplikacja do prowadzenia quizów na żywo",
         newIn: "Nowość",
-        newInFeature: "— dwustopniowe wybieranie pytań",
+        newInFeature: "— media odpowiedzi i szybszy, pewny zapis",
         ctaDownload: "Pobierz najnowszą wersję",
         aboutTitle: "Czym jest Triviacon?",
         aboutBody: "Triviacon to darmowa aplikacja desktopowa dla organizatorów quizów wiedzy. Prowadzący zarządza grą z panelu kontrolnego, a uczestnicy śledzą rozgrywkę na osobnym ekranie — idealnym do wyświetlenia na projektorze lub telewizorze.",
-        feature1: "Tworzenie quizów z kategoriami, pytaniami i odpowiedziami wielokrotnego wyboru",
-        feature2: "Załączanie mediów — obrazy, audio, wideo — bezpośrednio do pytań",
-        feature3: "Zarządzanie drużynami i punktacją w czasie rzeczywistym",
-        feature4: "Pliki quizów (<code>.tcq</code>) — samodzielne archiwa, łatwe do udostępniania",
-        feature5: "Interfejs w języku polskim i angielskim",
-        feature6: "W pełni przenośna — nie wymaga instalacji, działa z pendrive'a",
+        feature1: "Trzy typy pytań — jedna odpowiedź, wielokrotny wybór i lista — z formatowaniem tekstu",
+        feature2: "Załączanie mediów (obraz, audio, wideo) do pytań oraz osobny slot na media odsłaniane wraz z odpowiedzią",
+        feature3: "Motywy panelu kontrolnego i konfigurowalny ekran powitalny z grafiką i muzyką",
+        feature4: "Zarządzanie drużynami i punktacją na żywo, z finałowym rankingiem — etapowe odsłanianie i dogrywki",
+        feature5: "Odliczanie czasu dla pytań i notatki widoczne tylko dla prowadzącego",
+        feature6: "Pliki quizów (<code>.tcq</code>) — samodzielne archiwa, łatwe do udostępniania; szybki, odporny na awarie zapis",
+        feature7: "Interfejs w języku polskim i angielskim",
+        feature8: "W pełni przenośna — nie wymaga instalacji, działa z pendrive'a",
+        isntTitle: "Czym Triviacon jest — a czym nie",
+        isHead: "Jest",
+        isntHead: "Nie jest",
+        is1: "Jedna maszyna, dwa ekrany — panel prowadzącego i ekran dla publiczności",
+        is2: "Przenośny — bez instalacji, działa z pendrive'a, w pełni offline",
+        is3: "Ty prowadzisz — Ty liczysz punkty, Ty nawigujesz, Ty decydujesz",
+        is4: "Samodzielne pliki <code>.tcq</code>, które posiadasz i udostępniasz",
+        is5: "AI pomaga budować i prezentować — quiz piszesz Ty",
+        isnt1: "Nie działa online — nic, co mogłoby zawieść przy słabym WiFi",
+        isnt2: "Nie wymaga konta — bez rejestracji, bez chmury, nic śledzonego",
+        isnt3: "Nie liczy punktów za Ciebie — quizy żyją ludzką oceną",
+        isnt4: "Nie narzuca ścieżki — przełączaj się między etapami, kiedy chcesz",
+        isnt5: "Nie pisze Twojego quizu — tworzy szkielet; pytania, trudność i media są Twoje",
+        isntSummary: "Samochód tam, gdzie był rower — ale nigdy nie prowadzi sam. Kierownica zawsze jest w Twoich rękach.",
         downloadTitle: "Pobierz",
         downloadNote: "Nie wymaga instalacji. Wypakuj i uruchom.",
         winHint: "Wypakuj archiwum ZIP,<br>uruchom <code>triviacon.exe</code>",
@@ -239,16 +284,32 @@
         pageDescription: "Triviacon is a free, portable desktop app for running trivia quiz nights. For Windows, Linux, and macOS.",
         tagline: "Portable live trivia quiz host",
         newIn: "New in",
-        newInFeature: "— two-step question selection",
+        newInFeature: "— answer media & faster, crash-safe saving",
         ctaDownload: "Download the latest version",
         aboutTitle: "What is Triviacon?",
         aboutBody: "Triviacon is a free desktop app for trivia quiz hosts. The host runs the game from a control panel while contestants follow along on a separate game screen — perfect for projectors and second displays.",
-        feature1: "Build quizzes with categories, questions, and multiple-choice answers",
-        feature2: "Attach media — images, audio, video — directly to questions",
-        feature3: "Manage teams and live scoring in real time",
-        feature4: "Quiz files (<code>.tcq</code>) — self-contained archives, easy to share",
-        feature5: "Interface available in Polish and English",
-        feature6: "Fully portable — no installation, runs from a USB stick",
+        feature1: "Three question types — single answer, multiple choice, and list — with rich-text formatting",
+        feature2: "Attach media (image, audio, video) to questions, plus a separate slot for media revealed with the answer",
+        feature3: "Control-panel theming and a customizable splash screen with visuals and soundtrack",
+        feature4: "Manage teams and live scoring, with a ranking finale — staged reveal and tiebreakers",
+        feature5: "Per-question countdown timer and host-only notes",
+        feature6: "Quiz files (<code>.tcq</code>) — self-contained archives, easy to share; fast, crash-safe saving",
+        feature7: "Interface available in Polish and English",
+        feature8: "Fully portable — no installation, runs from a USB stick",
+        isntTitle: "What Triviacon is — and isn't",
+        isHead: "What it is",
+        isntHead: "What it isn't",
+        is1: "One machine, two screens — a host's control panel and an audience display",
+        is2: "Portable — no install, runs from a USB stick, fully offline",
+        is3: "Yours to run — you score, you navigate, you make the calls",
+        is4: "Self-contained <code>.tcq</code> files you own and share",
+        is5: "AI helps you build and present — you write the quiz",
+        isnt1: "Doesn't go online — nothing to fail in a room with bad WiFi",
+        isnt2: "Doesn't want an account — no sign-up, no cloud, nothing tracked",
+        isnt3: "Doesn't keep score for you — trivia runs on human judgment",
+        isnt4: "Doesn't force a path — jump between phases whenever you like",
+        isnt5: "Doesn't write your quiz — it scaffolds; the questions, difficulty, and media are yours",
+        isntSummary: "The car to a bicycle — but it never drives itself. You're always at the wheel.",
         downloadTitle: "Download",
         downloadNote: "No installation required. Extract and run.",
         winHint: "Extract the ZIP archive,<br>run <code>triviacon.exe</code>",
