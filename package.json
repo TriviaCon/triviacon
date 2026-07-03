@@ -1,6 +1,6 @@
 {
   "name": "triviacon-app",
-  "version": "0.9.9",
+  "version": "0.9.10",
   "description": "Portable dual-screen desktop app for hosting live trivia nights.",
   "main": "./out/main/index.js",
   "author": "Marcin \"Aluś\" Jędrecki",
@@ -38,6 +38,7 @@
     "@tiptap/react": "^3.23.6",
     "@tiptap/starter-kit": "^3.23.6",
     "adm-zip": "^0.5.17",
+    "archiver": "^8.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dompurify": "^3.4.5",
@@ -57,6 +58,7 @@
     "@electron-toolkit/tsconfig": "^1.0.1",
     "@electron-toolkit/utils": "^4.0.0",
     "@types/adm-zip": "^0.5.8",
+    "@types/archiver": "^8.0.0",
     "@types/node": "^22.19.19",
     "@types/react": "^19.2.15",
     "@types/react-dom": "^19.2.3",

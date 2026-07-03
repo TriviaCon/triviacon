@@ -106,14 +106,18 @@ export function registerIpcHandlers(): void {
   })
 
   ipcMain.handle(IPC.FILE_SAVE, async () => {
+    const cpWin = getControlPanelWindow()
     try {
-      await quizFile.save()
+      await quizFile.save((event) => {
+        if (cpWin) safeSend(cpWin, IPC.FILE_SAVE_PROGRESS, event)
+      })
       const path = quizFile.currentPath()
       if (path) engine.setQuizFilePath(path)
       broadcastState()
       return true
     } catch (err) {
       console.error('FILE_SAVE failed:', err)
+      if (cpWin) safeSend(cpWin, IPC.FILE_SAVE_PROGRESS, { phase: 'error', message: err instanceof Error ? err.message : String(err) })
       throw err
     }
   })
@@ -123,13 +127,17 @@ export function registerIpcHandlers(): void {
       filters: [QUIZ_FILE_FILTER]
     })
     if (result.canceled || !result.filePath) return null
+    const cpWin = getControlPanelWindow()
     try {
-      await quizFile.saveTo(result.filePath)
+      await quizFile.saveTo(result.filePath, (event) => {
+        if (cpWin) safeSend(cpWin, IPC.FILE_SAVE_PROGRESS, event)
+      })
       engine.setQuizFilePath(result.filePath)
       broadcastState()
       return result.filePath
     } catch (err) {
       console.error('FILE_SAVE_AS failed:', err)
+      if (cpWin) safeSend(cpWin, IPC.FILE_SAVE_PROGRESS, { phase: 'error', message: err instanceof Error ? err.message : String(err) })
       throw err
     }
   })

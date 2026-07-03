@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
 import type { GameState } from '@shared/types/state'
-import type { MediaPlaybackState, FileOpenProgressPayload } from '@shared/types/ipc'
+import type { MediaPlaybackState, FileOpenProgressPayload, FileSaveProgressPayload } from '@shared/types/ipc'
 import type { Category, Question, AnswerOption, QuizMeta, Stats } from '@shared/types/quiz'
 
 /**
@@ -26,6 +26,7 @@ declare global {
       onOpenProgress: (callback: (event: FileOpenProgressPayload) => void) => () => void
       fileSave: () => Promise<boolean>
       fileSaveAs: () => Promise<string | null>
+      onSaveProgress: (callback: (event: FileSaveProgressPayload) => void) => () => void
 
       // --- Categories ---
       categoriesAll: () => Promise<Category[]>

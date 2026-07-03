@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   FilePlus,
@@ -12,7 +12,8 @@ import {
   Moon,
   Image,
   Check,
-  Info
+  Info,
+  Loader2
 } from 'lucide-react'
 import { Button } from '@renderer/components/ui/button'
 import { Separator } from '@renderer/components/ui/separator'
@@ -39,25 +40,33 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
   const [progressOpen, setProgressOpen] = useState(false)
   const [pending, setPending] = useState<PendingAction>(null)
   const [savedFlash, setSavedFlash] = useState(false)
+  const [saving, setSaving] = useState<{ files: number; totalFiles: number } | null>(null)
   const [metaOpen, setMetaOpen] = useState(false)
   const flashTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined)
   const { gameScreenDarkMode, quizDirty, quizFilePath } = useGameState()
 
-  const handleSave = async () => {
-    await window.api.fileSave()
-    triggerSavedFlash()
-  }
-
-  const handleSaveAs = async () => {
-    const result = await window.api.fileSaveAs()
-    if (result) triggerSavedFlash()
-  }
-
-  const triggerSavedFlash = () => {
+  const triggerSavedFlash = useCallback(() => {
     setSavedFlash(true)
     clearTimeout(flashTimerRef.current)
     flashTimerRef.current = setTimeout(() => setSavedFlash(false), 2000)
-  }
+  }, [])
+
+  const handleSave = () => window.api.fileSave()
+  const handleSaveAs = () => window.api.fileSaveAs()
+
+  // Save progress is driven by main-process events so the indicator reflects
+  // real per-file write progress, not just when the invoke() resolves.
+  useEffect(() => {
+    const unsub = window.api.onSaveProgress((event) => {
+      if (event.phase === 'saving') {
+        setSaving({ files: event.files, totalFiles: event.totalFiles })
+        return
+      }
+      setSaving(null)
+      if (event.phase === 'done' || event.phase === 'clean') triggerSavedFlash()
+    })
+    return unsub
+  }, [triggerSavedFlash])
 
   useEffect(() => () => clearTimeout(flashTimerRef.current), [])
 
@@ -119,19 +128,26 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
             <Info className="mr-1 h-4 w-4" /> {t('builder.quizInfo')}
           </Button>
 
-          {/* Dirty / saved pill */}
+          {/* Saving / dirty / saved pill */}
             {quizFilePath && (
               <span
                 className={cn(
                   'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium transition-opacity duration-500',
-                  savedFlash
-                    ? 'border-green-500/50 bg-green-500/10 text-green-600 opacity-100'
-                    : quizDirty
-                      ? 'border-red-500/50 bg-red-500/10 text-red-600 opacity-100'
-                      : 'opacity-0 pointer-events-none'
+                  saving
+                    ? 'border-blue-500/50 bg-blue-500/10 text-blue-600 opacity-100'
+                    : savedFlash
+                      ? 'border-green-500/50 bg-green-500/10 text-green-600 opacity-100'
+                      : quizDirty
+                        ? 'border-red-500/50 bg-red-500/10 text-red-600 opacity-100'
+                        : 'opacity-0 pointer-events-none'
                 )}
               >
-                {savedFlash ? (
+                {saving ? (
+                  <>
+                    <Loader2 className="h-3 w-3 animate-spin" />{' '}
+                    {t('actions.saving')} <span className="tabular-nums">{saving.files}/{saving.totalFiles}</span>
+                  </>
+                ) : savedFlash ? (
                   <><Check className="h-3 w-3" /> {t('actions.saved')}</>
                 ) : (
                   <><span className="h-1.5 w-1.5 rounded-full bg-red-500" /> {t('actions.unsaved')}</>
