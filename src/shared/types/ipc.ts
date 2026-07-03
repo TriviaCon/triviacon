@@ -109,6 +109,9 @@ export const IPC = {
   // File open progress (main -> control panel)
   FILE_OPEN_PROGRESS: 'file:open:progress',
 
+  // File save progress (main -> control panel)
+  FILE_SAVE_PROGRESS: 'file:save:progress',
+
   // State push (main -> both renderers)
   STATE_UPDATE: 'state:update',
 
@@ -171,6 +174,13 @@ export type FileOpenProgressPayload =
   | { phase: 'structure'; categoryCount: number; questionCount: number }
   | { phase: 'extracting'; current: number; total: number }
   | { phase: 'done' }
+  | { phase: 'error'; message: string }
+
+export type FileSaveProgressPayload =
+  | { phase: 'saving'; files: number; totalFiles: number; bytes: number; totalBytes: number }
+  | { phase: 'done' }
+  /** Nothing to write — the quiz was already saved (C1 no-op). */
+  | { phase: 'clean' }
   | { phase: 'error'; message: string }
 
 export interface MediaPlaybackState {

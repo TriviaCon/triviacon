@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer, webUtils } from 'electron'
 import { IPC } from '@shared/types/ipc'
-import type { MediaPlaybackState, FileOpenProgressPayload } from '@shared/types/ipc'
+import type { MediaPlaybackState, FileOpenProgressPayload, FileSaveProgressPayload } from '@shared/types/ipc'
 import type { GameState } from '@shared/types/state'
 import type { Category, Question, AnswerOption, QuizMeta, Stats } from '@shared/types/quiz'
 
@@ -25,6 +25,8 @@ const api = {
     subscribeWith<FileOpenProgressPayload>(IPC.FILE_OPEN_PROGRESS, cb),
   fileSave: (): Promise<boolean> => ipcRenderer.invoke(IPC.FILE_SAVE),
   fileSaveAs: (): Promise<string | null> => ipcRenderer.invoke(IPC.FILE_SAVE_AS),
+  onSaveProgress: (cb: (event: FileSaveProgressPayload) => void) =>
+    subscribeWith<FileSaveProgressPayload>(IPC.FILE_SAVE_PROGRESS, cb),
 
   // ── Categories ─────────────────────────────────────────────────
   categoriesAll: (): Promise<Category[]> => ipcRenderer.invoke(IPC.QUIZ_CATEGORIES_ALL),

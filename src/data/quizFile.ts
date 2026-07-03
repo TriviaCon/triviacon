@@ -6,13 +6,14 @@
  *   - media/     — attached media files (originalname-uuid named)
  */
 
-import { readFile, copyFile, mkdir, rm, writeFile, readdir, access } from 'fs/promises'
+import { readFile, copyFile, mkdir, rm, writeFile, readdir, access, stat } from 'fs/promises'
 import { sanitizeFilename } from '@shared/media'
 import { constants, existsSync } from 'fs'
 import { join, sep } from 'path'
 import { app } from 'electron'
 import { getPortableRoot } from '../main/portablePath'
 import AdmZip from 'adm-zip'
+import { writeZipArchive, type ArchiveEntry, type SaveProgressCallback } from './zipArchive'
 import {
   type QuizDocument,
   createEmptyDocument,
@@ -20,11 +21,13 @@ import {
   setDocument,
   clearDocument,
   clearDirty,
+  isDirty,
   getStats as storeGetStats
 } from './quizStore'
 import type { FileOpenProgressPayload } from '@shared/types/ipc'
 
 export type OpenProgressCallback = (event: FileOpenProgressPayload) => void
+export type { SaveProgressCallback }
 
 const dbg = app.isPackaged ? (() => {}) : console.log
 
@@ -167,7 +170,7 @@ const _open = async (path: string, onProgress?: OpenProgressCallback) => {
 
 // ── Save / Save As ─────────────────────────────────────────────────
 
-const _saveTo = async (destPath: string): Promise<void> => {
+const _saveTo = async (destPath: string, onProgress?: SaveProgressCallback): Promise<void> => {
   if (!workDir) throw new Error('No quiz open')
   const doc = getDocument()
   if (!doc) throw new Error('No quiz document in memory')
@@ -175,18 +178,24 @@ const _saveTo = async (destPath: string): Promise<void> => {
   const jsonBuffer = Buffer.from(JSON.stringify(doc, null, 2), 'utf-8')
   await writeFile(join(workDir, JSON_FILENAME), jsonBuffer)
 
-  const zip = new AdmZip()
-  zip.addFile(JSON_FILENAME, jsonBuffer)
+  const entries: ArchiveEntry[] = [
+    { name: JSON_FILENAME, buffer: jsonBuffer, size: jsonBuffer.length }
+  ]
 
-  // Add media files
   const mediaDir = join(workDir, MEDIA_DIR)
   if (existsSync(mediaDir)) {
-    zip.addLocalFolder(mediaDir, MEDIA_DIR)
+    for (const name of await readdir(mediaDir)) {
+      const full = join(mediaDir, name)
+      const s = await stat(full)
+      if (s.isFile()) entries.push({ name: `${MEDIA_DIR}/${name}`, path: full, size: s.size })
+    }
   }
 
-  await zip.writeZipPromise(destPath)
+  await writeZipArchive(destPath, entries, onProgress)
+
   quizFilePath = destPath
   clearDirty()
+  onProgress?.({ phase: 'done' })
 }
 
 const _copyTo = async (destPath: string): Promise<void> => {
@@ -261,11 +270,16 @@ export async function cleanupStaleRuntimeDirs(): Promise<void> {
 export default {
   new: _new,
   open: (path: string, onProgress?: OpenProgressCallback) => _open(path, onProgress),
-  save: () => {
+  save: (onProgress?: SaveProgressCallback) => {
     if (!quizFilePath) throw new Error('No file path — use Save As')
-    return _saveTo(quizFilePath)
+    // C1 — nothing changed since the last save: skip the write entirely.
+    if (!isDirty()) {
+      onProgress?.({ phase: 'clean' })
+      return Promise.resolve()
+    }
+    return _saveTo(quizFilePath, onProgress)
   },
-  saveTo: _saveTo,
+  saveTo: (destPath: string, onProgress?: SaveProgressCallback) => _saveTo(destPath, onProgress),
   copyTo: _copyTo,
   currentPath: () => quizFilePath,
   getFilePath,
