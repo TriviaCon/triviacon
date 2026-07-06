@@ -10,7 +10,8 @@
 
 import { createWriteStream } from 'fs'
 import { rename, unlink, open } from 'fs/promises'
-import { ZipArchive } from 'archiver'
+import { Transform } from 'stream'
+import { ZipFile } from 'yazl'
 import type { FileSaveProgressPayload } from '@shared/types/ipc'
 
 export type SaveProgressCallback = (event: FileSaveProgressPayload) => void
@@ -54,32 +55,46 @@ export async function writeZipArchive(
 
   onProgress?.({ phase: 'saving', files: 0, totalFiles, bytes: 0, totalBytes })
 
+  // Approximate output byte offset at the end of each entry (local header + data).
+  // yazl streams entries in order, so counting bytes past each offset tells us how
+  // many files are done — enough to drive a per-file progress readout.
+  let cum = 0
+  const fileEndOffsets = entries.map((e) => (cum += 30 + Buffer.byteLength(e.name, 'utf-8') + e.size))
+
   const tmpPath = `${destPath}.saving-${crypto.randomUUID()}.tmp`
   try {
     await new Promise<void>((resolve, reject) => {
+      const zip = new ZipFile()
       const output = createWriteStream(tmpPath)
-      const archive = new ZipArchive({ store: true })
+
+      let written = 0
+      let filesDone = 0
+      const counter = new Transform({
+        transform(chunk, _enc, cb) {
+          written += chunk.length
+          let done = filesDone
+          while (done < fileEndOffsets.length && fileEndOffsets[done] <= written) done++
+          if (done > filesDone) {
+            filesDone = done
+            onProgress?.({ phase: 'saving', files: filesDone, totalFiles, bytes: written, totalBytes })
+          }
+          cb(null, chunk)
+        }
+      })
 
       output.on('close', resolve)
       output.on('error', reject)
-      archive.on('error', reject)
-      archive.on('warning', (err) => { if (err.code !== 'ENOENT') reject(err) })
-      archive.on('progress', (p) => {
-        onProgress?.({
-          phase: 'saving',
-          files: p.entries.processed,
-          totalFiles,
-          bytes: p.fs.processedBytes,
-          totalBytes
-        })
-      })
+      zip.outputStream.on('error', reject)
+      counter.on('error', reject)
 
-      archive.pipe(output)
+      // STORE every entry (compress: false): media is already-compressed and
+      // quiz.json is tiny, so deflating just burns CPU for ~no size gain.
+      zip.outputStream.pipe(counter).pipe(output)
       for (const e of entries) {
-        if (e.buffer) archive.append(e.buffer, { name: e.name })
-        else if (e.path) archive.file(e.path, { name: e.name })
+        if (e.buffer) zip.addBuffer(e.buffer, e.name, { compress: false })
+        else if (e.path) zip.addFile(e.path, e.name, { compress: false })
       }
-      archive.finalize()
+      zip.end()
     })
 
     await fsyncFile(tmpPath)
