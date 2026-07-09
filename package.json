@@ -1,6 +1,6 @@
 {
   "name": "triviacon-app",
-  "version": "0.9.11",
+  "version": "0.9.12",
   "description": "Portable dual-screen desktop app for hosting live trivia nights.",
   "main": "./out/main/index.js",
   "author": "Marcin \"Aluś\" Jędrecki",
