@@ -214,7 +214,7 @@ export const RunnerView = () => {
     <div className="w-full h-full flex flex-col gap-0 overflow-hidden">
       <div className="flex-1 min-h-0 flex overflow-hidden">
         {/* Teams */}
-        <div className="w-96 shrink-0 border-r border-border overflow-y-auto p-3">
+        <div className="w-80 shrink-0 border-r border-border overflow-y-auto p-3">
           <TeamTable />
         </div>
 
@@ -244,7 +244,7 @@ export const RunnerView = () => {
 
         {/* Question preview */}
         {stickyPreviewId !== null && (
-          <div className="w-[550px] shrink-0 overflow-y-auto p-4 border-l border-border">
+          <div className="w-[420px] shrink-0 overflow-y-auto p-4 border-l border-border">
             <PreviewColumn
               id={stickyPreviewId}
               phase={phase}
