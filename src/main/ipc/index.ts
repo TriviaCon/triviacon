@@ -191,12 +191,16 @@ export function registerIpcHandlers(): void {
 
   ipcMain.handle(IPC.QUIZ_QUESTION_CREATE, (_, question: Omit<Question, 'id' | 'sortOrder'>) => {
     const id = store.questionCreate(question)
+    engine.updateCategories(store.categoriesAll())
+    engine.updateQuestionCategoryMap(store.questionCategoryMap())
     broadcastState()
     return id
   })
 
   ipcMain.handle(IPC.QUIZ_QUESTION_UPDATE, (_, id: number, updates: Partial<Omit<Question, 'id'>>) => {
     store.questionUpdate(id, updates)
+    engine.updateCategories(store.categoriesAll())
+    engine.updateQuestionCategoryMap(store.questionCategoryMap())
     broadcastState()
   })
 
@@ -209,6 +213,8 @@ export function registerIpcHandlers(): void {
       await quizFile.removeMedia(question.answerMedia)
     }
     store.questionDelete(id)
+    engine.updateCategories(store.categoriesAll())
+    engine.updateQuestionCategoryMap(store.questionCategoryMap())
     broadcastState()
   })
 
