@@ -65,9 +65,9 @@ const QuestionPreview = ({
         </div>
       )}
 
-      <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 items-start">
-        <span className="font-semibold text-sm text-right">{t('runner.media')}</span>
-        <div>
+      <div className="space-y-3">
+        <div className="space-y-1">
+          <Label>{t('runner.media')}</Label>
           {!mediaSrc ? (
             <span className="text-sm text-muted-foreground">{t('runner.noMedia')}</span>
           ) : (
@@ -80,8 +80,8 @@ const QuestionPreview = ({
           )}
         </div>
 
-        <span className="font-semibold text-sm text-right">{t('runner.answerMedia')}</span>
-        <div>
+        <div className="space-y-1">
+          <Label>{t('runner.answerMedia')}</Label>
           {!answerMediaSrc ? (
             <span className="text-sm text-muted-foreground">{t('runner.noMedia')}</span>
           ) : (
@@ -94,70 +94,72 @@ const QuestionPreview = ({
           )}
         </div>
 
-        <span className="font-semibold text-sm text-right pt-1">{t('runner.answers')}</span>
-        <div className="space-y-1.5">
-          {answerOptions.length === 0 ? (
-            <span className="text-sm text-muted-foreground">{t('runner.noAnswerOptions')}</span>
-          ) : type === 'multiple-choice' ? (
-            answerOptions.map((opt, index) => {
-              const isMarked = opt.id === markedAnswerId
-              return (
-                <button
-                  key={opt.id}
-                  type="button"
-                  onClick={() => onMarkAnswer(isMarked ? null : opt.id)}
-                  className={cn(
-                    'w-full text-left rounded-md px-3 py-2 text-sm border cursor-pointer transition-colors flex items-baseline gap-1 flex-wrap',
-                    answerRevealed && opt.correct
-                      ? 'bg-green-100 border-green-300 text-green-900'
-                      : answerRevealed && isMarked && !opt.correct
-                        ? 'bg-red-100 border-red-300 text-red-900'
-                        : isMarked
-                          ? 'bg-amber-100 border-amber-300 text-amber-900'
-                          : opt.correct
-                            ? 'bg-muted/50 border-green-400/50 hover:bg-muted'
-                            : 'bg-muted/50 border-border hover:bg-muted'
-                  )}
-                >
-                  <strong>{String.fromCharCode(65 + index)}.</strong>
-                  <RichText html={opt.text} className="[&_p]:m-0" />
-                  {opt.correct && !answerRevealed && <span className="text-green-600">{'✓'}</span>}
-                  {answerRevealed && opt.correct && <span>{'✔'}</span>}
-                  {isMarked && !answerRevealed && <span>{'◀'}</span>}
-                </button>
-              )
-            })
-          ) : type === 'single-answer' ? (
-            <div className="rounded-md px-3 py-2 text-sm border bg-muted/50 border-green-400/50 flex items-baseline gap-1">
-              <RichText html={answerOptions[0]?.text ?? ''} className="[&_p]:m-0" />
-            </div>
-          ) : (
-            answerOptions.map((opt, index) => {
-              const found = revealedOptionIds.includes(opt.id)
-              return (
-                <button
-                  key={opt.id}
-                  type="button"
-                  onClick={() => onToggleListOption(opt.id)}
-                  className={cn(
-                    'w-full text-left rounded-md px-3 py-2 text-sm border cursor-pointer transition-colors flex items-baseline gap-1',
-                    found
-                      ? 'bg-green-100 border-green-300 text-green-900'
-                      : 'bg-muted/50 border-green-400/50 hover:bg-muted'
-                  )}
-                >
-                  <strong>{index + 1}.</strong>
-                  <RichText html={opt.text} className="[&_p]:m-0" />
-                  {found && <span className="ml-auto">{'✔'}</span>}
-                </button>
-              )
-            })
-          )}
+        <div className="space-y-1">
+          <Label>{t('runner.answers')}</Label>
+          <div className="space-y-1.5">
+            {answerOptions.length === 0 ? (
+              <span className="text-sm text-muted-foreground">{t('runner.noAnswerOptions')}</span>
+            ) : type === 'multiple-choice' ? (
+              answerOptions.map((opt, index) => {
+                const isMarked = opt.id === markedAnswerId
+                return (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    onClick={() => onMarkAnswer(isMarked ? null : opt.id)}
+                    className={cn(
+                      'w-full text-left rounded-md px-3 py-2 text-sm border cursor-pointer transition-colors flex items-baseline gap-1 flex-wrap',
+                      answerRevealed && opt.correct
+                        ? 'bg-green-100 border-green-300 text-green-900'
+                        : answerRevealed && isMarked && !opt.correct
+                          ? 'bg-red-100 border-red-300 text-red-900'
+                          : isMarked
+                            ? 'bg-amber-100 border-amber-300 text-amber-900'
+                            : opt.correct
+                              ? 'bg-muted/50 border-green-400/50 hover:bg-muted'
+                              : 'bg-muted/50 border-border hover:bg-muted'
+                    )}
+                  >
+                    <strong>{String.fromCharCode(65 + index)}.</strong>
+                    <RichText html={opt.text} className="[&_p]:m-0" />
+                    {opt.correct && !answerRevealed && <span className="text-green-600">{'✓'}</span>}
+                    {answerRevealed && opt.correct && <span>{'✔'}</span>}
+                    {isMarked && !answerRevealed && <span>{'◀'}</span>}
+                  </button>
+                )
+              })
+            ) : type === 'single-answer' ? (
+              <div className="rounded-md px-3 py-2 text-sm border bg-muted/50 border-green-400/50 flex items-baseline gap-1">
+                <RichText html={answerOptions[0]?.text ?? ''} className="[&_p]:m-0" />
+              </div>
+            ) : (
+              answerOptions.map((opt, index) => {
+                const found = revealedOptionIds.includes(opt.id)
+                return (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    onClick={() => onToggleListOption(opt.id)}
+                    className={cn(
+                      'w-full text-left rounded-md px-3 py-2 text-sm border cursor-pointer transition-colors flex items-baseline gap-1',
+                      found
+                        ? 'bg-green-100 border-green-300 text-green-900'
+                        : 'bg-muted/50 border-green-400/50 hover:bg-muted'
+                    )}
+                  >
+                    <strong>{index + 1}.</strong>
+                    <RichText html={opt.text} className="[&_p]:m-0" />
+                    {found && <span className="ml-auto">{'✔'}</span>}
+                  </button>
+                )
+              })
+            )}
+          </div>
         </div>
 
-        <span className="font-semibold text-sm text-right">{t('runner.used')}</span>
         <div className="flex items-center gap-2">
-          <Label htmlFor="used-switch" className="text-sm">
+          <Label className="shrink-0">{t('runner.used')}</Label>
+          <Label htmlFor="used-switch" className="text-sm text-muted-foreground">
             {used ? t('runner.yes') : t('runner.no')}
           </Label>
           <input
@@ -170,9 +172,9 @@ const QuestionPreview = ({
           />
         </div>
 
-        <span className="font-semibold text-sm text-right">{t('runner.reveal')}</span>
         <div className="flex items-center gap-2">
-          <Label htmlFor="reveal-switch" className="text-sm">
+          <Label className="shrink-0">{t('runner.reveal')}</Label>
+          <Label htmlFor="reveal-switch" className="text-sm text-muted-foreground">
             {answerRevealed ? t('runner.yes') : t('runner.no')}
           </Label>
           <input
