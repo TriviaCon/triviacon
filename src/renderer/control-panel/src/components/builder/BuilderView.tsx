@@ -24,6 +24,11 @@ export const BuilderView = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null)
   const [activeQuestionId, setActiveQuestionId] = useState<number | null>(null)
 
+  function selectCategory(id: number | null) {
+    setSelectedCategoryId(id)
+    setActiveQuestionId(null)
+  }
+
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
 
   if (!quizFilePath) {
@@ -67,7 +72,7 @@ export const BuilderView = () => {
         <CategorySidebar
           categories={categories}
           selectedCategoryId={selectedCategoryId}
-          onSelect={setSelectedCategoryId}
+          onSelect={selectCategory}
           onDeleted={() => queryClient.invalidateQueries({ queryKey: keys.categories() })}
         />
 

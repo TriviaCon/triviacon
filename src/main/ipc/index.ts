@@ -4,7 +4,7 @@ import type { AnswerOption, Question } from '@shared/types/quiz'
 import { getSetting, setSetting } from '../settings'
 import type { TimerSoundMode } from '@shared/types/state'
 import type { FanfareSound } from '../settings'
-import { QUIZ_FILE_FILTER } from '@shared/constants'
+import { QUIZ_FILE_FILTER, ensureQuizExtension } from '@shared/constants'
 import quizFile from '../../data/quizFile'
 import * as store from '../../data/quizStore'
 import { GameEngine } from '../state/GameEngine'
@@ -65,14 +65,15 @@ export function registerIpcHandlers(): void {
       filters: [QUIZ_FILE_FILTER]
     })
     if (result.canceled || !result.filePath) return null
+    const filePath = ensureQuizExtension(result.filePath)
     try {
-      await quizFile.new(result.filePath)
+      await quizFile.new(filePath)
       const quizMeta = store.metaGet()
       const cats = store.categoriesAll()
       const qMap = store.questionCategoryMap()
-      engine.loadQuiz(result.filePath, quizMeta, cats, qMap)
+      engine.loadQuiz(filePath, quizMeta, cats, qMap)
       broadcastState()
-      return result.filePath
+      return filePath
     } catch (err) {
       console.error('FILE_NEW failed:', err)
       throw err
@@ -127,14 +128,15 @@ export function registerIpcHandlers(): void {
       filters: [QUIZ_FILE_FILTER]
     })
     if (result.canceled || !result.filePath) return null
+    const filePath = ensureQuizExtension(result.filePath)
     const cpWin = getControlPanelWindow()
     try {
-      await quizFile.saveTo(result.filePath, (event) => {
+      await quizFile.saveTo(filePath, (event) => {
         if (cpWin) safeSend(cpWin, IPC.FILE_SAVE_PROGRESS, event)
       })
-      engine.setQuizFilePath(result.filePath)
+      engine.setQuizFilePath(filePath)
       broadcastState()
-      return result.filePath
+      return filePath
     } catch (err) {
       console.error('FILE_SAVE_AS failed:', err)
       if (cpWin) safeSend(cpWin, IPC.FILE_SAVE_PROGRESS, { phase: 'error', message: err instanceof Error ? err.message : String(err) })
