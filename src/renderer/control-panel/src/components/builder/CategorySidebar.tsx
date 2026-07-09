@@ -205,7 +205,7 @@ export function CategorySidebar({
 
   function commitAdd() {
     const trimmed = newName.trim()
-    if (trimmed) addCategory.mutate(trimmed)
+    if (trimmed) addCategory.mutate(trimmed, { onSuccess: onSelect })
     setNewName('')
     setAddingNew(false)
   }
@@ -242,7 +242,10 @@ export function CategorySidebar({
         </SortableContext>
 
         {categories.length === 0 && (
-          <p className="text-xs text-muted-foreground px-2 py-3">{t('builder.noCategories')}</p>
+          <div className="px-2 py-3 space-y-0.5">
+            <p className="text-xs font-medium text-muted-foreground">{t('builder.noCategories')}</p>
+            <p className="text-xs text-muted-foreground">{t('builder.noCategoriesHint')}</p>
+          </div>
         )}
 
         {addingNew && (

@@ -178,6 +178,7 @@ function CategoryQuestionList({
   onToggleSelect: (id: number) => void
   onSelectQuestion: (id: number) => void
 }) {
+  const { t } = useTranslation()
   const { data: questions = [] } = useCategoryQuestions(categoryId)
 
   const sortableIds = questions.map((q) => `question:${q.id}`)
@@ -199,7 +200,7 @@ function CategoryQuestionList({
         ))}
       </SortableContext>
       {questions.length === 0 && (
-        <p className="text-center text-sm text-muted-foreground py-8">No questions yet</p>
+        <p className="text-center text-sm text-muted-foreground py-8">{t('builder.noQuestionsYet')}</p>
       )}
     </div>
   )
@@ -345,7 +346,7 @@ export function QuestionList({
           )}
         </h2>
         {selectedCategoryId !== null ? (
-          <Button size="sm" onClick={() => addQuestion.mutate()}>
+          <Button size="sm" onClick={() => addQuestion.mutate(undefined, { onSuccess: onSelectQuestion })}>
             <Plus className="mr-1 h-3.5 w-3.5" /> {t('builder.addQuestion')}
           </Button>
         ) : (

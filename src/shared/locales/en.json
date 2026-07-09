@@ -100,6 +100,7 @@
     "splashSummary_videoMuted": "a silent looping video.",
     "addCategory": "Add new category",
     "addQuestion": "Add question",
+    "noQuestionsYet": "No questions yet",
     "noCategories": "No categories",
     "noCategoriesHint": "Add a category above to get started.",
     "question": "Question:",
