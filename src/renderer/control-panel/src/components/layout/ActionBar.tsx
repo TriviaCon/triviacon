@@ -170,10 +170,10 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
             <Trophy className="mr-1 h-4 w-4" /> {t('actions.ranking')}
           </Button>
           <Separator orientation="vertical" className="mx-1 h-8" />
-          <Button variant="outline" onClick={() => window.api.toggleGameFullscreen()}>
+          <Button variant="outline" disabled={!quizFilePath} onClick={() => window.api.toggleGameFullscreen()}>
             <Maximize className="mr-1 h-4 w-4" /> {t('actions.fullscreen')}
           </Button>
-          <Button variant="outline" onClick={() => window.api.toggleGameDarkMode()}>
+          <Button variant="outline" disabled={!quizFilePath} onClick={() => window.api.toggleGameDarkMode()}>
             {gameScreenDarkMode ? (
               <Sun className="mr-1 h-4 w-4" />
             ) : (
