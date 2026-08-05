@@ -258,6 +258,11 @@ export function registerIpcHandlers(): void {
     broadcastState()
   })
 
+  ipcMain.handle(IPC.QUIZ_ANSWER_OPTIONS_REORDER, (_, orderedIds: number[]) => {
+    store.answerOptionsReorder(orderedIds)
+    broadcastState()
+  })
+
   // ── Meta ─────────────────────────────────────────────────────────
 
   ipcMain.handle(IPC.QUIZ_META_GET, () => store.metaGet())

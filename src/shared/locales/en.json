@@ -117,6 +117,7 @@
     "answers": "Answers",
     "addAnswer": "Add answer",
     "correctAnswer": "Correct answer",
+    "multipleChoiceInvalidWarning": "Mark a correct answer and add at least two options — the host will need both to run this question.",
     "bold": "Bold",
     "italic": "Italic",
     "underline": "Underline",

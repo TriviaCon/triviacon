@@ -327,6 +327,15 @@ export function answerOptionRemove(id: number): void {
   markDirty()
 }
 
+export function answerOptionsReorder(orderedIds: number[]): void {
+  const d = requireDoc()
+  orderedIds.forEach((id, i) => {
+    const ao = d.answerOptions.find((ao) => ao.id === id)
+    if (ao) ao.sortOrder = i
+  })
+  markDirty()
+}
+
 // ── Meta ──────────────────────────────────────────────────────────
 
 export function metaGet(): QuizMeta {

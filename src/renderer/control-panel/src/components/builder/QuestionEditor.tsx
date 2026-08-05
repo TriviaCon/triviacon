@@ -2,13 +2,16 @@ import { useCallback, useRef, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { ConfirmDialog } from '@renderer/components/ui/confirm-dialog'
 import { useTranslation } from 'react-i18next'
-import { CloudUpload, Trash2, Volume2 } from 'lucide-react'
+import { AlertTriangle, CloudUpload, GripVertical, Trash2, Volume2 } from 'lucide-react'
+import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import { Button } from '@renderer/components/ui/button'
 import { Label } from '@renderer/components/ui/label'
 import { Card, CardContent } from '@renderer/components/ui/card'
 import { ToggleGroup, ToggleGroupItem } from '@renderer/components/ui/toggle-group'
 import { RichTextEditor } from '@renderer/components/ui/rich-text-editor'
 import { richTextToPlain } from '@shared/RichText'
+import { cn } from '@renderer/lib/utils'
 import { useQuestion } from '@renderer/hooks/useQuestion'
 import { AnswerOption, Question } from '@shared/types/quiz'
 import { useUpdateQuestionMutation } from '@renderer/hooks/useUpdateQuestionMutation'
@@ -60,6 +63,81 @@ const SingleAnswerField = ({
       onChange={handleChange}
       ariaLabel={t('builder.answer')}
     />
+  )
+}
+
+/**
+ * One answer-option row. Sortable (drag handle) for List questions only —
+ * ordering is purely presentational there. Multiple-choice options are
+ * static; grading is the host's call, not affected by option order.
+ */
+const AnswerOptionRow = ({
+  option,
+  index,
+  withCorrect,
+  sortable,
+  onToggleCorrect,
+  onChangeText,
+  onDelete
+}: {
+  option: AnswerOption
+  index: number
+  withCorrect: boolean
+  sortable: boolean
+  onToggleCorrect: () => void
+  onChangeText: (html: string) => void
+  onDelete: () => void
+}) => {
+  const { t } = useTranslation()
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: `option:${option.id}`,
+    disabled: !sortable
+  })
+  const style = { transform: CSS.Transform.toString(transform), transition }
+  const label = withCorrect ? `${String.fromCharCode(65 + index)}.` : `${index + 1}.`
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cn('flex items-start gap-2', isDragging && 'opacity-30')}
+    >
+      {sortable && (
+        <span
+          {...attributes}
+          {...listeners}
+          className="mt-2.5 shrink-0 cursor-grab text-muted-foreground/30 hover:text-muted-foreground/60"
+        >
+          <GripVertical className="h-4 w-4" />
+        </span>
+      )}
+      {withCorrect && (
+        <input
+          type="radio"
+          name={`correct-answer-${option.questionId}`}
+          checked={option.correct}
+          onChange={onToggleCorrect}
+          className="h-4 w-4 border-input mt-2.5"
+          title={t('builder.correctAnswer')}
+        />
+      )}
+      <Label className="font-semibold shrink-0 mt-2">{label}</Label>
+      <RichTextEditor
+        key={option.id}
+        value={option.text}
+        onChange={onChangeText}
+        ariaLabel={`${t('builder.answer')} ${label}`}
+        className="flex-1"
+      />
+      <Button
+        variant="outline"
+        size="icon"
+        className="h-8 w-8 shrink-0 mt-1 text-destructive border-destructive/50 hover:bg-destructive/10"
+        onClick={onDelete}
+      >
+        <Trash2 className="h-4 w-4" />
+      </Button>
+    </div>
   )
 }
 
@@ -122,7 +200,14 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
       options.filter((o) => o.id !== keep.id).forEach((o) => deleteOption.mutate(o.id))
       if (!keep.correct) updateOption.mutate({ id: keep.id, correct: true })
     }
+    if (newType === 'multiple-choice') {
+      // Multiple-choice needs at least two options to be a meaningful choice.
+      for (let i = options.length; i < 2; i++) addOption.mutate()
+    }
   }
+
+  const multipleChoiceInvalid =
+    type === 'multiple-choice' && (options.length < 2 || !options.some((o) => o.correct))
 
   const renderOptionList = (withCorrect: boolean) => (
     <Card>
@@ -135,43 +220,36 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
             {t('builder.addAnswer')}
           </Button>
         </div>
-        <div className="space-y-2">
-          {options.map((opt, index) => (
-            <div key={opt.id} className="flex items-start gap-2">
-              {withCorrect && (
-                <input
-                  type="radio"
-                  name={`correct-answer-${question.data!.id}`}
-                  checked={opt.correct}
-                  onChange={() => {
-                    options.filter((o) => o.correct && o.id !== opt.id).forEach((o) => updateOption.mutate({ id: o.id, correct: false }))
-                    updateOption.mutate({ id: opt.id, correct: true })
-                  }}
-                  className="h-4 w-4 border-input mt-2.5"
-                  title={t('builder.correctAnswer')}
-                />
-              )}
-              <Label className="font-semibold shrink-0 mt-2">
-                {String.fromCharCode(65 + index)}.
-              </Label>
-              <RichTextEditor
+        {withCorrect && multipleChoiceInvalid && (
+          <p className="flex items-center gap-1.5 text-xs text-amber-600 mb-2">
+            <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+            {t('builder.multipleChoiceInvalidWarning')}
+          </p>
+        )}
+        <SortableContext
+          items={options.map((o) => `option:${o.id}`)}
+          strategy={verticalListSortingStrategy}
+        >
+          <div className="space-y-2">
+            {options.map((opt, index) => (
+              <AnswerOptionRow
                 key={opt.id}
-                value={opt.text}
-                onChange={(html) => updateOption.mutate({ id: opt.id, text: html })}
-                ariaLabel={`${t('builder.answer')} ${String.fromCharCode(65 + index)}`}
-                className="flex-1"
+                option={opt}
+                index={index}
+                withCorrect={withCorrect}
+                sortable={!withCorrect}
+                onToggleCorrect={() => {
+                  options
+                    .filter((o) => o.correct && o.id !== opt.id)
+                    .forEach((o) => updateOption.mutate({ id: o.id, correct: false }))
+                  updateOption.mutate({ id: opt.id, correct: true })
+                }}
+                onChangeText={(html) => updateOption.mutate({ id: opt.id, text: html })}
+                onDelete={() => deleteOption.mutate(opt.id)}
               />
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8 shrink-0 mt-1 text-destructive border-destructive/50 hover:bg-destructive/10"
-                onClick={() => deleteOption.mutate(opt.id)}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        </SortableContext>
       </CardContent>
     </Card>
   )

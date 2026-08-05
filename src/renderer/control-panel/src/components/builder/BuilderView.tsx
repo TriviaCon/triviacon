@@ -64,6 +64,18 @@ export const BuilderView = () => {
       await window.api.questionsReorder(reordered.map((q) => q.id))
       queryClient.invalidateQueries({ queryKey: keys.questions(selectedCategoryId) })
     }
+
+    if (activeStr.startsWith('option:') && overStr.startsWith('option:') && activeQuestionId !== null) {
+      const activeOId = parseInt(activeStr.replace('option:', ''), 10)
+      const overOId = parseInt(overStr.replace('option:', ''), 10)
+      const options = queryClient.getQueryData<{ id: number }[]>(keys.answerOptions(activeQuestionId)) ?? []
+      const oldIndex = options.findIndex((o) => o.id === activeOId)
+      const newIndex = options.findIndex((o) => o.id === overOId)
+      if (oldIndex === -1 || newIndex === -1) return
+      const reordered = arrayMove(options, oldIndex, newIndex)
+      await window.api.answerOptionsReorder(reordered.map((o) => o.id))
+      queryClient.invalidateQueries({ queryKey: keys.answerOptions(activeQuestionId) })
+    }
   }
 
   return (
