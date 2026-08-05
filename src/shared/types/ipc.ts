@@ -24,6 +24,7 @@ export const IPC = {
   QUIZ_ANSWER_OPTION_CREATE: 'quiz:answerOption:create',
   QUIZ_ANSWER_OPTION_UPDATE: 'quiz:answerOption:update',
   QUIZ_ANSWER_OPTION_REMOVE: 'quiz:answerOption:remove',
+  QUIZ_ANSWER_OPTIONS_REORDER: 'quiz:answerOptions:reorder',
 
   QUIZ_META_GET: 'quiz:meta:get',
   QUIZ_META_UPDATE_NAME: 'quiz:meta:updateName',

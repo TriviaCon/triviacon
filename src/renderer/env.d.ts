@@ -59,6 +59,7 @@ declare global {
         fields: Partial<Omit<AnswerOption, 'id' | 'questionId'>>
       ) => Promise<void>
       answerOptionRemove: (id: number) => Promise<void>
+      answerOptionsReorder: (orderedIds: number[]) => Promise<void>
 
       // --- Meta ---
       quizMetaGet: () => Promise<QuizMeta>

@@ -12,6 +12,9 @@ import {
   questionsAllByCategoryId,
   questionsReorder,
   questionsBulkMove,
+  answerOptionCreate,
+  answerOptionsByQuestionId,
+  answerOptionsReorder,
 } from './quizStore'
 
 function setup() {
@@ -126,6 +129,34 @@ describe('question sortOrder', () => {
     questionsReorder([c, a, b])
     const qs = questionsAllByCategoryId(catId)
     expect(qs.map((q) => q.text)).toEqual(['C', 'A', 'B'])
+  })
+})
+
+describe('answerOptionsReorder', () => {
+  beforeEach(setup)
+
+  it('updates sortOrder and reflects new order', () => {
+    const catId = categoryCreate('History')
+    const qId = questionCreate({ categoryId: catId, type: 'list', text: 'Q', media: null })
+    const a = answerOptionCreate(qId, 'A')
+    const b = answerOptionCreate(qId, 'B')
+    const c = answerOptionCreate(qId, 'C')
+    answerOptionsReorder([c, a, b])
+    const opts = answerOptionsByQuestionId(qId)
+    expect(opts.map((o) => o.text)).toEqual(['C', 'A', 'B'])
+  })
+
+  it('does not affect answer options on other questions', () => {
+    const catId = categoryCreate('History')
+    const q1 = questionCreate({ categoryId: catId, type: 'list', text: 'Q1', media: null })
+    const q2 = questionCreate({ categoryId: catId, type: 'list', text: 'Q2', media: null })
+    const a = answerOptionCreate(q1, 'A')
+    const b = answerOptionCreate(q1, 'B')
+    answerOptionCreate(q2, 'X')
+    answerOptionCreate(q2, 'Y')
+    answerOptionsReorder([b, a])
+    expect(answerOptionsByQuestionId(q1).map((o) => o.text)).toEqual(['B', 'A'])
+    expect(answerOptionsByQuestionId(q2).map((o) => o.text)).toEqual(['X', 'Y'])
   })
 })
 

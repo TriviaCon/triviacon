@@ -117,6 +117,7 @@
     "answers": "Odpowiedzi",
     "addAnswer": "Dodaj odpowiedź",
     "correctAnswer": "Poprawna odpowiedź",
+    "multipleChoiceInvalidWarning": "Zaznacz poprawną odpowiedź i dodaj co najmniej dwie opcje — będą potrzebne, by poprowadzić to pytanie.",
     "bold": "Pogrubienie",
     "italic": "Kursywa",
     "underline": "Podkreślenie",

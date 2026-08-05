@@ -73,6 +73,8 @@ const api = {
   ): Promise<void> => ipcRenderer.invoke(IPC.QUIZ_ANSWER_OPTION_UPDATE, id, fields),
   answerOptionRemove: (id: number): Promise<void> =>
     ipcRenderer.invoke(IPC.QUIZ_ANSWER_OPTION_REMOVE, id),
+  answerOptionsReorder: (orderedIds: number[]): Promise<void> =>
+    ipcRenderer.invoke(IPC.QUIZ_ANSWER_OPTIONS_REORDER, orderedIds),
 
   // ── Meta ───────────────────────────────────────────────────────
   quizMetaGet: (): Promise<QuizMeta> => ipcRenderer.invoke(IPC.QUIZ_META_GET),
