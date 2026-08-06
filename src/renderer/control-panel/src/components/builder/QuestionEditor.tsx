@@ -202,7 +202,12 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
     }
     if (newType === 'multiple-choice') {
       // Multiple-choice needs at least two options to be a meaningful choice.
-      for (let i = options.length; i < 2; i++) addOption.mutate()
+      for (let i = options.length; i < 2; i++) addOption.mutate(false)
+    }
+    if (newType === 'list') {
+      // Every list item is a correct answer — no single/multiple-choice
+      // distinction survives the conversion.
+      options.filter((o) => !o.correct).forEach((o) => updateOption.mutate({ id: o.id, correct: true }))
     }
   }
 
@@ -216,7 +221,7 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
           <h6 className="text-sm font-semibold">
             {withCorrect ? t('builder.answerOptions') : t('builder.answers')}
           </h6>
-          <Button size="sm" onClick={() => addOption.mutate()}>
+          <Button size="sm" onClick={() => addOption.mutate(!withCorrect)}>
             {t('builder.addAnswer')}
           </Button>
         </div>
