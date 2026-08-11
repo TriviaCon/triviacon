@@ -7,6 +7,7 @@ import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-
 import { CSS } from '@dnd-kit/utilities'
 import { Button } from '@renderer/components/ui/button'
 import { Label } from '@renderer/components/ui/label'
+import { Switch } from '@renderer/components/ui/switch'
 import { Card, CardContent } from '@renderer/components/ui/card'
 import { ToggleGroup, ToggleGroupItem } from '@renderer/components/ui/toggle-group'
 import { RichTextEditor } from '@renderer/components/ui/rich-text-editor'
@@ -350,16 +351,20 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
                 </div>
               </div>
               {detectMediaType(question.data!.media) === 'video' && (
-                <label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer">
-                  <input
-                    type="checkbox"
+                <div className="flex items-center gap-2">
+                  <Switch
+                    id={`audio-only-${id}`}
                     checked={question.data!.audioOnly ?? false}
-                    onChange={(e) => update({ audioOnly: e.target.checked })}
-                    className="h-4 w-4 rounded border-input"
+                    onCheckedChange={(checked) => update({ audioOnly: checked })}
                   />
-                  <Volume2 className="h-4 w-4" />
-                  {t('builder.audioOnly')}
-                </label>
+                  <Label
+                    htmlFor={`audio-only-${id}`}
+                    className="text-sm font-normal text-muted-foreground cursor-pointer"
+                  >
+                    <Volume2 className="h-4 w-4" />
+                    {t('builder.audioOnly')}
+                  </Label>
+                </div>
               )}
             </>
           ) : (
@@ -424,16 +429,20 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
                 </div>
               </div>
               {detectMediaType(question.data!.answerMedia) === 'video' && (
-                <label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer">
-                  <input
-                    type="checkbox"
+                <div className="flex items-center gap-2">
+                  <Switch
+                    id={`answer-audio-only-${id}`}
                     checked={question.data!.answerMediaAudioOnly ?? false}
-                    onChange={(e) => update({ answerMediaAudioOnly: e.target.checked })}
-                    className="h-4 w-4 rounded border-input"
+                    onCheckedChange={(checked) => update({ answerMediaAudioOnly: checked })}
                   />
-                  <Volume2 className="h-4 w-4" />
-                  {t('builder.audioOnly')}
-                </label>
+                  <Label
+                    htmlFor={`answer-audio-only-${id}`}
+                    className="text-sm font-normal text-muted-foreground cursor-pointer"
+                  >
+                    <Volume2 className="h-4 w-4" />
+                    {t('builder.audioOnly')}
+                  </Label>
+                </div>
               )}
             </>
           ) : (
