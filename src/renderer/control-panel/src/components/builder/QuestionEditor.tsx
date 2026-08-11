@@ -67,15 +67,14 @@ const SingleAnswerField = ({
 }
 
 /**
- * One answer-option row. Sortable (drag handle) for List questions only —
- * ordering is purely presentational there. Multiple-choice options are
- * static; grading is the host's call, not affected by option order.
+ * One answer-option row, with a drag handle for reordering. Order is
+ * purely presentational — it never affects grading, which is always the
+ * host's live call.
  */
 const AnswerOptionRow = ({
   option,
   index,
   withCorrect,
-  sortable,
   onToggleCorrect,
   onChangeText,
   onDelete
@@ -83,15 +82,13 @@ const AnswerOptionRow = ({
   option: AnswerOption
   index: number
   withCorrect: boolean
-  sortable: boolean
   onToggleCorrect: () => void
   onChangeText: (html: string) => void
   onDelete: () => void
 }) => {
   const { t } = useTranslation()
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: `option:${option.id}`,
-    disabled: !sortable
+    id: `option:${option.id}`
   })
   const style = { transform: CSS.Transform.toString(transform), transition }
   const label = withCorrect ? `${String.fromCharCode(65 + index)}.` : `${index + 1}.`
@@ -102,15 +99,13 @@ const AnswerOptionRow = ({
       style={style}
       className={cn('flex items-start gap-2', isDragging && 'opacity-30')}
     >
-      {sortable && (
-        <span
-          {...attributes}
-          {...listeners}
-          className="mt-2.5 shrink-0 cursor-grab text-muted-foreground/30 hover:text-muted-foreground/60"
-        >
-          <GripVertical className="h-4 w-4" />
-        </span>
-      )}
+      <span
+        {...attributes}
+        {...listeners}
+        className="mt-2.5 shrink-0 cursor-grab text-muted-foreground/30 hover:text-muted-foreground/60"
+      >
+        <GripVertical className="h-4 w-4" />
+      </span>
       {withCorrect && (
         <input
           type="radio"
@@ -237,7 +232,6 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
                 option={opt}
                 index={index}
                 withCorrect={withCorrect}
-                sortable={!withCorrect}
                 onToggleCorrect={() => {
                   options
                     .filter((o) => o.correct && o.id !== opt.id)
