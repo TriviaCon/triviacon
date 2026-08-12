@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LayoutGrid } from 'lucide-react'
 import { cn } from '@renderer/lib/utils'
+import { Button } from '@renderer/components/ui/button'
 import TeamTable from './TeamTable'
 import { RankingModule } from './RankingModule'
 import { SplashRunnerPanel } from './SplashRunnerPanel'
@@ -37,15 +38,16 @@ function RunnerCategorySidebar({
         <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           {t('actions.categories')}
         </span>
-        <button
-          type="button"
+        <Button
+          variant="outline"
+          size="xs"
           title={t('actions.categories')}
-          className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-primary border border-primary/40 rounded px-2 py-0.5 hover:bg-primary/10 transition-colors"
+          className="text-xs font-semibold uppercase tracking-wide text-primary border-primary/40 hover:bg-primary/10"
           onClick={() => window.api.showCategories()}
         >
           <LayoutGrid className="h-3 w-3" />
           {t('runner.showCategories')}
-        </button>
+        </Button>
       </div>
       <div className="flex-1 overflow-y-auto p-1.5 space-y-0.5">
         {categories.map((cat) => {

@@ -3,6 +3,7 @@ import { Eye, StickyNote } from 'lucide-react'
 import { AnswerOption, Question } from '@shared/types/quiz'
 import { Label } from '@renderer/components/ui/label'
 import { Button } from '@renderer/components/ui/button'
+import { Switch } from '@renderer/components/ui/switch'
 import { MediaPreview } from '@renderer/components/ui/media-preview'
 import { RichText, richTextToPlain } from '@shared/RichText'
 import { cn } from '@renderer/lib/utils'
@@ -162,14 +163,7 @@ const QuestionPreview = ({
           <Label htmlFor="used-switch" className="text-sm text-muted-foreground">
             {used ? t('runner.yes') : t('runner.no')}
           </Label>
-          <input
-            id="used-switch"
-            type="checkbox"
-            role="switch"
-            checked={used}
-            onChange={onUse}
-            className="h-4 w-4"
-          />
+          <Switch id="used-switch" checked={used} onCheckedChange={onUse} />
         </div>
 
         <div className="flex items-center gap-2">
@@ -177,14 +171,7 @@ const QuestionPreview = ({
           <Label htmlFor="reveal-switch" className="text-sm text-muted-foreground">
             {answerRevealed ? t('runner.yes') : t('runner.no')}
           </Label>
-          <input
-            id="reveal-switch"
-            type="checkbox"
-            role="switch"
-            checked={answerRevealed}
-            onChange={onRevealAnswer}
-            className="h-4 w-4"
-          />
+          <Switch id="reveal-switch" checked={answerRevealed} onCheckedChange={onRevealAnswer} />
         </div>
       </div>
     </div>

@@ -67,6 +67,7 @@ function CategoryItem({
   onSelect: () => void
   onDeleted: () => void
 }) {
+  const { t } = useTranslation()
   const [editing, setEditing] = useState(false)
   const [editValue, setEditValue] = useState(category.name)
   const [showDelete, setShowDelete] = useState(false)
@@ -128,12 +129,24 @@ function CategoryItem({
               }}
               className="h-6 text-xs py-0 px-1"
             />
-            <button onClick={commitRename} className="text-green-600 hover:text-green-700 shrink-0">
+            <Button
+              variant="ghost"
+              size="icon-xs"
+              onClick={commitRename}
+              className="text-green-600 hover:text-green-700 hover:bg-green-600/10"
+              title={t('actions.save')}
+            >
               <Check className="h-3.5 w-3.5" />
-            </button>
-            <button onClick={cancelRename} className="text-destructive hover:text-destructive/80 shrink-0">
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon-xs"
+              onClick={cancelRename}
+              className="text-destructive hover:text-destructive/80 hover:bg-destructive/10"
+              title={t('actions.cancel')}
+            >
               <X className="h-3.5 w-3.5" />
-            </button>
+            </Button>
           </div>
         ) : (
           <span className="flex-1 truncate">{category.name}</span>
@@ -145,30 +158,36 @@ function CategoryItem({
 
         {!editing && (
           <div className="hidden group-hover:flex items-center gap-0.5 shrink-0" onClick={(e) => e.stopPropagation()}>
-            <button
+            <Button
+              variant="ghost"
+              size="icon-xs"
               onClick={() => { setEditValue(category.name); setEditing(true) }}
-              className={cn('p-0.5 rounded hover:bg-black/10', isActive && 'hover:bg-white/20')}
-              title="Rename"
+              className={cn('hover:bg-black/10', isActive && 'text-primary-foreground hover:bg-white/20')}
+              title={t('actions.rename')}
             >
               <Pencil className="h-3 w-3" />
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon-xs"
               onClick={async () => {
                 await window.api.categoryShuffle(category.id)
                 qc.invalidateQueries({ queryKey: keys.questions(category.id) })
               }}
-              className={cn('p-0.5 rounded hover:bg-black/10', isActive && 'hover:bg-white/20')}
-              title="Shuffle questions"
+              className={cn('hover:bg-black/10', isActive && 'text-primary-foreground hover:bg-white/20')}
+              title={t('builder.shuffleQuestions')}
             >
               <Shuffle className="h-3 w-3" />
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon-xs"
               onClick={() => setShowDelete(true)}
-              className={cn('p-0.5 rounded hover:bg-destructive/20 text-destructive', isActive && 'text-red-300')}
-              title="Delete"
+              className={cn('text-destructive hover:bg-destructive/20', isActive && 'text-red-300')}
+              title={t('actions.delete')}
             >
               <Trash2 className="h-3 w-3" />
-            </button>
+            </Button>
           </div>
         )}
       </div>
@@ -219,7 +238,7 @@ export function CategorySidebar({
           {t('actions.categories')}
         </span>
         <div className="flex items-center gap-1">
-          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setAddingNew(true)} title={t('builder.addCategory')}>
+          <Button variant="ghost" size="icon-xs" onClick={() => setAddingNew(true)} title={t('builder.addCategory')}>
             <Plus className="h-4 w-4" />
           </Button>
         </div>
@@ -261,8 +280,24 @@ export function CategorySidebar({
               }}
               className="h-6 text-xs py-0 px-1"
             />
-            <button onClick={commitAdd} className="text-green-600 shrink-0"><Check className="h-3.5 w-3.5" /></button>
-            <button onClick={() => { setAddingNew(false); setNewName('') }} className="text-destructive shrink-0"><X className="h-3.5 w-3.5" /></button>
+            <Button
+              variant="ghost"
+              size="icon-xs"
+              onClick={commitAdd}
+              className="text-green-600 hover:text-green-700 hover:bg-green-600/10"
+              title={t('actions.save')}
+            >
+              <Check className="h-3.5 w-3.5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon-xs"
+              onClick={() => { setAddingNew(false); setNewName('') }}
+              className="text-destructive hover:text-destructive/80 hover:bg-destructive/10"
+              title={t('actions.cancel')}
+            >
+              <X className="h-3.5 w-3.5" />
+            </Button>
           </div>
         )}
       </div>

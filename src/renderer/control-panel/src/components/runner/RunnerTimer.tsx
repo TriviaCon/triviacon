@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { Play, Pause, RotateCcw } from 'lucide-react'
 import { cn } from '@renderer/lib/utils'
+import { Button } from '@renderer/components/ui/button'
 import { useGameState } from '@renderer/hooks/useGameState'
 
 export function RunnerTimer() {
@@ -27,33 +28,33 @@ export function RunnerTimer() {
         {mm}:{ss}
       </span>
       <div className="flex items-center gap-1">
-        <button
-          type="button"
+        <Button
+          variant="outline"
+          size="xs"
           title={t('runner.timerStart')}
           disabled={isRunning || isExpired}
-          className="flex items-center gap-1 rounded px-2 py-0.5 text-xs font-medium border border-border hover:bg-accent transition-colors disabled:opacity-40 disabled:pointer-events-none"
           onClick={() => window.api.timerStart()}
         >
           <Play className="h-3 w-3" /> {t('runner.timerStart')}
-        </button>
-        <button
-          type="button"
+        </Button>
+        <Button
+          variant="outline"
+          size="xs"
           title={t('runner.timerPause')}
           disabled={!isRunning}
-          className="flex items-center gap-1 rounded px-2 py-0.5 text-xs font-medium border border-border hover:bg-accent transition-colors disabled:opacity-40 disabled:pointer-events-none"
           onClick={() => window.api.timerPause()}
         >
           <Pause className="h-3 w-3" /> {t('runner.timerPause')}
-        </button>
-        <button
-          type="button"
+        </Button>
+        <Button
+          variant="outline"
+          size="xs"
           title={t('runner.timerReset')}
           disabled={isIdle}
-          className="flex items-center gap-1 rounded px-2 py-0.5 text-xs font-medium border border-border hover:bg-accent transition-colors disabled:opacity-40 disabled:pointer-events-none"
           onClick={() => window.api.timerReset()}
         >
           <RotateCcw className="h-3 w-3" /> {t('runner.timerReset')}
-        </button>
+        </Button>
       </div>
     </div>
   )
