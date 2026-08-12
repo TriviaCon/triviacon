@@ -10,6 +10,7 @@ import {
   useQueryClient
 } from '@tanstack/react-query'
 import { useGameState } from '@renderer/hooks/useGameState'
+import { useBlockStrayDragDrop } from '@shared/hooks/useBlockStrayDragDrop'
 
 declare module '@tanstack/react-query' {
   interface Register {
@@ -48,15 +49,7 @@ function QueryInvalidator() {
 }
 
 function App() {
-  useEffect(() => {
-    const prevent = (e: DragEvent) => e.preventDefault()
-    document.addEventListener('dragover', prevent)
-    document.addEventListener('drop', prevent)
-    return () => {
-      document.removeEventListener('dragover', prevent)
-      document.removeEventListener('drop', prevent)
-    }
-  }, [])
+  useBlockStrayDragDrop()
 
   return (
     <div className="px-1 py-1 flex flex-col h-full overflow-hidden">

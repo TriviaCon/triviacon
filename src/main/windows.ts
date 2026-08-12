@@ -32,6 +32,11 @@ export function createControlPanelWindow(): BrowserWindow {
     return { action: 'deny' }
   })
 
+  // Guards against stray drag-drop (or any other renderer-initiated
+  // navigation) hijacking the window — e.g. dragging an image in from a
+  // browser can otherwise navigate the app away to that image's URL.
+  controlPanelWindow.webContents.on('will-navigate', (e) => e.preventDefault())
+
   if (process.env['ELECTRON_RENDERER_URL']) {
     controlPanelWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/control-panel/`)
   } else {
@@ -84,6 +89,8 @@ export function createGameScreenWindow(): BrowserWindow {
     shell.openExternal(details.url)
     return { action: 'deny' }
   })
+
+  gameScreenWindow.webContents.on('will-navigate', (e) => e.preventDefault())
 
   if (process.env['ELECTRON_RENDERER_URL']) {
     gameScreenWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/game-screen/`)

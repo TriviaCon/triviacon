@@ -2,6 +2,7 @@ import './index.css'
 import { useEffect } from 'react'
 import { useGameState } from './hooks/useGameState'
 import { GamePhase } from '@shared/types/state'
+import { useBlockStrayDragDrop } from '@shared/hooks/useBlockStrayDragDrop'
 import IdleScreen from './components/IdleScreen'
 import CategoriesScreen from './components/CategoriesScreen'
 import QuestionsScreen from './components/QuestionsScreen'
@@ -10,6 +11,8 @@ import RankingScreen from './components/RankingScreen'
 
 function App() {
   const gameState = useGameState()
+
+  useBlockStrayDragDrop()
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', gameState.gameScreenDarkMode)
