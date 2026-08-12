@@ -9,6 +9,7 @@ export interface MediaDrop {
     onDragOver: (e: DragEvent) => void
     onDragLeave: (e: DragEvent) => void
     onDrop: (e: DragEvent) => void
+    'data-dropzone': true
   }
   /** True while a dropped file is awaiting confirmation to replace existing media. */
   replaceOpen: boolean
@@ -101,7 +102,7 @@ export function useMediaDrop(
   return {
     dragOver,
     dropError,
-    dropProps: { onDragOver, onDragLeave, onDrop },
+    dropProps: { onDragOver, onDragLeave, onDrop, 'data-dropzone': true },
     replaceOpen,
     confirmReplace,
     cancelReplace
