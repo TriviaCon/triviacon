@@ -9,7 +9,7 @@ One of three modes a question can be authored in: `single-answer` (one fixed ans
 _Avoid_: "question kind", "answer type"
 
 **Answer Option**:
-One entry in a question's set of possible answers (`AnswerOption`). For `single-answer`, there is exactly one, and it *is* the answer. For `multiple-choice`, exactly one option is marked `correct`; the rest are distractors. For `list`, every option is a correct item — there is no `correct` flag distinction.
+One entry in a question's set of possible answers (`AnswerOption`). For `single-answer`, there is exactly one, and it *is* the answer. For `multiple-choice`, exactly one option is marked `correct`; the rest are distractors. For `list`, every option is a correct item — the `correct` field is always `true` and carries no distinguishing meaning; the Editor enforces this on creation and on conversion to `list`, but nothing in the Runner or Game Screen reads `correct` for `list` questions — it's stored for data-consistency, not gameplay.
 _Avoid_: "choice", "item" (except when specifically talking about `list` questions, where "item" is natural)
 
 **Presentation order**:
