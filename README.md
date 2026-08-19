@@ -69,7 +69,7 @@ Found a bug or have an idea? [Open an issue](https://github.com/TriviaCon/trivia
 
 ## For developers
 
-**Prerequisites:** [Node.js](https://nodejs.org/) v22+ and [pnpm](https://pnpm.io/) v10+ (`npm i -g pnpm` or via [Corepack](https://pnpm.io/installation#using-corepack)). This project uses pnpm exclusively — `npm install` is blocked by a `preinstall` guard to avoid lockfile drift.
+**Prerequisites:** [Node.js](https://nodejs.org/) v20–v25 (v22 LTS recommended — see `.nvmrc`; Node 26+ is not yet supported) and [pnpm](https://pnpm.io/) v10+ (`npm i -g pnpm` or via [Corepack](https://pnpm.io/installation#using-corepack)). This project uses pnpm exclusively — `npm install` is blocked by a `preinstall` guard to avoid lockfile drift.
 
 ```bash
 git clone https://github.com/TriviaCon/triviacon.git
@@ -78,7 +78,17 @@ pnpm install
 pnpm dev          # dev mode with hot reload (both windows)
 ```
 
-> **`Error: Electron uninstall` on `pnpm dev`?** Electron's postinstall download was skipped. Run `node node_modules/electron/install.js`, or if that fails, `rm -rf node_modules ~/.cache/electron && pnpm install`.
+> **`Error: Electron uninstall` on `pnpm dev`?** You're on an unsupported Node version. On Node 26+, Electron's installer silently fails to unpack its binary — it exits successfully after extracting a single file, so `pnpm install` reports no error but leaves you without an Electron binary. Reinstalling won't help; you need to switch Node versions.
+>
+> Use [nvm](https://github.com/nvm-sh/nvm) to pick up the version pinned in `.nvmrc`:
+>
+> ```bash
+> nvm install       # installs the version from .nvmrc
+> nvm use
+> rm -rf node_modules && pnpm install
+> ```
+>
+> On Windows, [nvm-windows](https://github.com/coreybutler/nvm-windows) doesn't read `.nvmrc` — run `nvm install 22 && nvm use 22` instead.
 
 Other scripts:
 
