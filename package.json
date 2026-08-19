@@ -24,8 +24,9 @@
     "test": "vitest run"
   },
   "packageManager": "pnpm@10.33.0",
+  "//engines.node": "The <26 ceiling is a stopgap: electron@35's postinstall (extract-zip@2.0.1) hangs unpacking its binary on Node 26+, producing a silent broken install. Electron replaced extract-zip in v42 — lift this ceiling when bumping Electron to >=42. See PR #70.",
   "engines": {
-    "node": ">=20",
+    "node": ">=20 <26",
     "pnpm": ">=10"
   },
   "dependencies": {
