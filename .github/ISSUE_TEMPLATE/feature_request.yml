@@ -1,37 +1,39 @@
-name: Propozycja funkcji
-description: Zaproponuj nową funkcję lub usprawnienie
+name: Feature request
+description: Suggest a new feature or improvement
 labels: ["enhancement"]
 body:
   - type: markdown
     attributes:
       value: |
-        Masz pomysł? Świetnie! Opisz go poniżej.
+        Got an idea? Great — describe it below. Feel free to write in any language.
+
+        **Before you start:** TriviaCON has a deliberately narrow, fixed scope. Please skim the design principles and permanent non-goals in [CONTRIBUTING.md](https://github.com/TriviaCon/triviacon/blob/main/CONTRIBUTING.md) first — a few things (networking, automatic scoring, automated game flow, AI-authored content, cloud/accounts/telemetry) are permanently out of scope.
 
   - type: textarea
     id: problem
     attributes:
-      label: Problem lub potrzeba
-      description: Jaki problem rozwiązuje ta funkcja? Czego Ci brakuje?
-      placeholder: Kiedy robię X, chciałbym móc...
+      label: Problem or need
+      description: What problem does this feature solve? What are you missing?
+      placeholder: When I do X, I'd like to be able to...
     validations:
       required: true
 
   - type: textarea
     id: solution
     attributes:
-      label: Proponowane rozwiązanie
-      description: Jak Twoim zdaniem powinna działać ta funkcja?
+      label: Proposed solution
+      description: How do you think this feature should work?
     validations:
       required: true
 
   - type: textarea
     id: alternatives
     attributes:
-      label: Alternatywy
-      description: Czy rozważałeś/-aś inne podejścia?
+      label: Alternatives
+      description: Have you considered other approaches?
 
   - type: textarea
     id: extra
     attributes:
-      label: Dodatkowe informacje
-      description: Kontekst, przykłady, mockupy — cokolwiek może pomóc.
+      label: Additional context
+      description: Context, examples, mockups — anything that helps.

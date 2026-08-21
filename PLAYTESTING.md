@@ -1,6 +1,6 @@
-# Help Me Break Triviacon
+# Help Me Break TriviaCON
 
-Thanks for agreeing to take Triviacon for a spin. Before you start, the
+Thanks for agreeing to take TriviaCON for a spin. Before you start, the
 single most useful thing to know:
 
 **I want you to try to break it.** Click the wrong things, type nonsense,
@@ -9,9 +9,9 @@ think — "this confused me" or "this looks ugly" is just as valuable as
 finding a crash. You won't hurt my feelings, and vague politeness helps
 nobody.
 
-## What Triviacon is
+## What TriviaCON is
 
-Triviacon is a desktop app for running trivia quiz nights. You build a
+TriviaCON is a desktop app for running trivia quiz nights. You build a
 quiz, then run it live: you drive the game from a **control panel**
 window while players watch a separate **game screen** (meant for a TV or
 projector). It runs on Windows, Linux, and macOS, and the interface is

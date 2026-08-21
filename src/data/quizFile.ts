@@ -111,7 +111,7 @@ const _open = async (path: string, onProgress?: OpenProgressCallback) => {
 
   if (!isZipFile(fileBuffer)) {
     throw new Error(
-      'Unsupported file format. This .tcq file is from an old version of Triviacon. ' +
+      'Unsupported file format. This .tcq file is from an old version of TriviaCON. ' +
         'Open it once with v0.9.3 to convert it to the current format, then try again.'
     )
   }
@@ -131,7 +131,7 @@ const _open = async (path: string, onProgress?: OpenProgressCallback) => {
   if ((doc as { version?: unknown }).version !== 2) {
     throw new Error(
       `Unsupported quiz version (${(doc as { version?: unknown }).version ?? 'unknown'}). ` +
-        'This file may have been created with a newer version of Triviacon.'
+        'This file may have been created with a newer version of TriviaCON.'
     )
   }
 

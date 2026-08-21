@@ -1,4 +1,4 @@
-# Triviacon
+# TriviaCON
 
 Portable desktop trivia-night app: a host runs the show from a control panel while a separate game screen displays to the audience. This context covers the quiz content model — categories, questions, and answer options — and how they're authored, validated, and displayed.
 

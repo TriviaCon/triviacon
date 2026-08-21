@@ -1,4 +1,4 @@
-# Triviacon
+# TriviaCON
 
 Portable desktop app for running live trivia quiz nights. The host drives the game from a **control panel** window while players watch a separate **game screen** (projector/TV/second monitor). Single machine, dual display — no networking.
 
@@ -99,7 +99,7 @@ Supported formats: mp3, wav, ogg, aac, m4a, mp4, webm, mov, png, jpg, jpeg, gif,
 
 ## Languages
 
-**Polish** is the primary user-facing language. English is secondary. All new UI strings must be added to both `pl.json` and `en.json`, with Polish as the reference.
+The app is fully localizable — a new language is just another locale file, and translation contributions are welcome. It currently ships **Polish** and **English**. When adding or changing UI strings, update every existing locale (`pl.json`, `en.json`) so none fall behind. Polish is the maintainer's working language, so in practice it's usually the most complete — but that's a working reality, not a limit on what the app can speak.
 
 **Development language is English**: code, comments, commit messages, documentation.
 
