@@ -1,5 +1,5 @@
 appId: io.github.triviacon.triviacon
-productName: Triviacon
+productName: TriviaCON
 directories:
   buildResources: build
 files:
@@ -13,10 +13,12 @@ asarUnpack:
   - resources/**
 win:
   executableName: triviacon
+  artifactName: triviacon-${version}-win.${ext}
   target:
     - target: zip
       arch: x64
 mac:
+  artifactName: triviacon-${version}-mac-${arch}.${ext}
   target:
     - target: zip
       arch:
@@ -30,6 +32,7 @@ mac:
     - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
   notarize: false
 linux:
+  artifactName: triviacon-${version}.${ext}
   target:
     - target: AppImage
       arch: x64

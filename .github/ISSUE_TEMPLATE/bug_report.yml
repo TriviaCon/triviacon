@@ -1,24 +1,24 @@
-name: Raport błędu
-description: Zgłoś błąd w działaniu aplikacji
+name: Bug report
+description: Report a problem with the app
 labels: ["bug"]
 body:
   - type: markdown
     attributes:
       value: |
-        Dziękujemy za zgłoszenie! Wypełnij formularz możliwie dokładnie — pomaga to szybciej znaleźć i naprawić problem.
+        Thanks for reporting! Fill this in as thoroughly as you can — it helps us find and fix the problem faster. Feel free to write in any language.
 
   - type: input
     id: version
     attributes:
-      label: Wersja aplikacji
-      placeholder: np. 0.9.1
+      label: App version
+      placeholder: e.g. 0.9.1
     validations:
       required: true
 
   - type: dropdown
     id: platform
     attributes:
-      label: System operacyjny
+      label: Operating system
       options:
         - Windows
         - Linux
@@ -29,19 +29,19 @@ body:
   - type: textarea
     id: description
     attributes:
-      label: Opis błędu
-      description: Co się stało? Czego się spodziewałeś/-aś?
-      placeholder: Opisz błąd...
+      label: Bug description
+      description: What happened? What did you expect instead?
+      placeholder: Describe the bug...
     validations:
       required: true
 
   - type: textarea
     id: steps
     attributes:
-      label: Kroki do odtworzenia
+      label: Steps to reproduce
       placeholder: |
-        1. Otwórz plik quizu
-        2. Kliknij...
+        1. Open a quiz file
+        2. Click...
         3. ...
     validations:
       required: true
@@ -49,17 +49,17 @@ body:
   - type: dropdown
     id: severity
     attributes:
-      label: Dotkliwość
+      label: Severity
       options:
-        - Krytyczny (aplikacja się crashuje)
-        - Wysoki (funkcja nie działa)
-        - Średni (coś działa niepoprawnie)
-        - Niski (kosmetyczny)
+        - Critical (app crashes)
+        - High (a feature is broken)
+        - Medium (something misbehaves)
+        - Low (cosmetic)
     validations:
       required: true
 
   - type: textarea
     id: extra
     attributes:
-      label: Dodatkowe informacje
-      description: Logi, zrzuty ekranu, pliki quizu (jeśli problem jest z konkretnym quizem).
+      label: Additional context
+      description: Logs, screenshots, quiz files (if the problem is tied to a specific quiz).
