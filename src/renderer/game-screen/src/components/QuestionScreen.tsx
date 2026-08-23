@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { ActiveQuestionState, TimerSoundMode, TimerState } from '@shared/types/state'
 import { detectMediaType } from '@shared/media'
-import { mediaUrl } from '@shared/mediaUrl'
+import { mediaUrl, mediaCrossOrigin } from '@shared/mediaUrl'
 import { RichText } from '@shared/RichText'
 import AutoFitText from './AutoFitText'
 import AudioVisualizer from '@shared/AudioVisualizer'
@@ -181,6 +181,7 @@ const QuestionScreen = ({
             <video
               ref={videoRef}
               src={mediaSrc}
+              crossOrigin={mediaCrossOrigin(mediaSrc)}
               preload="auto"
               className="w-full h-full object-contain"
             />
@@ -210,10 +211,10 @@ const QuestionScreen = ({
         <hr className="border-border mx-6 shrink-0" />
 
         {mediaSrc && mediaType === 'audio' && (
-          <audio ref={audioRef} src={mediaSrc} preload="auto" />
+          <audio ref={audioRef} src={mediaSrc} crossOrigin={mediaCrossOrigin(mediaSrc)} preload="auto" />
         )}
         {audioOnly && mediaSrc && (
-          <video ref={videoRef} src={mediaSrc} preload="auto" className="hidden" />
+          <video ref={videoRef} src={mediaSrc} crossOrigin={mediaCrossOrigin(mediaSrc)} preload="auto" className="hidden" />
         )}
 
         <div className="flex-1 min-h-0 flex flex-col px-6 pb-4 pt-2 overflow-hidden">

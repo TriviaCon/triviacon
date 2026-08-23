@@ -35,7 +35,16 @@ if (app.isPackaged) {
 protocol.registerSchemesAsPrivileged([
   {
     scheme: MEDIA_PROTOCOL,
-    privileges: { standard: true, secure: true, supportFetchAPI: true, stream: true }
+    // corsEnabled is what lets media elements fetch this scheme in CORS mode.
+    // Without it, an element with crossOrigin="anonymous" fails outright with
+    // MEDIA_ERR_SRC_NOT_SUPPORTED. See mediaCrossOrigin() in shared/mediaUrl.
+    privileges: {
+      standard: true,
+      secure: true,
+      supportFetchAPI: true,
+      stream: true,
+      corsEnabled: true
+    }
   }
 ])
 
