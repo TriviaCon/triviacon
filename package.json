@@ -13,8 +13,9 @@
     "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
     "typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false",
     "typecheck": "tsc --noEmit -p tsconfig.node.json --composite false && tsc --noEmit -p tsconfig.web.json --composite false",
-    "start": "electron-vite preview",
-    "dev": "electron-vite dev",
+    "//electron-binary": "Electron >=42 ships no postinstall and fetches its binary on first run of its own CLI. electron-vite resolves the binary path directly, so it never triggers that — without this prefix a fresh clone fails with 'Error: Electron uninstall'. It is a ~0.7s no-op once installed. Not in postinstall: CI only lints/tests/builds, and electron-builder downloads its own dist, so no CI job needs the binary.",
+    "start": "install-electron && electron-vite preview",
+    "dev": "install-electron && electron-vite dev",
     "build": "pnpm run typecheck && electron-vite build",
     "postinstall": "electron-builder install-app-deps",
     "build:unpack": "pnpm run build && electron-builder --dir",
@@ -24,9 +25,9 @@
     "test": "vitest run"
   },
   "packageManager": "pnpm@10.33.0",
-  "//engines.node": "Floor comes from jsdom@30 (^22.22.2 || ^24.15.0 || >=26). The missing >=26 branch is a stopgap: electron@35's postinstall (extract-zip@2.0.1) hangs unpacking its binary on Node 26+, producing a silent broken install. Electron replaced extract-zip in v42 — add >=26 back when bumping Electron to >=42. See PR #70.",
+  "//engines.node": "Mirrors jsdom@30's supported range, which is the strictest floor in the tree. Electron 43 needs >=22.12. The <26 ceiling from PR #70 is gone: it existed because electron@35's postinstall (extract-zip@2.0.1) hung unpacking its binary on Node 26+, and Electron dropped that postinstall entirely in v42.",
   "engines": {
-    "node": "^22.22.2 || ^24.15.0",
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0",
     "pnpm": ">=10"
   },
   "dependencies": {
@@ -61,7 +62,7 @@
     "@types/react-dom": "^19.2.4",
     "@types/yazl": "^3.3.1",
     "@vitejs/plugin-react": "^5.2.0",
-    "electron": "^35.7.5",
+    "electron": "^43.4.1",
     "electron-builder": "^26.15.3",
     "electron-vite": "^5.0.0",
     "eslint": "^9.39.4",
