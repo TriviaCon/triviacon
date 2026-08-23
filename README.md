@@ -89,7 +89,7 @@ Bug fixes, translations, docs, and polish are very welcome. Before proposing a f
 
 > **Read [CONTRIBUTING.md](CONTRIBUTING.md) before you start coding.** TriviaCON has a deliberately narrow, fixed scope — the design principles and permanent non-goals there will save you from building something that can't be merged.
 
-**Prerequisites:** [Node.js](https://nodejs.org/) v20–v25 (v22 LTS recommended — see `.nvmrc`; Node 26+ is not yet supported) and [pnpm](https://pnpm.io/) v10+ (`npm i -g pnpm` or via [Corepack](https://pnpm.io/installation#using-corepack)). This project uses pnpm exclusively — `npm install` is blocked by a `preinstall` guard to avoid lockfile drift.
+**Prerequisites:** [Node.js](https://nodejs.org/) v24 recommended (see `.nvmrc` — it's what CI builds on, and what Electron bundles). v22.22.2+ and v26+ also work; Node 20 is no longer supported. Plus [pnpm](https://pnpm.io/) v10+ (`npm i -g pnpm` or via [Corepack](https://pnpm.io/installation#using-corepack)). This project uses pnpm exclusively — `npm install` is blocked by a `preinstall` guard to avoid lockfile drift.
 
 ```bash
 git clone https://github.com/TriviaCon/triviacon.git
@@ -98,17 +98,16 @@ pnpm install
 pnpm dev          # dev mode with hot reload (both windows)
 ```
 
-> **`Error: Electron uninstall` on `pnpm dev`?** You're on an unsupported Node version. On Node 26+, Electron's installer silently fails to unpack its binary — it exits successfully after extracting a single file, so `pnpm install` reports no error but leaves you without an Electron binary. Reinstalling won't help; you need to switch Node versions.
+> **The first `pnpm dev` after a fresh clone downloads ~100 MB.** Since Electron 42 the npm package no longer fetches its binary during `pnpm install`, so `pnpm dev` and `pnpm start` run `install-electron` first to fetch it on demand. Later runs are instant. If you invoke `electron-vite` directly and hit `Error: Electron uninstall`, run `pnpm exec install-electron` once.
 >
-> Use [nvm](https://github.com/nvm-sh/nvm) to pick up the version pinned in `.nvmrc`:
+> To pick up the Node version in `.nvmrc`, use [nvm](https://github.com/nvm-sh/nvm):
 >
 > ```bash
 > nvm install       # installs the version from .nvmrc
 > nvm use
-> rm -rf node_modules && pnpm install
 > ```
 >
-> On Windows, [nvm-windows](https://github.com/coreybutler/nvm-windows) doesn't read `.nvmrc` — run `nvm install 22 && nvm use 22` instead.
+> On Windows, [nvm-windows](https://github.com/coreybutler/nvm-windows) doesn't read `.nvmrc` — run `nvm install 24 && nvm use 24` instead.
 
 Other scripts:
 
