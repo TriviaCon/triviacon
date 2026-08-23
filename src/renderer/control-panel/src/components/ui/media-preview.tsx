@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CheckCircle, Maximize, Music, Play, Pause, Square, Volume2 } from 'lucide-react'
 import { detectMediaType } from '@shared/media'
-import { mediaUrl } from '@shared/mediaUrl'
+import { mediaUrl, mediaCrossOrigin } from '@shared/mediaUrl'
 import AudioVisualizer from '@shared/AudioVisualizer'
 import type { MediaPlaybackState } from '@shared/types/ipc'
 import { Button } from '@renderer/components/ui/button'
@@ -217,7 +217,7 @@ const LocalMediaPlayer = ({ src, mediaType }: { src: string; mediaType: 'audio' 
     <div className="space-y-2">
       {mediaType === 'audio' && (
         <>
-          <audio ref={audioRef} src={src} preload="auto" />
+          <audio ref={audioRef} src={src} crossOrigin={mediaCrossOrigin(src)} preload="auto" />
           <div className="h-20 rounded border border-border bg-muted/30 overflow-hidden">
             <AudioVisualizer audioRef={audioRef} />
           </div>
@@ -227,6 +227,7 @@ const LocalMediaPlayer = ({ src, mediaType }: { src: string; mediaType: 'audio' 
         <video
           ref={videoRef}
           src={src}
+          crossOrigin={mediaCrossOrigin(src)}
           preload="auto"
           className="max-w-full max-h-[200px] rounded"
         />

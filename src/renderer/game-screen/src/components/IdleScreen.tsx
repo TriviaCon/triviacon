@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { QuizMeta } from '@shared/types/quiz'
-import { mediaUrl } from '@shared/mediaUrl'
+import { mediaUrl, mediaCrossOrigin } from '@shared/mediaUrl'
 import { detectMediaType } from '@shared/media'
 
 const IdleScreen = ({ quizMeta }: { quizMeta: QuizMeta | null }) => {
@@ -112,7 +112,7 @@ const IdleScreen = ({ quizMeta }: { quizMeta: QuizMeta | null }) => {
       </div>
 
       {/* Soundtrack (hidden audio element) */}
-      {audioSrc && <audio ref={audioRef} src={audioSrc} autoPlay loop={loop} />}
+      {audioSrc && <audio ref={audioRef} src={audioSrc} crossOrigin={mediaCrossOrigin(audioSrc)} autoPlay loop={loop} />}
     </div>
   )
 }

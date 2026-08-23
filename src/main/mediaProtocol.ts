@@ -61,7 +61,8 @@ export function registerMediaProtocol(): void {
             'Content-Type': contentType,
             'Content-Range': `bytes ${start}-${end}/${totalSize}`,
             'Content-Length': String(chunkSize),
-            'Accept-Ranges': 'bytes'
+            'Accept-Ranges': 'bytes',
+            'Access-Control-Allow-Origin': '*'
           }
         })
       }
@@ -73,7 +74,8 @@ export function registerMediaProtocol(): void {
       headers: {
         'Content-Type': contentType,
         'Content-Length': String(totalSize),
-        'Accept-Ranges': 'bytes'
+        'Accept-Ranges': 'bytes',
+        'Access-Control-Allow-Origin': '*'
       }
     })
   })

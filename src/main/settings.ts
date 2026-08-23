@@ -15,6 +15,10 @@ export interface AppSettings {
   timerSound: TimerSoundMode
   fanfareSound: FanfareSound
   appTheme: string
+  /** Directory of the last quiz file opened or saved. Not user-facing. */
+  lastQuizDir: string | null
+  /** Directory of the last media file attached. Not user-facing. */
+  lastMediaDir: string | null
 }
 
 const DEFAULTS: AppSettings = {
@@ -24,7 +28,9 @@ const DEFAULTS: AppSettings = {
   visualizerBarCount: 48,
   timerSound: 'beeps-and-buzz',
   fanfareSound: 'ff5',
-  appTheme: 'system'
+  appTheme: 'system',
+  lastQuizDir: null,
+  lastMediaDir: null
 }
 
 const SETTINGS_FILENAME = 'triviacon-settings.json'

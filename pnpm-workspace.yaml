@@ -1,0 +1,6 @@
+# pnpm 10 no longer reads the "pnpm" field in package.json.
+# electron is not listed: since v42 it ships no install script at all and
+# fetches its binary on the first run instead.
+onlyBuiltDependencies:
+  - electron-winstaller
+  - esbuild

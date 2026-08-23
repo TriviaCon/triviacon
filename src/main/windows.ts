@@ -3,6 +3,7 @@ import { BrowserWindow, ipcMain, shell } from 'electron'
 import { IPC } from '@shared/types/ipc'
 import { isDirty } from '../data/quizStore'
 import quizFile from '../data/quizFile'
+import { showSaveDialog } from './dialogs'
 
 let controlPanelWindow: BrowserWindow | null = null
 let gameScreenWindow: BrowserWindow | null = null
@@ -56,8 +57,7 @@ export function createControlPanelWindow(): BrowserWindow {
     if (choice === 'save') {
       try { await quizFile.save() } catch { return }
     } else if (choice === 'saveAs') {
-      const { dialog } = await import('electron')
-      const result = await dialog.showSaveDialog(controlPanelWindow!, { filters: [{ name: 'TriviaCON Quiz', extensions: ['tcq'] }] })
+      const result = await showSaveDialog(controlPanelWindow, 'quiz', { filters: [{ name: 'TriviaCON Quiz', extensions: ['tcq'] }] })
       if (result.canceled || !result.filePath) return
       try { await quizFile.saveTo(result.filePath) } catch { return }
     }
