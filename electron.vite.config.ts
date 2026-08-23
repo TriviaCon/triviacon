@@ -1,5 +1,5 @@
 import { resolve } from 'path'
-import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
+import { defineConfig } from 'electron-vite'
 import react from '@vitejs/plugin-react'
 // @ts-expect-error — @tailwindcss/vite only ships .d.mts; works fine at runtime
 import tailwindcss from '@tailwindcss/vite'
@@ -7,21 +7,23 @@ import { version } from './package.json'
 
 export default defineConfig({
   main: {
-    plugins: [externalizeDepsPlugin()],
-    resolve: {
-      alias: {
-        '@shared': resolve('src/shared')
-      }
-    }
-  },
-  preload: {
-    plugins: [externalizeDepsPlugin()],
     resolve: {
       alias: {
         '@shared': resolve('src/shared')
       }
     },
     build: {
+      externalizeDeps: true
+    }
+  },
+  preload: {
+    resolve: {
+      alias: {
+        '@shared': resolve('src/shared')
+      }
+    },
+    build: {
+      externalizeDeps: true,
       rollupOptions: {
         input: {
           controlPanel: resolve(__dirname, 'src/preload/controlPanel.ts'),
