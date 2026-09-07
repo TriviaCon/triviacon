@@ -7,6 +7,7 @@ import {
   ChevronDown,
   Play,
   Trophy,
+  LayoutGrid,
   Maximize,
   Sun,
   Moon,
@@ -165,6 +166,9 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
           <Separator orientation="vertical" className="mx-1 h-8" />
           <Button variant="outline" onClick={() => window.api.showSplash()}>
             <Image className="mr-1 h-4 w-4" /> {t('actions.splash')}
+          </Button>
+          <Button variant="outline" onClick={() => window.api.showCategories()}>
+            <LayoutGrid className="mr-1 h-4 w-4" /> {t('actions.categories')}
           </Button>
           <Button variant="outline" onClick={() => window.api.showRanking()}>
             <Trophy className="mr-1 h-4 w-4" /> {t('actions.ranking')}
