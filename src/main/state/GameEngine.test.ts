@@ -61,8 +61,8 @@ describe('GameEngine', () => {
 
     it('restores saved teams and sets currentTeamId', () => {
       const teams = [
-        { id: 't5', name: 'Alpha', score: 10 },
-        { id: 't8', name: 'Beta', score: 20 }
+        { id: 't5', name: 'Alpha', score: 10, tiebreakScore: 0 },
+        { id: 't8', name: 'Beta', score: 20, tiebreakScore: 0 }
       ]
       engine.loadQuiz('/test.tcq', meta, categories, questionCategoryMap, teams)
       const s = engine.getState()
@@ -71,7 +71,7 @@ describe('GameEngine', () => {
     })
 
     it('restores nextTeamId counter past saved teams', () => {
-      const teams = [{ id: 't5', name: 'Alpha', score: 0 }]
+      const teams = [{ id: 't5', name: 'Alpha', score: 0, tiebreakScore: 0 }]
       engine.loadQuiz('/test.tcq', meta, categories, questionCategoryMap, teams)
       engine.addTeam('New')
       const newTeam = engine.getState().teams.find((t) => t.name === 'New')
@@ -118,6 +118,35 @@ describe('GameEngine', () => {
       engine.updateScore(id, 5)
       engine.updateScore(id, -2)
       expect(engine.getState().teams[0].score).toBe(3)
+    })
+
+    it('addTeam starts with a zero tiebreak sub-score', () => {
+      engine.addTeam('A')
+      expect(engine.getState().teams[0].tiebreakScore).toBe(0)
+    })
+
+    it('updateTiebreakScore adjusts the sub-score without touching the main score, floored at 0', () => {
+      engine.addTeam('A')
+      const id = engine.getState().teams[0].id
+      engine.updateTiebreakScore(id, 2)
+      engine.updateTiebreakScore(id, -1)
+      expect(engine.getState().teams[0].tiebreakScore).toBe(1)
+      expect(engine.getState().teams[0].score).toBe(0)
+      engine.updateTiebreakScore(id, -5)
+      expect(engine.getState().teams[0].tiebreakScore).toBe(0)
+    })
+
+    it('starting a tiebreaker resets sub-scores for its teams only', () => {
+      engine.addTeam('A')
+      engine.addTeam('B')
+      engine.addTeam('C')
+      const [a, b, c] = engine.getState().teams.map((t) => t.id)
+      engine.updateTiebreakScore(a, 3)
+      engine.updateTiebreakScore(c, 4)
+      engine.setTiebreaker([a, b])
+      const s = engine.getState()
+      expect(s.teams.find((t) => t.id === a)!.tiebreakScore).toBe(0)
+      expect(s.teams.find((t) => t.id === c)!.tiebreakScore).toBe(4)
     })
   })
 
@@ -251,6 +280,34 @@ describe('GameEngine', () => {
     it('showRanking sets Ranking phase', () => {
       engine.showRanking()
       expect(engine.getState().phase).toBe(GamePhase.Ranking)
+    })
+  })
+
+  describe('ranking reveal', () => {
+    beforeEach(() => {
+      engine.loadQuiz('/test.tcq', meta, categories, questionCategoryMap)
+    })
+
+    it('clamps reveal to the placement-row count, so a split podium tie is fully revealable', () => {
+      engine.addTeam('A')
+      engine.addTeam('B')
+      engine.addTeam('C')
+      const [a, b, c] = engine.getState().teams.map((t) => t.id)
+      // A & B tied for 1st on score, resolved by sub-score → 3 placement rows
+      // (1st, 2nd, 3rd) even though there are only 2 score tiers.
+      engine.updateScore(a, 50)
+      engine.updateScore(b, 50)
+      engine.updateScore(c, 40)
+      engine.updateTiebreakScore(a, 2)
+      engine.updateTiebreakScore(b, 1)
+      engine.finishQuiz()
+
+      engine.revealNext()
+      engine.revealNext()
+      engine.revealNext()
+      expect(engine.getState().rankingRevealStep).toBe(3)
+      engine.revealNext()
+      expect(engine.getState().rankingRevealStep).toBe(3)
     })
   })
 

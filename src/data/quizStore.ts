@@ -65,6 +65,7 @@ export interface QuizDocument {
     id: string
     name: string
     score: number
+    tiebreakScore?: number
     sortOrder: number
   }>
 }
@@ -408,7 +409,7 @@ export function teamsAll(): Team[] {
   return doc.teams
     .slice()
     .sort((a, b) => a.sortOrder - b.sortOrder)
-    .map(({ id, name, score }) => ({ id, name, score }))
+    .map(({ id, name, score, tiebreakScore }) => ({ id, name, score, tiebreakScore: tiebreakScore ?? 0 }))
 }
 
 export function teamsSaveAll(teams: Team[]): void {
@@ -417,6 +418,7 @@ export function teamsSaveAll(teams: Team[]): void {
     id: t.id,
     name: t.name,
     score: t.score,
+    tiebreakScore: t.tiebreakScore,
     sortOrder: i
   }))
   markDirty()

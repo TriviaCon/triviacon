@@ -4,9 +4,13 @@ import type { Team } from './types/quiz'
  * Teams grouped into place tiers by equal score, best → worst (dense ranking).
  * Tied teams share a tier; each distinct score is the next place. So
  * [50, 50, 40, 25, 25] → tiers at ranks 1, 2, 3 (the 50-pair, the 40, the 25-pair).
+ * Within a tier, teams are ordered by tiebreak sub-score (best first) so a
+ * resolved tie reads in finishing order.
  */
 export function placeGroups(teams: Team[]): Team[][] {
-  const sorted = [...teams].sort((a, b) => b.score - a.score)
+  const sorted = [...teams].sort(
+    (a, b) => b.score - a.score || b.tiebreakScore - a.tiebreakScore
+  )
   const groups: Team[][] = []
   for (const team of sorted) {
     const last = groups[groups.length - 1]
@@ -14,6 +18,46 @@ export function placeGroups(teams: Team[]): Team[][] {
     else groups.push([team])
   }
   return groups
+}
+
+/** A rendered ranking row: one place, shared by 1+ teams. */
+export interface PlacementRow {
+  place: number
+  score: number
+  /** Teams on this row, best tiebreak sub-score first. >1 = genuinely tied. */
+  teams: Team[]
+  /** This row came from a score-tier a tiebreaker ordered (badge the split). */
+  tiebroken: boolean
+}
+
+const PODIUM_PLACES = 3
+
+/**
+ * Ranking rows for display. Below the podium a score-tie stays one shared row
+ * (stacked in tiebreak order). On the podium a score-tie the tiebreaker resolved
+ * (distinct sub-scores) splits into separate placements, pushing lower teams
+ * down — prize positions must be unambiguous. An unresolved tie (equal sub-scores)
+ * always shares its row.
+ */
+export function placementRows(teams: Team[]): PlacementRow[] {
+  const rows: PlacementRow[] = []
+  let place = 1
+  for (const tier of placeGroups(teams)) {
+    const resolved = new Set(tier.map((t) => t.tiebreakScore)).size > 1
+    if (place <= PODIUM_PLACES && resolved) {
+      for (let i = 0; i < tier.length; ) {
+        let j = i + 1
+        while (j < tier.length && tier[j].tiebreakScore === tier[i].tiebreakScore) j++
+        rows.push({ place, score: tier[i].score, teams: tier.slice(i, j), tiebroken: true })
+        place += 1
+        i = j
+      }
+    } else {
+      rows.push({ place, score: tier[0].score, teams: tier, tiebroken: resolved })
+      place += 1
+    }
+  }
+  return rows
 }
 
 /**

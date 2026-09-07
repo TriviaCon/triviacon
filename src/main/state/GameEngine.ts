@@ -1,6 +1,6 @@
 import { GamePhase, INITIAL_GAME_STATE, type GameState } from '@shared/types/state'
 import type { AnswerOption, Category, Question, QuizMeta, Team } from '@shared/types/quiz'
-import { placeGroups, totalRevealSteps } from '@shared/ranking'
+import { placementRows, totalRevealSteps } from '@shared/ranking'
 
 function createInitialState(): GameState {
   return { ...INITIAL_GAME_STATE }
@@ -68,7 +68,7 @@ export class GameEngine {
 
   addTeam(name: string): void {
     const id = `t${this.nextTeamId++}`
-    this.state.teams.push({ id, name, score: 0 })
+    this.state.teams.push({ id, name, score: 0, tiebreakScore: 0 })
     if (!this.state.currentTeamId) {
       this.state.currentTeamId = id
     }
@@ -89,6 +89,12 @@ export class GameEngine {
   updateScore(teamId: string, delta: number): void {
     const team = this.state.teams.find((t) => t.id === teamId)
     if (team) team.score += delta
+  }
+
+  // Tiebreaker sub-score: orders teams tied on `score`, never touches `score`.
+  updateTiebreakScore(teamId: string, delta: number): void {
+    const team = this.state.teams.find((t) => t.id === teamId)
+    if (team) team.tiebreakScore = Math.max(0, team.tiebreakScore + delta)
   }
 
   setCurrentTeam(teamId: string): void {
@@ -193,7 +199,7 @@ export class GameEngine {
   }
 
   revealNext(): void {
-    const total = totalRevealSteps(placeGroups(this.state.teams).length)
+    const total = totalRevealSteps(placementRows(this.state.teams).length)
     this.state.rankingRevealStep = Math.min(this.state.rankingRevealStep + 1, total)
   }
 
@@ -202,7 +208,15 @@ export class GameEngine {
   }
 
   setTiebreaker(teamIds: string[] | null): void {
-    this.state.tiebreakerTeamIds = teamIds && teamIds.length > 0 ? teamIds : null
+    const active = teamIds && teamIds.length > 0 ? teamIds : null
+    // Starting a tiebreaker clears any prior sub-scores for those teams so the
+    // sub-game begins from zero; finishing (null) leaves them to drive the order.
+    if (active) {
+      for (const team of this.state.teams) {
+        if (active.includes(team.id)) team.tiebreakScore = 0
+      }
+    }
+    this.state.tiebreakerTeamIds = active
   }
 
   // ── Selection (preview before reveal) ────────────────────────

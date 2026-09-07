@@ -483,6 +483,12 @@ export function registerIpcHandlers(): void {
     persistTeams()
   })
 
+  ipcMain.handle(IPC.GAME_UPDATE_TIEBREAK_SCORE, (_, teamId: string, delta: number) => {
+    engine.updateTiebreakScore(teamId, delta)
+    broadcastState()
+    persistTeams()
+  })
+
   ipcMain.handle(IPC.GAME_SET_CURRENT_TEAM, (_, teamId: string) => {
     engine.setCurrentTeam(teamId)
     broadcastState()
@@ -558,6 +564,7 @@ export function registerIpcHandlers(): void {
   ipcMain.handle(IPC.GAME_SET_TIEBREAKER, (_, teamIds: string[] | null) => {
     engine.setTiebreaker(teamIds)
     broadcastState()
+    persistTeams()
   })
 
   // ── Selection (preview before reveal) ────────────────────────────

@@ -184,8 +184,9 @@
     "tiedForPlace": "Remis o miejsce {{place}}",
     "runTiebreaker": "Dogrywka",
     "tiebreakerActive": "Dogrywka w toku",
-    "tiebreakerHint": "Przełącz na Kategorie / Pytania, rozegraj ją i przyznaj punkty — licznik rund jest zatrzymany.",
+    "tiebreakerHint": "Przyznawaj punkty dogrywki poniżej w trakcie gry — porządkują remis bez zmiany wyników.",
     "tiebreakerDone": "Zakończ dogrywkę",
+    "tiebreakerResolved": "remis rozstrzygnięty",
     "revealNext": "Odsłoń kolejne",
     "stepBack": "Cofnij",
     "revealWinnerTitle": "Odsłonić zwycięzcę?",
@@ -204,6 +205,7 @@
     "ranking": "RANKING",
     "finalResults": "WYNIKI KOŃCOWE",
     "tiebreaker": "DOGRYWKA",
+    "tiebreakerResolved": "rozstrzygnięte dogrywką",
     "noTeams": "Brak drużyn w rankingu.",
     "points": "pkt",
     "byAuthor": "autorstwa {{author}}"

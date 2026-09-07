@@ -110,6 +110,8 @@ const api = {
     ipcRenderer.invoke(IPC.GAME_RENAME_TEAM, teamId, name),
   updateScore: (teamId: string, delta: number): Promise<void> =>
     ipcRenderer.invoke(IPC.GAME_UPDATE_SCORE, teamId, delta),
+  updateTiebreakScore: (teamId: string, delta: number): Promise<void> =>
+    ipcRenderer.invoke(IPC.GAME_UPDATE_TIEBREAK_SCORE, teamId, delta),
   setCurrentTeam: (teamId: string): Promise<void> =>
     ipcRenderer.invoke(IPC.GAME_SET_CURRENT_TEAM, teamId),
   nextTeam: (): Promise<void> => ipcRenderer.invoke(IPC.GAME_NEXT_TEAM),

@@ -57,4 +57,10 @@ export interface Team {
   id: string
   name: string
   score: number
+  /**
+   * Secondary score used only to order teams tied on `score`. Awarded during a
+   * tiebreaker (last-man-standing) and never added to the main score, so tied
+   * teams stay tied on the game while gaining a resolvable order.
+   */
+  tiebreakScore: number
 }
