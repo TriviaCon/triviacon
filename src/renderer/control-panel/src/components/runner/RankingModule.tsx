@@ -51,7 +51,17 @@ function StandingsTable({
               {MEDALS[gi] ? `${MEDALS[gi]} ` : ''}
               {gi + 1}
             </TableCell>
-            <TableCell className="font-medium">{groupNames(group)}</TableCell>
+            <TableCell className="font-medium">
+              {group.length === 1 ? (
+                group[0].name
+              ) : (
+                <div className="flex flex-col gap-0.5">
+                  {group.map((tm) => (
+                    <span key={tm.id}>{tm.name}</span>
+                  ))}
+                </div>
+              )}
+            </TableCell>
             <TableCell className="text-right tabular-nums">{group[0].score}</TableCell>
           </TableRow>
         ))}

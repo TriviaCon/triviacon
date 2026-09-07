@@ -35,8 +35,6 @@ const MEDAL_STYLES = [
 
 const sizeClasses = ['text-[4.5rem]', 'text-[3.5rem]', 'text-[2.9rem]', 'text-[1.7rem]']
 
-const names = (group: Team[]): string => group.map((tm) => tm.name).join(', ')
-
 // ── RankingScreen ─────────────────────────────────────────────
 
 interface Props {
@@ -49,6 +47,27 @@ interface Props {
 const RankingScreen = ({ teams, mode, revealStep, tiebreakerTeamIds }: Props) => {
   const { t } = useTranslation()
   const pts = t('gameScreen.points')
+
+  // A place tier: place + score anchor the first row; tied teams stack beneath.
+  const renderTier = (group: Team[], label: string, size: string, colorClass = '') => {
+    const scoreSuffix = `${group[0].score} ${pts}`
+    if (group.length === 1) {
+      return (
+        <p className={`${size} font-semibold text-center ${colorClass}`}>
+          {label} {group[0].name}: {scoreSuffix}
+        </p>
+      )
+    }
+    return (
+      <div className={`flex flex-col items-center leading-tight ${colorClass}`}>
+        {group.map((tm, i) => (
+          <p key={tm.id} className={`${size} font-semibold text-center`}>
+            {i === 0 ? `${label} ${tm.name}: ${scoreSuffix}` : tm.name}
+          </p>
+        ))}
+      </div>
+    )
+  }
 
   const groups = placeGroups(teams)
   const total = totalRevealSteps(groups.length)
@@ -107,9 +126,9 @@ const RankingScreen = ({ teams, mode, revealStep, tiebreakerTeamIds }: Props) =>
           if (revealed.has(i)) {
             const group = groups[i]
             return (
-              <p key={i} className={`${size} font-semibold text-center ${medal.color}`}>
-                {medal.emoji} {i + 1}. {names(group)}: {group[0].score} {pts}
-              </p>
+              <React.Fragment key={i}>
+                {renderTier(group, `${medal.emoji} ${i + 1}.`, size, medal.color)}
+              </React.Fragment>
             )
           }
           return (
@@ -123,9 +142,9 @@ const RankingScreen = ({ teams, mode, revealStep, tiebreakerTeamIds }: Props) =>
           (revealed.has(3) ? (
             <div className="mt-4 flex flex-col items-center gap-1">
               {groups.slice(3).map((group, j) => (
-                <p key={group[0].id} className={`${sizeClasses[3]} font-semibold text-center`}>
-                  {j + 4}. {names(group)}: {group[0].score} {pts}
-                </p>
+                <React.Fragment key={group[0].id}>
+                  {renderTier(group, `${j + 4}.`, sizeClasses[3])}
+                </React.Fragment>
               ))}
             </div>
           ) : (
@@ -139,9 +158,7 @@ const RankingScreen = ({ teams, mode, revealStep, tiebreakerTeamIds }: Props) =>
     // Regular mode: plain tier list, top 3 larger, no medals; ties share a row.
     body = groups.map((group, gi) => (
       <React.Fragment key={group[0].id}>
-        <p className={`${sizeClasses[Math.min(gi, 3)]} font-semibold text-center`}>
-          {gi + 1}. {names(group)}: {group[0].score} {pts}
-        </p>
+        {renderTier(group, `${gi + 1}.`, sizeClasses[Math.min(gi, 3)])}
         {gi === 2 && groups.length > 3 && <div className="h-8" />}
       </React.Fragment>
     ))
