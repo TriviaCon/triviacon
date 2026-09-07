@@ -103,6 +103,19 @@ export class GameEngine {
     }
   }
 
+  // The "we're live" marker. Mirrors finishQuiz as the opening bookend: finalizes
+  // the roster (locks the order so round counting works without the host
+  // remembering to), resets to round 1, and starts at the first team. Gates
+  // nothing — phases stay jump-anywhere and scoring stays manual.
+  startGame(): void {
+    this.state.gameStarted = true
+    this.state.teamOrderLocked = true
+    this.state.round = 1
+    if (this.state.teams.length > 0) {
+      this.state.currentTeamId = this.state.teams[0].id
+    }
+  }
+
   setTeamOrderLocked(locked: boolean): void {
     this.state.teamOrderLocked = locked
   }

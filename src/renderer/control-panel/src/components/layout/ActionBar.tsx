@@ -6,6 +6,7 @@ import {
   Save,
   ChevronDown,
   Play,
+  Monitor,
   Trophy,
   LayoutGrid,
   Maximize,
@@ -44,7 +45,7 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
   const [saving, setSaving] = useState<{ files: number; totalFiles: number } | null>(null)
   const [metaOpen, setMetaOpen] = useState(false)
   const flashTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined)
-  const { gameScreenDarkMode, quizDirty, quizFilePath } = useGameState()
+  const { gameScreenDarkMode, quizDirty, quizFilePath, gameStarted } = useGameState()
 
   const triggerSavedFlash = useCallback(() => {
     setSavedFlash(true)
@@ -159,10 +160,23 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
         </>
       ) : (
         <>
-          <Button variant="destructive" onClick={() => window.api.openGameScreen()}>
-            <Play className="mr-1 h-4 w-4" />
-            <strong>{t('actions.runQuiz')}</strong>
+          <Button variant="secondary" onClick={() => window.api.openGameScreen()}>
+            <Monitor className="mr-1 h-4 w-4" /> {t('actions.openScreen')}
           </Button>
+          {gameStarted ? (
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-emerald-500/50 bg-emerald-500/10 px-3 text-sm font-semibold text-emerald-600">
+              <span className="h-2 w-2 rounded-full bg-emerald-500" /> {t('runner.live')}
+            </span>
+          ) : (
+            <Button
+              className="bg-emerald-600 hover:bg-emerald-500 text-white"
+              disabled={!quizFilePath}
+              onClick={() => window.api.startGame()}
+            >
+              <Play className="mr-1 h-4 w-4" />
+              <strong>{t('actions.startGame')}</strong>
+            </Button>
+          )}
           <Separator orientation="vertical" className="mx-1 h-8" />
           <Button variant="outline" onClick={() => window.api.showSplash()}>
             <Image className="mr-1 h-4 w-4" /> {t('actions.splash')}
