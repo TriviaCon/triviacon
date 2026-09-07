@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useRef, useState } from 'react'
+import { FormEvent, useState } from 'react'
 import {
   DndContext,
   DragEndEvent,
@@ -135,58 +135,25 @@ function SortableTeamRow({
 
 const TeamTable = () => {
   const { t } = useTranslation()
-  const { teams, currentTeamId, tiebreakerTeamIds } = useGameState()
+  // Team order, lock, and round live in authoritative GameState so they survive
+  // view switches (tab changes, the Ranking screen) that unmount this component.
+  const { teams, currentTeamId, tiebreakerTeamIds, teamOrderLocked, round } = useGameState()
 
-  const [orderedIds, setOrderedIds] = useState<string[]>(() => teams.map((t) => t.id))
-  const [locked, setLocked] = useState(false)
-  const [round, setRound] = useState(1)
   const [editingTeamId, setEditingTeamId] = useState<string | null>(null)
   const [editingTeamName, setEditingTeamName] = useState('')
   const [deletingTeam, setDeletingTeam] = useState<{ id: string; name: string } | null>(null)
 
-  const prevTeamIdRef = useRef<string | null>(null)
-
-  // Sync orderedIds when teams are added or removed (but preserve manual order)
-  useEffect(() => {
-    setOrderedIds((prev) => {
-      const existing = prev.filter((id) => teams.some((t) => t.id === id))
-      const added = teams.map((t) => t.id).filter((id) => !prev.includes(id))
-      return [...existing, ...added]
-    })
-  }, [teams])
-
-  // Round counter: increments when currentTeam rolls from last to first while locked
-  useEffect(() => {
-    const prev = prevTeamIdRef.current
-    prevTeamIdRef.current = currentTeamId
-
-    if (!locked || !prev || !currentTeamId || orderedIds.length < 2) return
-    // Frozen during a tiebreaker sub-game (cycling tied teams isn't a real round).
-    if (tiebreakerTeamIds) return
-
-    const prevIdx = orderedIds.indexOf(prev)
-    const currIdx = orderedIds.indexOf(currentTeamId)
-    if (prevIdx === orderedIds.length - 1 && currIdx === 0) {
-      setRound((r) => r + 1)
-    }
-  }, [currentTeamId, locked, orderedIds, tiebreakerTeamIds])
-
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
-
-  const orderedTeams = orderedIds
-    .map((id) => teams.find((t) => t.id === id))
-    .filter((t): t is Team => t !== undefined)
 
   const currentTeam = teams.find((t) => t.id === currentTeamId) ?? null
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
     if (!over || active.id === over.id) return
-    setOrderedIds((ids) => {
-      const oldIdx = ids.indexOf(String(active.id))
-      const newIdx = ids.indexOf(String(over.id))
-      return arrayMove(ids, oldIdx, newIdx)
-    })
+    const ids = teams.map((tm) => tm.id)
+    const oldIdx = ids.indexOf(String(active.id))
+    const newIdx = ids.indexOf(String(over.id))
+    window.api.reorderTeams(arrayMove(ids, oldIdx, newIdx))
   }
 
   const handleAddTeam = (event: FormEvent) => {
@@ -223,13 +190,13 @@ const TeamTable = () => {
           </span>
           <Button
             size="sm"
-            variant={locked ? 'default' : 'outline'}
+            variant={teamOrderLocked ? 'default' : 'outline'}
             className="h-7 gap-1"
-            onClick={() => setLocked((l) => !l)}
-            title={locked ? t('runner.unlockOrder') : t('runner.lockOrder')}
+            onClick={() => window.api.setTeamOrderLocked(!teamOrderLocked)}
+            title={teamOrderLocked ? t('runner.unlockOrder') : t('runner.lockOrder')}
           >
-            {locked ? <Lock className="h-3.5 w-3.5" /> : <Unlock className="h-3.5 w-3.5" />}
-            {locked ? t('runner.unlockOrder') : t('runner.lockOrder')}
+            {teamOrderLocked ? <Lock className="h-3.5 w-3.5" /> : <Unlock className="h-3.5 w-3.5" />}
+            {teamOrderLocked ? t('runner.unlockOrder') : t('runner.lockOrder')}
           </Button>
         </div>
       </div>
@@ -258,25 +225,25 @@ const TeamTable = () => {
 
       {/* Team table with DnD */}
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <SortableContext items={orderedIds} strategy={verticalListSortingStrategy}>
+        <SortableContext items={teams.map((tm) => tm.id)} strategy={verticalListSortingStrategy}>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-8">{locked ? '#' : ''}</TableHead>
+                <TableHead className="w-8">{teamOrderLocked ? '#' : ''}</TableHead>
                 <TableHead>{t('runner.teamName')}</TableHead>
                 <TableHead className="text-center">{t('runner.score')}</TableHead>
                 <TableHead className="text-center w-12">{t('actions.delete')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {orderedTeams.map((team, index) => (
+              {teams.map((team, index) => (
                 <SortableTeamRow
                   key={team.id}
                   team={team}
                   index={index}
                   isCurrent={team.id === currentTeamId}
                   isTiebreaker={tiebreakerTeamIds?.includes(team.id) ?? false}
-                  locked={locked}
+                  locked={teamOrderLocked}
                   editing={editingTeamId === team.id}
                   editingName={editingTeamName}
                   onEditStart={() => { setEditingTeamId(team.id); setEditingTeamName(team.name) }}
@@ -285,7 +252,7 @@ const TeamTable = () => {
                   onDeleteRequest={() => setDeletingTeam({ id: team.id, name: team.name })}
                 />
               ))}
-              {orderedTeams.length === 0 && (
+              {teams.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={4} className="text-center text-muted-foreground">
                     {t('runner.noTeams')}

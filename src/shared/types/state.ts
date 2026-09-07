@@ -30,6 +30,8 @@ export interface ActiveQuestionState {
 export interface GameState {
   phase: GamePhase
   teams: Team[]
+  teamOrderLocked: boolean
+  round: number
   currentTeamId: string | null
   currentCategoryId: number | null
   categoryQuestions: Question[]
@@ -54,6 +56,8 @@ export interface GameState {
 export const INITIAL_GAME_STATE: GameState = {
   phase: GamePhase.Idle,
   teams: [],
+  teamOrderLocked: false,
+  round: 1,
   currentTeamId: null,
   currentCategoryId: null,
   categoryQuestions: [],

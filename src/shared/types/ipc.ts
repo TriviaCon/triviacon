@@ -68,6 +68,8 @@ export const IPC = {
   GAME_SET_CURRENT_TEAM: 'game:setCurrentTeam',
   GAME_NEXT_TEAM: 'game:nextTeam',
   GAME_PREV_TEAM: 'game:prevTeam',
+  GAME_SET_TEAM_ORDER_LOCKED: 'game:setTeamOrderLocked',
+  GAME_REORDER_TEAMS: 'game:reorderTeams',
 
   // Screen transitions
   GAME_SHOW_SPLASH: 'game:showSplash',

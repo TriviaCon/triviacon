@@ -114,6 +114,10 @@ const api = {
     ipcRenderer.invoke(IPC.GAME_SET_CURRENT_TEAM, teamId),
   nextTeam: (): Promise<void> => ipcRenderer.invoke(IPC.GAME_NEXT_TEAM),
   prevTeam: (): Promise<void> => ipcRenderer.invoke(IPC.GAME_PREV_TEAM),
+  setTeamOrderLocked: (locked: boolean): Promise<void> =>
+    ipcRenderer.invoke(IPC.GAME_SET_TEAM_ORDER_LOCKED, locked),
+  reorderTeams: (orderedIds: string[]): Promise<void> =>
+    ipcRenderer.invoke(IPC.GAME_REORDER_TEAMS, orderedIds),
 
   // ── Screen transitions ─────────────────────────────────────────
   showSplash: (): Promise<void> => ipcRenderer.invoke(IPC.GAME_SHOW_SPLASH),
