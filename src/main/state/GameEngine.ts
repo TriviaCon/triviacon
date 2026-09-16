@@ -329,6 +329,12 @@ export class GameEngine {
     this.state.gameScreenDarkMode = !this.state.gameScreenDarkMode
   }
 
+  /** Mirrors the game screen window's real fullscreen state, which only the
+   *  main process can observe — the runner's toggle reads it back from here. */
+  setGameScreenFullscreen(value: boolean): void {
+    this.state.gameScreenFullscreen = value
+  }
+
   setTimerSound(mode: import('@shared/types/state').TimerSoundMode): void {
     this.state.timerSound = mode
   }

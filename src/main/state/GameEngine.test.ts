@@ -389,6 +389,16 @@ describe('GameEngine', () => {
     })
   })
 
+  describe('game screen fullscreen', () => {
+    it('starts false and mirrors whatever the main process reports', () => {
+      expect(engine.getState().gameScreenFullscreen).toBe(false)
+      engine.setGameScreenFullscreen(true)
+      expect(engine.getState().gameScreenFullscreen).toBe(true)
+      engine.setGameScreenFullscreen(false)
+      expect(engine.getState().gameScreenFullscreen).toBe(false)
+    })
+  })
+
   describe('selection', () => {
     beforeEach(() => {
       engine.loadQuiz('/test.tcq', meta, categories, questionCategoryMap)

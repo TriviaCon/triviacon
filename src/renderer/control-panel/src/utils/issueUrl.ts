@@ -1,3 +1,5 @@
+import i18n from '@shared/i18n'
+
 declare const __APP_VERSION__: string
 
 const platformLabel: Record<string, string> = {
@@ -8,7 +10,7 @@ const platformLabel: Record<string, string> = {
 
 export function buildIssueUrl(): string {
   const platform = platformLabel[window.api.platform] ?? window.api.platform
-  const body = `**Wersja:** ${__APP_VERSION__}\n**System:** ${platform}\n\n<!-- Opisz błąd poniżej -->`
+  const body = `**${i18n.t('header.issueVersion')}:** ${__APP_VERSION__}\n**${i18n.t('header.issueSystem')}:** ${platform}\n\n${i18n.t('header.issueBodyHint')}`
   const params = new URLSearchParams({
     template: 'bug_report.yml',
     title: 'Bug: ',

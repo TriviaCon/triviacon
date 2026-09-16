@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { Film, ImagePlus, Maximize2, Music, Repeat, VolumeX, X } from 'lucide-react'
+import { Film, ImagePlus, Maximize2, Music, Repeat, Volume2, VolumeX, X } from 'lucide-react'
 import { Toggle } from '@renderer/components/ui/toggle'
 import { cn } from '@renderer/lib/utils'
 import { mediaUrl } from '@shared/mediaUrl'
@@ -153,40 +153,40 @@ export function SplashControl({ meta }: { meta: QuizMeta }) {
           )}
 
           {hasVisual && (
-            <div className="flex flex-wrap gap-1.5 pt-0.5">
+            <div className="flex flex-col gap-1.5 pt-0.5">
               <Toggle
                 size="sm"
                 variant="outline"
                 pressed={grow}
                 onPressedChange={(v) => setGrow.mutate(v)}
-                className="text-xs gap-1"
+                className="w-full text-xs gap-1"
               >
                 <Maximize2 className="h-3.5 w-3.5" />
-                {t('builder.splashGrow')}
+                {grow ? t('builder.splashGrown') : t('builder.splashGrow')}
               </Toggle>
               {isVideo && (
-                <>
+                <div className="grid grid-cols-2 gap-1.5">
                   <Toggle
                     size="sm"
                     variant="outline"
                     pressed={muted}
                     onPressedChange={(v) => setMuted.mutate(v)}
-                    className="text-xs gap-1"
+                    className="w-full text-xs gap-1"
                   >
-                    <VolumeX className="h-3.5 w-3.5" />
-                    {t('builder.muteVideoAudio')}
+                    {muted ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
+                    {muted ? t('builder.videoAudioMuted') : t('builder.muteVideoAudio')}
                   </Toggle>
                   <Toggle
                     size="sm"
                     variant="outline"
                     pressed={loop}
                     onPressedChange={(v) => setLoop.mutate(v)}
-                    className="text-xs gap-1"
+                    className="w-full text-xs gap-1"
                   >
                     <Repeat className="h-3.5 w-3.5" />
-                    {t('builder.loopVideo')}
+                    {loop ? t('builder.videoLooping') : t('builder.loopVideo')}
                   </Toggle>
-                </>
+                </div>
               )}
             </div>
           )}

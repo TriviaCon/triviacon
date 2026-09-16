@@ -1,14 +1,36 @@
 import { useTranslation } from 'react-i18next'
-import { Eye, StickyNote } from 'lucide-react'
+import { CheckCircle2, Eye, EyeOff, StickyNote } from 'lucide-react'
 import { AnswerOption, Question } from '@shared/types/quiz'
 import { Label } from '@renderer/components/ui/label'
 import { Button } from '@renderer/components/ui/button'
-import { Switch } from '@renderer/components/ui/switch'
+import { Toggle } from '@renderer/components/ui/toggle'
 import { MediaPreview } from '@renderer/components/ui/media-preview'
 import { RichText, richTextToPlain } from '@shared/RichText'
 import { cn } from '@renderer/lib/utils'
 import { mediaUrl } from '@shared/mediaUrl'
-import { mediaDisplayName } from '@shared/media'
+import { activeQuestionMedia, detectMediaType, mediaDisplayName } from '@shared/media'
+
+/**
+ * One media slot. Transport controls go only to the file the game screen is
+ * actually playing — the two panels drive the same element, so showing controls
+ * on both made them mirror each other's time and volume. An image keeps its
+ * preview either way; the idle player just says why it's idle.
+ */
+const MediaSlot = ({
+  media,
+  active,
+  inactiveHint
+}: {
+  media: string | null
+  active: boolean
+  inactiveHint: string
+}) => {
+  if (detectMediaType(media) === 'image') {
+    return <MediaPreview media={media} fullscreenButton={active} />
+  }
+  if (active) return <MediaPreview media={media} fullscreenButton playbackControls />
+  return <p className="text-xs text-muted-foreground italic">{inactiveHint}</p>
+}
 
 const QuestionPreview = ({
   question,
@@ -38,6 +60,7 @@ const QuestionPreview = ({
   const { t } = useTranslation()
   const mediaSrc = mediaUrl(question.media)
   const answerMediaSrc = mediaUrl(question.answerMedia)
+  const activeMedia = activeQuestionMedia(question.media, question.answerMedia, answerRevealed)
   const type = question.type
 
   return (
@@ -76,7 +99,11 @@ const QuestionPreview = ({
               <span className="text-sm text-muted-foreground truncate block">
                 {mediaDisplayName(question.media) ?? question.media}
               </span>
-              <MediaPreview media={question.media} fullscreenButton playbackControls />
+              <MediaSlot
+                media={question.media}
+                active={activeMedia.slot === 'question'}
+                inactiveHint={t('runner.mediaHandedToAnswer')}
+              />
             </div>
           )}
         </div>
@@ -90,7 +117,11 @@ const QuestionPreview = ({
               <span className="text-sm text-muted-foreground truncate block">
                 {mediaDisplayName(question.answerMedia) ?? question.answerMedia}
               </span>
-              <MediaPreview media={question.answerMedia} fullscreenButton playbackControls />
+              <MediaSlot
+                media={question.answerMedia ?? null}
+                active={activeMedia.slot === 'answer'}
+                inactiveHint={t('runner.mediaAfterReveal')}
+              />
             </div>
           )}
         </div>
@@ -158,20 +189,26 @@ const QuestionPreview = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Label className="shrink-0">{t('runner.used')}</Label>
-          <Label htmlFor="used-switch" className="text-sm text-muted-foreground">
-            {used ? t('runner.yes') : t('runner.no')}
-          </Label>
-          <Switch id="used-switch" checked={used} onCheckedChange={onUse} />
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Label className="shrink-0">{t('runner.reveal')}</Label>
-          <Label htmlFor="reveal-switch" className="text-sm text-muted-foreground">
-            {answerRevealed ? t('runner.yes') : t('runner.no')}
-          </Label>
-          <Switch id="reveal-switch" checked={answerRevealed} onCheckedChange={onRevealAnswer} />
+        {/* Both are states of the question, so they read as pressed or not
+            rather than as a switch with a Yes/No caption beside it. */}
+        <div className="grid grid-cols-2 gap-2">
+          <Toggle
+            variant="outline"
+            pressed={used}
+            onPressedChange={onUse}
+            className="w-full"
+          >
+            <CheckCircle2 /> {t('runner.used')}
+          </Toggle>
+          <Toggle
+            variant="outline"
+            pressed={answerRevealed}
+            onPressedChange={onRevealAnswer}
+            className="w-full"
+          >
+            {answerRevealed ? <Eye /> : <EyeOff />}
+            {answerRevealed ? t('runner.revealed') : t('runner.reveal')}
+          </Toggle>
         </div>
       </div>
     </div>

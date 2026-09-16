@@ -48,6 +48,7 @@ export interface GameState {
   categories: Category[]
   questionCategoryMap: Record<number, number>
   gameScreenDarkMode: boolean
+  gameScreenFullscreen: boolean
   selectedCategoryId: number | null
   selectedQuestionId: number | null
   timer: TimerState
@@ -75,6 +76,7 @@ export const INITIAL_GAME_STATE: GameState = {
   categories: [],
   questionCategoryMap: {},
   gameScreenDarkMode: false,
+  gameScreenFullscreen: false,
   selectedCategoryId: null,
   selectedQuestionId: null,
   timer: { status: 'idle', remaining: 0 },

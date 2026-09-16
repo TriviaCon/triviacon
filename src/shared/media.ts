@@ -76,3 +76,26 @@ export function detectMediaType(src: string | null | undefined): MediaType {
   if (!ext) return null
   return MEDIA_TYPE_BY_EXT[ext] ?? null
 }
+
+export interface ActiveQuestionMedia {
+  slot: 'question' | 'answer'
+  file: string | null
+}
+
+/**
+ * Which of a question's two media files the game screen is playing.
+ *
+ * The answer's media takes the screen once the answer is revealed; until then —
+ * or when the answer has none — the question's own media holds it. The game
+ * screen mounts a single element for whichever wins, so only one of the two can
+ * be driven at any moment, and the runner shows transport controls for that one
+ * alone. Both sides read this function so the rule can't drift between them.
+ */
+export function activeQuestionMedia(
+  media: string | null | undefined,
+  answerMedia: string | null | undefined,
+  answerRevealed: boolean
+): ActiveQuestionMedia {
+  if (answerRevealed && answerMedia) return { slot: 'answer', file: answerMedia }
+  return { slot: 'question', file: media ?? null }
+}

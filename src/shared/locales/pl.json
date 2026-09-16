@@ -4,6 +4,29 @@
     "waitingForData": "Oczekiwanie na dane gry..."
   },
 
+  "header": {
+    "feedback": "Zgłoszenia",
+    "reportBug": "Zgłoś błąd",
+    "suggestFeature": "Zaproponuj funkcję",
+    "credits": "O aplikacji / Twórcy",
+    "issueVersion": "Wersja",
+    "issueSystem": "System",
+    "issueBodyHint": "<!-- Opisz błąd poniżej -->"
+  },
+
+  "credits": {
+    "title": "O aplikacji TriviaCON",
+    "developedBy": "Twórcy",
+    "authorRole": "pomysł, kod",
+    "blurb": "Tworzone na czuja o nieludzkich porach, napędzane nieustającym uzależnieniem od kofeiny i upartym przekonaniem, że konwentowe quizy zasługują na lepsze oprogramowanie.",
+    "testers": "...oraz długa lista dzielnych beta testerów",
+    "builtWith": "Zbudowane w oparciu o",
+    "soundNote": "Fanfary rankingowe są własnością odpowiednich właścicieli i nie są objęte licencją tej aplikacji: „Victory” (Final Fantasy V) © Square Enix · Pokémon Gen 1 © Nintendo / Game Freak · motyw NFL on Fox © Fox.",
+    "license": "Licencja MIT",
+    "github": "GitHub",
+    "reportIssue": "Zgłoś problem"
+  },
+
   "tabs": {
     "builder": "Kreator",
     "runner": "Rozgrywka",
@@ -24,7 +47,6 @@
     "finishQuiz": "Zakończ quiz",
     "finishQuizConfirm": "Ogłoś wyniki i odtwórz fanfarę. Tej operacji nie można cofnąć.",
     "fullscreen": "Pełny ekran",
-    "light": "Jasny",
     "dark": "Ciemny",
     "add": "Dodaj",
     "change": "Zmień",
@@ -90,8 +112,11 @@
     "splashVisualHint": "obraz lub wideo",
     "splashAudioHint": "audio lub wideo",
     "muteVideoAudio": "Wycisz",
+    "videoAudioMuted": "Wyciszone",
     "loopVideo": "Zapętl",
+    "videoLooping": "Zapętlone",
     "splashGrow": "Powiększ do wypełnienia",
+    "splashGrown": "Powiększone do wypełnienia",
     "splashAudioDisabled": "Wideo odtwarza własny dźwięk — usuń je, aby dodać osobną ścieżkę dźwiękową.",
     "splashSummaryLabel": "Widzowie zobaczą:",
     "splashSummary_card": "kartę informacyjną na zwykłym tle.",
@@ -161,6 +186,8 @@
     "unlockOrder": "Odblokuj",
     "media": "Media",
     "answerMedia": "Media odpowiedzi",
+    "mediaHandedToAnswer": "Na ekranie gry są teraz media odpowiedzi.",
+    "mediaAfterReveal": "Sterowanie pojawi się po odsłonięciu odpowiedzi.",
     "noMedia": "Brak mediów",
     "audioControls": "Sterowanie audio",
     "videoControls": "Sterowanie wideo",
@@ -168,8 +195,7 @@
     "noAnswerOptions": "Brak opcji odpowiedzi",
     "used": "Użyte",
     "reveal": "Pokaż",
-    "yes": "Tak",
-    "no": "Nie",
+    "revealed": "Odsłonięte",
     "timerStart": "Start",
     "timerPause": "Pauza",
     "timerReset": "Reset",
@@ -180,6 +206,7 @@
     "splashTitle": "Ekran powitalny",
     "splashStatic": "Statyczny ekran powitalny — nie ma czego odtwarzać.",
     "loop": "Zapętl",
+    "looping": "Zapętlone",
     "finalResults": "Wyniki końcowe",
     "tieGroups": "Remisy do rozstrzygnięcia",
     "tiedForPlace": "Remis o miejsce {{place}}",

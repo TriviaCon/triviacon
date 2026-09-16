@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { ActiveQuestionState, TimerSoundMode, TimerState } from '@shared/types/state'
-import { detectMediaType } from '@shared/media'
+import { activeQuestionMedia, detectMediaType } from '@shared/media'
 import { mediaUrl, mediaCrossOrigin } from '@shared/mediaUrl'
 import { RichText } from '@shared/RichText'
 import AutoFitText from './AutoFitText'
@@ -51,10 +51,12 @@ const QuestionScreen = ({
   }, [])
 
   // Reset fullscreen and playback bookkeeping when the active question or active media changes
-  const activeMediaFile =
-    activeQuestion?.answerRevealed && activeQuestion.question.answerMedia
-      ? activeQuestion.question.answerMedia
-      : activeQuestion?.question.media ?? null
+  const activeMedia = activeQuestionMedia(
+    activeQuestion?.question.media,
+    activeQuestion?.question.answerMedia,
+    activeQuestion?.answerRevealed ?? false
+  )
+  const activeMediaFile = activeMedia.file
   useEffect(() => {
     setMediaFullscreen(false)
     savedTimeRef.current = 0
@@ -152,7 +154,7 @@ const QuestionScreen = ({
   }
 
   const { question, answerOptions, answerRevealed, markedAnswerId, revealedOptionIds } = activeQuestion
-  const showAnswerMedia = answerRevealed && !!question.answerMedia
+  const showAnswerMedia = activeMedia.slot === 'answer'
   const activeAudioOnly = showAnswerMedia
     ? (question.answerMediaAudioOnly ?? false)
     : (question.audioOnly ?? false)

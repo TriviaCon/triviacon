@@ -14,10 +14,14 @@ const ControlView = () => {
 
   return (
     <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
-      <Tabs defaultValue="builder" onValueChange={setActiveTab} className="flex-1 min-h-0 flex flex-col overflow-hidden">
+      <Tabs
+        defaultValue="builder"
+        onValueChange={setActiveTab}
+        className="flex-1 min-h-0 flex flex-col gap-0 overflow-hidden"
+      >
         {/* Toolbar zone: tab switcher + action bar on the left, timer flush right */}
         <div className="flex items-stretch shrink-0 border-b border-border">
-          <div className="flex-1 min-w-0 flex flex-col">
+          <div className="flex-1 min-w-0 flex flex-col py-2">
             <TabsList className="border-b-0">
               <TabsTrigger value="builder">
                 <Pencil className="mr-1 h-4 w-4" /> {t('tabs.builder')}
