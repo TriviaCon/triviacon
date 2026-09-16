@@ -13,7 +13,13 @@ import {
   TableRow
 } from '@renderer/components/ui/table'
 import { useGameState } from '@renderer/hooks/useGameState'
-import { placeGroups, placementRows, totalRevealSteps, revealedGroups } from '@shared/ranking'
+import {
+  formatScore,
+  placeGroups,
+  placementRows,
+  totalRevealSteps,
+  revealedGroups
+} from '@shared/ranking'
 import type { PlacementRow } from '@shared/ranking'
 import type { Team } from '@shared/types/quiz'
 
@@ -32,7 +38,7 @@ function StandingsTable({
   revealed: Set<number>
   dimUnrevealed: boolean
 }) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   return (
     <Table>
       <TableHeader>
@@ -69,7 +75,7 @@ function StandingsTable({
                 </span>
               )}
             </TableCell>
-            <TableCell className="text-right tabular-nums">{row.score}</TableCell>
+            <TableCell className="text-right tabular-nums">{formatScore(row.score, i18n.language)}</TableCell>
           </TableRow>
         ))}
       </TableBody>

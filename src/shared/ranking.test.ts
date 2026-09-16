@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import {
+  formatScore,
   placeGroups,
   placementRows,
   revealUnits,
@@ -177,5 +178,42 @@ describe('tieGroups', () => {
     const groups = tieGroups([team('a', 4), team('b', 4), team('c', 4)])
     expect(groups).toHaveLength(1)
     expect(groups[0]).toHaveLength(3)
+  })
+})
+
+describe('formatScore', () => {
+  it('prints whole scores without a decimal part', () => {
+    expect(formatScore(0, 'en')).toBe('0')
+    expect(formatScore(12, 'en')).toBe('12')
+  })
+
+  it('prints halves', () => {
+    expect(formatScore(3.5, 'en')).toBe('3.5')
+    expect(formatScore(0.5, 'en')).toBe('0.5')
+  })
+
+  it('follows the language’s decimal separator', () => {
+    expect(formatScore(3.5, 'pl')).toBe('3,5')
+    expect(formatScore(3, 'pl')).toBe('3')
+  })
+
+  it('keeps negative scores signed', () => {
+    expect(formatScore(-1.5, 'en')).toBe('-1.5')
+  })
+})
+
+describe('half points through the ranking', () => {
+  it('places a half-point lead above a whole-point tie', () => {
+    const rows = placementRows([team('a', 3), team('b', 3.5), team('c', 3)])
+    expect(rows.map((r) => r.place)).toEqual([1, 2])
+    expect(rows[0].teams.map((tm) => tm.id)).toEqual(['b'])
+    expect(rows[1].teams.map((tm) => tm.id)).toEqual(['a', 'c'])
+  })
+
+  it('ties teams that reached the same half score by different routes', () => {
+    // 0.5 is exact in binary, so 0.5+0.5+0.5 and 1+0.5 both land on 1.5.
+    const groups = placeGroups([team('a', 0.5 + 0.5 + 0.5), team('b', 1 + 0.5)])
+    expect(groups).toHaveLength(1)
+    expect(groups[0]).toHaveLength(2)
   })
 })
