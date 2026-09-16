@@ -124,6 +124,13 @@ Conventional Commits style: `feat:`, `fix:`, `test:`, `chore:`, etc.
 - Tailwind CSS v4 for styling
 - Radix UI primitives for accessible components
 - No comments unless the "why" is non-obvious
+- Control panel colours come from the theme tokens in `index.css` (`primary`,
+  `destructive`, `success`, `warning`, `muted`, ...), never Tailwind palette
+  values — a hardcoded `green-600` looks wrong in at least one of the ten
+  built-in themes and ignores the user's choice entirely.
+- Anything that represents a state uses `Toggle`, not `Button` or `Switch`. The
+  pressed style carries the state, so the label names the state (`Muted`,
+  `Revealed`) rather than the next action.
 
 ### Testing
 
