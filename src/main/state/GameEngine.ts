@@ -97,17 +97,42 @@ export class GameEngine {
     }
   }
 
+  setTeamOrderLocked(locked: boolean): void {
+    this.state.teamOrderLocked = locked
+  }
+
+  reorderTeams(orderedIds: string[]): void {
+    const byId = new Map(this.state.teams.map((t) => [t.id, t]))
+    const reordered = orderedIds.map((id) => byId.get(id)).filter((t): t is Team => t !== undefined)
+    // Guard against a stale/partial id list dropping teams.
+    if (reordered.length === this.state.teams.length) this.state.teams = reordered
+  }
+
+  // A full forward lap over a locked roster advances the round; a backward lap
+  // rewinds it. Frozen while a tiebreaker sub-game is cycling the tied teams.
+  private roundCountsNow(): boolean {
+    return (
+      this.state.teamOrderLocked &&
+      this.state.teams.length >= 2 &&
+      !(this.state.tiebreakerTeamIds && this.state.tiebreakerTeamIds.length > 0)
+    )
+  }
+
   nextTeam(): void {
     if (this.state.teams.length === 0) return
     const idx = this.state.teams.findIndex((t) => t.id === this.state.currentTeamId)
+    const wraps = idx === this.state.teams.length - 1
     this.state.currentTeamId = this.state.teams[(idx + 1) % this.state.teams.length].id
+    if (wraps && this.roundCountsNow()) this.state.round += 1
   }
 
   prevTeam(): void {
     if (this.state.teams.length === 0) return
     const idx = this.state.teams.findIndex((t) => t.id === this.state.currentTeamId)
+    const wraps = idx === 0
     const prev = (idx - 1 + this.state.teams.length) % this.state.teams.length
     this.state.currentTeamId = this.state.teams[prev].id
+    if (wraps && this.roundCountsNow()) this.state.round = Math.max(1, this.state.round - 1)
   }
 
   // ── Screen transitions ───────────────────────────────────────

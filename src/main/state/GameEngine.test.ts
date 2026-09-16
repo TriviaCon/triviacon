@@ -149,6 +149,69 @@ describe('GameEngine', () => {
     })
   })
 
+  describe('team order + round', () => {
+    beforeEach(() => {
+      engine.loadQuiz('/test.tcq', meta, categories, questionCategoryMap)
+      engine.addTeam('A')
+      engine.addTeam('B')
+      engine.addTeam('C')
+    })
+
+    it('starts unlocked at round 1', () => {
+      const s = engine.getState()
+      expect(s.teamOrderLocked).toBe(false)
+      expect(s.round).toBe(1)
+    })
+
+    it('reorderTeams reorders the authoritative array', () => {
+      const [a, b, c] = engine.getState().teams.map((t) => t.id)
+      engine.reorderTeams([c, a, b])
+      expect(engine.getState().teams.map((t) => t.id)).toEqual([c, a, b])
+    })
+
+    it('reorderTeams ignores a partial id list that would drop teams', () => {
+      const ids = engine.getState().teams.map((t) => t.id)
+      engine.reorderTeams([ids[0]])
+      expect(engine.getState().teams.map((t) => t.id)).toEqual(ids)
+    })
+
+    it('round only advances on a full forward lap while locked', () => {
+      engine.nextTeam()
+      engine.nextTeam()
+      engine.nextTeam() // wraps C -> A, but unlocked
+      expect(engine.getState().round).toBe(1)
+
+      engine.setTeamOrderLocked(true)
+      engine.nextTeam() // A -> B
+      engine.nextTeam() // B -> C
+      expect(engine.getState().round).toBe(1)
+      engine.nextTeam() // C -> A, full lap
+      expect(engine.getState().round).toBe(2)
+    })
+
+    it('prevTeam rewinds the round on a backward lap, floored at 1', () => {
+      engine.setTeamOrderLocked(true)
+      engine.nextTeam()
+      engine.nextTeam()
+      engine.nextTeam() // round 2, back at A
+      expect(engine.getState().round).toBe(2)
+      engine.prevTeam() // A -> C, backward lap
+      expect(engine.getState().round).toBe(1)
+      engine.prevTeam() // C -> B, no wrap
+      expect(engine.getState().round).toBe(1)
+    })
+
+    it('round is frozen during a tiebreaker', () => {
+      const ids = engine.getState().teams.map((t) => t.id)
+      engine.setTeamOrderLocked(true)
+      engine.setTiebreaker([ids[0], ids[1]])
+      engine.nextTeam()
+      engine.nextTeam()
+      engine.nextTeam() // full lap, but tiebreaker active
+      expect(engine.getState().round).toBe(1)
+    })
+  })
+
   describe('screen transitions', () => {
     beforeEach(() => {
       engine.loadQuiz('/test.tcq', meta, categories, questionCategoryMap)

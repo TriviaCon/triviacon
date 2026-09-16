@@ -498,6 +498,17 @@ export function registerIpcHandlers(): void {
     broadcastState()
   })
 
+  ipcMain.handle(IPC.GAME_SET_TEAM_ORDER_LOCKED, (_, locked: boolean) => {
+    engine.setTeamOrderLocked(locked)
+    broadcastState()
+  })
+
+  ipcMain.handle(IPC.GAME_REORDER_TEAMS, (_, orderedIds: string[]) => {
+    engine.reorderTeams(orderedIds)
+    broadcastState()
+    persistTeams()
+  })
+
   // ── Screen transitions ───────────────────────────────────────────
 
   ipcMain.handle(IPC.GAME_SHOW_SPLASH, () => {

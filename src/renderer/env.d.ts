@@ -90,6 +90,8 @@ declare global {
       setCurrentTeam: (teamId: string) => Promise<void>
       nextTeam: () => Promise<void>
       prevTeam: () => Promise<void>
+      setTeamOrderLocked: (locked: boolean) => Promise<void>
+      reorderTeams: (orderedIds: string[]) => Promise<void>
 
       // --- Screen transitions ---
       showSplash: () => Promise<void>
