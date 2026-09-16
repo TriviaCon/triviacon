@@ -233,7 +233,7 @@ export function CategorySidebar({
 
   return (
     <aside className="w-56 shrink-0 border-r border-border flex flex-col overflow-hidden">
-      <div className="flex items-center justify-between px-3 py-2 border-b border-border shrink-0">
+      <div className="flex h-10 shrink-0 items-center justify-between border-b border-border px-3">
         <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           {t('actions.categories')}
         </span>

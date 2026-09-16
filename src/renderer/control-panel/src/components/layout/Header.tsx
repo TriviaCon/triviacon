@@ -18,8 +18,8 @@ const Header = () => {
   const [showCredits, setShowCredits] = useState(false)
 
   return (
-    <div className="w-full pb-1">
-      <nav className="mb-1 px-3 pb-0.5 bg-card border-b border-border rounded flex items-center justify-between">
+    <div className="w-full border-b border-border">
+      <nav className="mb-1 px-3 pb-0.5 bg-card rounded flex items-center justify-between">
         <Logo />
         <div className="flex items-center gap-1">
           <DropdownMenu>

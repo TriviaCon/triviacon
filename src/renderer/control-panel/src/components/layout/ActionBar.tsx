@@ -85,7 +85,7 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
 
   return (
     <>
-    <div className="flex gap-1 pb-2 pt-1 px-0.5">
+    <div className="flex gap-1 pt-2 px-0.5">
       {activeTab === 'builder' ? (
         <>
           <Button onClick={() => setPending('new')}>

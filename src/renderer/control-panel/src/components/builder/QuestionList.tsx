@@ -327,16 +327,7 @@ export function QuestionList({
 
   return (
     <div className="flex-1 flex flex-col min-h-0 border-r border-border">
-      {selectedIds.size > 0 && (
-        <BulkActionBar
-          count={selectedIds.size}
-          categories={otherCategories}
-          onMove={handleBulkMove}
-          onClear={() => setSelectedIds(new Set())}
-        />
-      )}
-
-      <div className="flex items-center justify-between px-4 py-2 border-b border-border shrink-0">
+      <div className="flex h-10 shrink-0 items-center justify-between border-b border-border px-4">
         <h2 className="font-semibold text-sm">
           {heading}
           {selectedCategory && (
@@ -353,6 +344,15 @@ export function QuestionList({
           <span className="text-[10px] text-muted-foreground">{t('builder.selectCategoryToReorder')}</span>
         )}
       </div>
+
+      {selectedIds.size > 0 && (
+        <BulkActionBar
+          count={selectedIds.size}
+          categories={otherCategories}
+          onMove={handleBulkMove}
+          onClear={() => setSelectedIds(new Set())}
+        />
+      )}
 
       {selectedCategoryId !== null ? (
         <CategoryQuestionList
