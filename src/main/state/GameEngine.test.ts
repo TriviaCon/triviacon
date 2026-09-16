@@ -78,6 +78,93 @@ describe('GameEngine', () => {
       expect(newTeam).toBeDefined()
       expect(parseInt(newTeam!.id.replace('t', ''), 10)).toBeGreaterThanOrEqual(6)
     })
+
+    it('gives every added team its own id when saved ids are UUIDs', () => {
+      // Stripping the non-digits out of a UUID lands past MAX_SAFE_INTEGER,
+      // where ++ stops incrementing and every added team shared one id.
+      const teams = [
+        { id: 'dc4ac40c-4472-4079-8061-05798bd4936d', name: 'Alpha', score: 0, tiebreakScore: 0 },
+        { id: '28491901-8690-4e0f-92c7-8220dd66a12f', name: 'Beta', score: 0, tiebreakScore: 0 }
+      ]
+      engine.loadQuiz('/test.tcq', meta, categories, questionCategoryMap, teams)
+      engine.addTeam('One')
+      engine.addTeam('Two')
+      engine.addTeam('Three')
+      const added = engine.getState().teams.filter((t) => t.id.startsWith('t'))
+      expect(added).toHaveLength(3)
+      for (const t of added) expect(t.id).toMatch(/^t\d+$/)
+      expect(new Set(added.map((t) => t.id)).size).toBe(3)
+    })
+
+    it('renames only the team that was asked for', () => {
+      const teams = [
+        { id: 'dc4ac40c-4472-4079-8061-05798bd4936d', name: 'Alpha', score: 0, tiebreakScore: 0 }
+      ]
+      engine.loadQuiz('/test.tcq', meta, categories, questionCategoryMap, teams)
+      engine.addTeam('One')
+      engine.addTeam('Two')
+      const [, one, two] = engine.getState().teams
+      engine.renameTeam(two.id, 'Renamed')
+      const after = engine.getState().teams
+      expect(after.find((t) => t.id === two.id)!.name).toBe('Renamed')
+      expect(after.find((t) => t.id === one.id)!.name).toBe('One')
+    })
+
+    it('gives repeated ids fresh ones on load, first holder keeps it', () => {
+      // What a quiz saved while the counter was broken looks like.
+      const dupe = 't4.404472407980611e+23'
+      const teams = [
+        { id: 'dc4ac40c-4472-4079-8061-05798bd4936d', name: 'Alpha', score: 5, tiebreakScore: 1 },
+        { id: dupe, name: 'Beta', score: 10, tiebreakScore: 0 },
+        { id: dupe, name: 'Gamma', score: 20, tiebreakScore: 2 },
+        { id: dupe, name: 'Delta', score: 30, tiebreakScore: 0 }
+      ]
+      engine.loadQuiz('/test.tcq', meta, categories, questionCategoryMap, teams)
+      const loaded = engine.getState().teams
+
+      expect(loaded.map((t) => t.name)).toEqual(['Alpha', 'Beta', 'Gamma', 'Delta'])
+      expect(new Set(loaded.map((t) => t.id)).size).toBe(4)
+      expect(loaded[0].id).toBe('dc4ac40c-4472-4079-8061-05798bd4936d')
+      expect(loaded[1].id).toBe(dupe)
+      expect(loaded.map((t) => t.score)).toEqual([5, 10, 20, 30])
+      expect(loaded.map((t) => t.tiebreakScore)).toEqual([1, 0, 2, 0])
+    })
+
+    it('leaves already-unique ids exactly as the file wrote them', () => {
+      const teams = [
+        { id: 'dc4ac40c-4472-4079-8061-05798bd4936d', name: 'Alpha', score: 0, tiebreakScore: 0 },
+        { id: 'not-a-uuid-either', name: 'Beta', score: 0, tiebreakScore: 0 },
+        { id: 't7', name: 'Gamma', score: 0, tiebreakScore: 0 }
+      ]
+      engine.loadQuiz('/test.tcq', meta, categories, questionCategoryMap, teams)
+      expect(engine.getState().teams.map((t) => t.id)).toEqual([
+        'dc4ac40c-4472-4079-8061-05798bd4936d',
+        'not-a-uuid-either',
+        't7'
+      ])
+    })
+
+    it('scores a de-duplicated team on its own', () => {
+      const dupe = 'tX'
+      const teams = [
+        { id: dupe, name: 'Beta', score: 0, tiebreakScore: 0 },
+        { id: dupe, name: 'Gamma', score: 0, tiebreakScore: 0 }
+      ]
+      engine.loadQuiz('/test.tcq', meta, categories, questionCategoryMap, teams)
+      const [beta, gamma] = engine.getState().teams
+      engine.updateScore(gamma.id, 3)
+      const after = engine.getState().teams
+      expect(after.find((t) => t.id === gamma.id)!.score).toBe(3)
+      expect(after.find((t) => t.id === beta.id)!.score).toBe(0)
+    })
+
+    it('skips an id a loaded quiz already uses', () => {
+      const teams = [{ id: 't1', name: 'Alpha', score: 0, tiebreakScore: 0 }]
+      engine.loadQuiz('/test.tcq', meta, categories, questionCategoryMap, teams)
+      engine.addTeam('New')
+      const ids = engine.getState().teams.map((t) => t.id)
+      expect(new Set(ids).size).toBe(ids.length)
+    })
   })
 
   describe('team management', () => {
