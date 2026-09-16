@@ -70,7 +70,7 @@ export function SplashRunnerPanel() {
             className="w-full gap-2"
           >
             <Maximize2 className="h-4 w-4" />
-            {t('builder.splashGrow')}
+            {grow ? t('builder.splashGrown') : t('builder.splashGrow')}
           </Toggle>
         )}
 
@@ -85,7 +85,7 @@ export function SplashRunnerPanel() {
               className="w-full gap-2"
             >
               <Repeat className="h-4 w-4" />
-              {t('runner.loop')}
+              {loop ? t('runner.looping') : t('runner.loop')}
             </Toggle>
           </div>
         ) : (
