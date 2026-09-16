@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next'
-import { Eye, StickyNote } from 'lucide-react'
+import { CheckCircle2, Eye, EyeOff, StickyNote } from 'lucide-react'
 import { AnswerOption, Question } from '@shared/types/quiz'
 import { Label } from '@renderer/components/ui/label'
 import { Button } from '@renderer/components/ui/button'
-import { Switch } from '@renderer/components/ui/switch'
+import { Toggle } from '@renderer/components/ui/toggle'
 import { MediaPreview } from '@renderer/components/ui/media-preview'
 import { RichText, richTextToPlain } from '@shared/RichText'
 import { cn } from '@renderer/lib/utils'
@@ -189,20 +189,26 @@ const QuestionPreview = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Label className="shrink-0">{t('runner.used')}</Label>
-          <Label htmlFor="used-switch" className="text-sm text-muted-foreground">
-            {used ? t('runner.yes') : t('runner.no')}
-          </Label>
-          <Switch id="used-switch" checked={used} onCheckedChange={onUse} />
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Label className="shrink-0">{t('runner.reveal')}</Label>
-          <Label htmlFor="reveal-switch" className="text-sm text-muted-foreground">
-            {answerRevealed ? t('runner.yes') : t('runner.no')}
-          </Label>
-          <Switch id="reveal-switch" checked={answerRevealed} onCheckedChange={onRevealAnswer} />
+        {/* Both are states of the question, so they read as pressed or not
+            rather than as a switch with a Yes/No caption beside it. */}
+        <div className="grid grid-cols-2 gap-2">
+          <Toggle
+            variant="outline"
+            pressed={used}
+            onPressedChange={onUse}
+            className="w-full"
+          >
+            <CheckCircle2 /> {t('runner.used')}
+          </Toggle>
+          <Toggle
+            variant="outline"
+            pressed={answerRevealed}
+            onPressedChange={onRevealAnswer}
+            className="w-full"
+          >
+            {answerRevealed ? <Eye /> : <EyeOff />}
+            {answerRevealed ? t('runner.revealed') : t('runner.reveal')}
+          </Toggle>
         </div>
       </div>
     </div>
