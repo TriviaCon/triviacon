@@ -152,7 +152,6 @@ const QuestionScreen = ({
   }
 
   const { question, answerOptions, answerRevealed, markedAnswerId, revealedOptionIds } = activeQuestion
-  const correctOptions = answerOptions.filter((opt) => opt.correct)
   const showAnswerMedia = answerRevealed && !!question.answerMedia
   const activeAudioOnly = showAnswerMedia
     ? (question.answerMediaAudioOnly ?? false)
@@ -163,6 +162,7 @@ const QuestionScreen = ({
   const hasVisualMedia =
     mediaSrc && (mediaType === 'image' || (mediaType === 'video' && !audioOnly)) && !mediaFullscreen
   const hasAudioVisualizer = (mediaSrc && mediaType === 'audio') || audioOnly
+  const hasMedia = hasVisualMedia || hasAudioVisualizer
   const type = question.type
 
   return (
@@ -191,21 +191,24 @@ const QuestionScreen = ({
 
       <div className="flex flex-col h-screen bg-background text-foreground">
         <div className="grid grid-cols-3 items-center px-6 py-4 shrink-0">
-          <div className="text-2xl font-semibold text-muted-foreground">
-            {categoryName}
+          <div className="text-4xl font-semibold text-muted-foreground flex items-center gap-3 min-w-0">
+            <span className="truncate">{categoryName}</span>
+            {questionIndex > 0 && (
+              <span className="shrink-0 text-muted-foreground/60">/ #{questionIndex}</span>
+            )}
           </div>
-          <div className="text-2xl font-semibold flex items-center justify-center gap-3">
+          <div className="text-4xl font-semibold flex items-center justify-center gap-3">
             {currentTeamName && (
               <>
                 <span className="text-muted-foreground">{t('gameScreen.answering')}</span>{' '}
                 <span className="text-foreground">{currentTeamName}</span>
-                <PieTimer timer={timer} durationSeconds={timerDuration} timerSound={timerSound} size={48} />
               </>
             )}
           </div>
-          <div className="text-2xl font-semibold text-muted-foreground text-right">
-            {questionIndex > 0 &&
-              t('gameScreen.questionIndicator', { current: questionIndex })}
+          <div className="flex items-center justify-end">
+            {currentTeamName && (
+              <PieTimer timer={timer} durationSeconds={timerDuration} timerSound={timerSound} size={48} />
+            )}
           </div>
         </div>
         <hr className="border-border mx-6 shrink-0" />
@@ -218,21 +221,26 @@ const QuestionScreen = ({
         )}
 
         <div className="flex-1 min-h-0 flex flex-col px-6 pb-4 pt-2 overflow-hidden">
-          {/* Question text — auto-fits so long questions shrink to fit instead of clipping */}
-          <div className="flex-1 min-h-0">
+          {/* Question text — height follows the text: short questions stay compact
+              (leaving more room for media), long ones grow to a cap then scale down.
+              With no media the question fills and centers in the available space. */}
+          <div className={`min-h-0 flex flex-col ${hasMedia ? 'shrink-0' : 'flex-1'}`}>
             <AutoFitText
               maxPx={60}
               minPx={24}
               resetKey={question.id}
-              className="text-center [&_p]:m-0 [&_p+p]:mt-3 [overflow-wrap:anywhere]"
+              className={`text-center [&_p]:m-0 [&_p+p]:mt-3 [overflow-wrap:anywhere] ${
+                hasMedia ? 'max-h-[45vh]' : 'h-full'
+              }`}
             >
               <RichText html={question.text} />
             </AutoFitText>
           </div>
 
-          {/* Media — scales to fill remaining space, capped so answers aren't squeezed */}
+          {/* Media — fills the space the question leaves; shrinks first when space
+              is tight so the (shrink-0) answers are never squeezed */}
           {hasVisualMedia && (
-            <div className="flex-1 min-h-0 max-h-[40vh] flex items-center justify-center mt-2">
+            <div className="flex-1 min-h-0 flex items-center justify-center mt-2 mb-6">
               {mediaType === 'image' && (
                 <img
                   src={mediaSrc!}
@@ -253,13 +261,13 @@ const QuestionScreen = ({
 
           {/* Audio visualizer — fills the media zone for audio-only questions */}
           {hasAudioVisualizer && (
-            <div className="flex-1 min-h-0 max-h-[40vh] mt-2 px-8">
+            <div className="flex-1 min-h-0 mt-2 mb-6 px-8">
               <AudioVisualizer audioRef={audioOnly ? videoRef : audioRef} />
             </div>
           )}
 
-          {/* Answers — pinned to bottom */}
-          <div className="shrink-0 mt-auto">
+          {/* Answers — pinned to bottom by the flex-1 media/question above */}
+          <div className="shrink-0">
             {type === 'single-answer' && (
               <div
                 className="text-8xl font-bold text-center [&_p]:m-0"
@@ -269,34 +277,20 @@ const QuestionScreen = ({
               </div>
             )}
 
-            {type === 'multiple-choice' && (
-              <>
-                {correctOptions.length > 0 && (
+            {type === 'multiple-choice' && answerOptions.length > 0 && (
+              <div className="grid grid-cols-2 gap-4">
+                {answerOptions.map((opt, index) => (
                   <div
-                    className="text-8xl font-bold mb-4 flex flex-wrap justify-center gap-x-6 [&_p]:m-0"
-                    style={{ visibility: answerRevealed ? 'visible' : 'hidden' }}
+                    key={opt.id}
+                    className={`rounded-lg p-4 transition-colors flex items-center justify-center gap-3 text-5xl ${optionClass(opt.correct, opt.id === markedAnswerId, answerRevealed)}`}
                   >
-                    {correctOptions.map((o) => (
-                      <RichText key={o.id} html={o.text} />
-                    ))}
+                    <span className="font-semibold">
+                      {String.fromCharCode(65 + index)}.
+                    </span>
+                    <RichText html={opt.text} className="[&_p]:m-0" />
                   </div>
-                )}
-                {answerOptions.length > 0 && (
-                  <div className="grid grid-cols-2 gap-4">
-                    {answerOptions.map((opt, index) => (
-                      <div
-                        key={opt.id}
-                        className={`rounded-lg p-4 transition-colors flex items-center justify-center gap-3 text-5xl ${optionClass(opt.correct, opt.id === markedAnswerId, answerRevealed)}`}
-                      >
-                        <span className="font-semibold">
-                          {String.fromCharCode(65 + index)}.
-                        </span>
-                        <RichText html={opt.text} className="[&_p]:m-0" />
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </>
+                ))}
+              </div>
             )}
 
             {type === 'list' && answerOptions.length > 0 && (() => {
