@@ -3,6 +3,7 @@ import {
   sanitizeFilename,
   mediaDisplayName,
   detectMediaType,
+  activeQuestionMedia,
   ALLOWED_MEDIA_EXTENSIONS,
   type MediaType
 } from '@shared/media'
@@ -140,5 +141,28 @@ describe('detectMediaType', () => {
       expect(detectMediaType(`file.${ext}`), ext).toBeNull()
       expect(ALLOWED_MEDIA_EXTENSIONS, ext).not.toContain(ext)
     }
+  })
+})
+
+describe('activeQuestionMedia', () => {
+  it('keeps the question media while the answer is hidden', () => {
+    expect(activeQuestionMedia('q.mp3', 'a.mp3', false)).toEqual({ slot: 'question', file: 'q.mp3' })
+  })
+
+  it('hands the screen to the answer media once revealed', () => {
+    expect(activeQuestionMedia('q.mp3', 'a.mp3', true)).toEqual({ slot: 'answer', file: 'a.mp3' })
+  })
+
+  it('keeps the question media when the answer has none', () => {
+    expect(activeQuestionMedia('q.mp3', null, true)).toEqual({ slot: 'question', file: 'q.mp3' })
+    expect(activeQuestionMedia('q.mp3', undefined, true)).toEqual({ slot: 'question', file: 'q.mp3' })
+  })
+
+  it('reports the answer media even when the question has none', () => {
+    expect(activeQuestionMedia(null, 'a.mp3', true)).toEqual({ slot: 'answer', file: 'a.mp3' })
+  })
+
+  it('normalises a missing question media to null', () => {
+    expect(activeQuestionMedia(undefined, null, false)).toEqual({ slot: 'question', file: null })
   })
 })

@@ -187,6 +187,8 @@
     "unlockOrder": "Unlock",
     "media": "Media",
     "answerMedia": "Answer Media",
+    "mediaHandedToAnswer": "The answer media has the game screen now.",
+    "mediaAfterReveal": "Controls appear once the answer is revealed.",
     "noMedia": "No media",
     "audioControls": "Audio Controls",
     "videoControls": "Video Controls",

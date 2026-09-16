@@ -187,6 +187,8 @@
     "unlockOrder": "Odblokuj",
     "media": "Media",
     "answerMedia": "Media odpowiedzi",
+    "mediaHandedToAnswer": "Na ekranie gry są teraz media odpowiedzi.",
+    "mediaAfterReveal": "Sterowanie pojawi się po odsłonięciu odpowiedzi.",
     "noMedia": "Brak mediów",
     "audioControls": "Sterowanie audio",
     "videoControls": "Sterowanie wideo",

@@ -8,7 +8,29 @@ import { MediaPreview } from '@renderer/components/ui/media-preview'
 import { RichText, richTextToPlain } from '@shared/RichText'
 import { cn } from '@renderer/lib/utils'
 import { mediaUrl } from '@shared/mediaUrl'
-import { mediaDisplayName } from '@shared/media'
+import { activeQuestionMedia, detectMediaType, mediaDisplayName } from '@shared/media'
+
+/**
+ * One media slot. Transport controls go only to the file the game screen is
+ * actually playing — the two panels drive the same element, so showing controls
+ * on both made them mirror each other's time and volume. An image keeps its
+ * preview either way; the idle player just says why it's idle.
+ */
+const MediaSlot = ({
+  media,
+  active,
+  inactiveHint
+}: {
+  media: string | null
+  active: boolean
+  inactiveHint: string
+}) => {
+  if (detectMediaType(media) === 'image') {
+    return <MediaPreview media={media} fullscreenButton={active} />
+  }
+  if (active) return <MediaPreview media={media} fullscreenButton playbackControls />
+  return <p className="text-xs text-muted-foreground italic">{inactiveHint}</p>
+}
 
 const QuestionPreview = ({
   question,
@@ -38,6 +60,7 @@ const QuestionPreview = ({
   const { t } = useTranslation()
   const mediaSrc = mediaUrl(question.media)
   const answerMediaSrc = mediaUrl(question.answerMedia)
+  const activeMedia = activeQuestionMedia(question.media, question.answerMedia, answerRevealed)
   const type = question.type
 
   return (
@@ -76,7 +99,11 @@ const QuestionPreview = ({
               <span className="text-sm text-muted-foreground truncate block">
                 {mediaDisplayName(question.media) ?? question.media}
               </span>
-              <MediaPreview media={question.media} fullscreenButton playbackControls />
+              <MediaSlot
+                media={question.media}
+                active={activeMedia.slot === 'question'}
+                inactiveHint={t('runner.mediaHandedToAnswer')}
+              />
             </div>
           )}
         </div>
@@ -90,7 +117,11 @@ const QuestionPreview = ({
               <span className="text-sm text-muted-foreground truncate block">
                 {mediaDisplayName(question.answerMedia) ?? question.answerMedia}
               </span>
-              <MediaPreview media={question.answerMedia} fullscreenButton playbackControls />
+              <MediaSlot
+                media={question.answerMedia ?? null}
+                active={activeMedia.slot === 'answer'}
+                inactiveHint={t('runner.mediaAfterReveal')}
+              />
             </div>
           )}
         </div>
