@@ -14,7 +14,7 @@ These are the ideas the app is built around. They are not up for incremental ero
 
 3. **Never block the host.** Validation and warnings are informative, never blocking. A questionable quiz — a multiple-choice question with no correct answer marked, a very long list — still saves, runs, and exports. Warn, explain, respect the host's judgment; don't gate them out of their own game.
 
-4. **AI does the plumbing; humans do the quiz.** AI helped build the app, and AI-assisted tooling may scaffold the empty structure of a quiz file (`.tcq` skeleton) to save clicks. It must never author the substance — questions, answers, difficulty, or media are always human-written — and it never runs the game. No auto-generated content, no auto-scoring, no auto-advancing. The metaphor: a car versus a bicycle, but the car doesn't drive itself.
+4. **AI does the plumbing; humans do the quiz.** AI helped build the app, and AI-assisted tooling may scaffold the empty structure of a quiz file (`.tcq` skeleton) to save clicks. It must never author the substance — questions, answers, host notes, or media are always human-written — and it never runs the game. No auto-generated content, no auto-scoring, no auto-advancing. The metaphor: a car versus a bicycle, but the car doesn't drive itself.
 
 5. **Portable and zero-trace.** The app must leave nothing behind on the host machine. All storage prefers the exe-adjacent directory; temp extraction dirs are cleaned up on quit and purged on startup. Run it from a USB stick and walk away clean. No telemetry, ever.
 
