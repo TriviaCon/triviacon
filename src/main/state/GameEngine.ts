@@ -34,18 +34,48 @@ export class GameEngine {
       quizMeta: meta,
       categories,
       questionCategoryMap,
-      teams: savedTeams ?? []
+      teams: []
     }
     if (savedTeams && savedTeams.length > 0) {
-      this.state.currentTeamId = savedTeams[0].id
-      // Restore nextTeamId counter past existing team IDs
+      // Read the counter past our own `t<n>` ids, and only those. Ids minted
+      // anywhere else — the demo quiz ships UUIDs — are matched, never parsed
+      // or rewritten, and travel through the app exactly as the file wrote them.
       for (const t of savedTeams) {
-        const num = parseInt(t.id.replace(/\D/g, ''), 10)
-        if (!isNaN(num) && num >= this.nextTeamId) {
+        const match = /^t(\d+)$/.exec(t.id)
+        if (!match) continue
+        const num = parseInt(match[1], 10)
+        if (Number.isSafeInteger(num) && num >= this.nextTeamId) {
           this.nextTeamId = num + 1
         }
       }
+      this.state.teams = this.withUniqueTeamIds(savedTeams)
+      this.state.currentTeamId = this.state.teams[0].id
     }
+  }
+
+  /**
+   * Teams as saved, except that a repeated id is replaced with a fresh one.
+   *
+   * A quiz written while the id counter was broken can carry several teams
+   * sharing an id, and every rename, score and delete then lands on whichever
+   * of them comes first. The first holder of an id keeps it, so only the
+   * genuine duplicates move; ids that are already unique are passed through
+   * untouched, UUIDs included.
+   */
+  private withUniqueTeamIds(teams: Team[]): Team[] {
+    const taken = new Set(teams.map((t) => t.id))
+    const seen = new Set<string>()
+    return teams.map((team) => {
+      if (!seen.has(team.id)) {
+        seen.add(team.id)
+        return team
+      }
+      let id = `t${this.nextTeamId++}`
+      while (taken.has(id)) id = `t${this.nextTeamId++}`
+      taken.add(id)
+      seen.add(id)
+      return { ...team, id }
+    })
   }
 
   closeQuiz(): void {
@@ -67,7 +97,9 @@ export class GameEngine {
   // ── Team management ──────────────────────────────────────────
 
   addTeam(name: string): void {
-    const id = `t${this.nextTeamId++}`
+    // Never hand out an id a loaded quiz already uses, whatever shape it is.
+    let id = `t${this.nextTeamId++}`
+    while (this.state.teams.some((t) => t.id === id)) id = `t${this.nextTeamId++}`
     this.state.teams.push({ id, name, score: 0, tiebreakScore: 0 })
     if (!this.state.currentTeamId) {
       this.state.currentTeamId = id
