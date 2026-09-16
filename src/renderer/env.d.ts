@@ -88,6 +88,7 @@ declare global {
       renameTeam: (teamId: string, name: string) => Promise<void>
       updateScore: (teamId: string, delta: number) => Promise<void>
       updateTiebreakScore: (teamId: string, delta: number) => Promise<void>
+      startGame: () => Promise<void>
       setCurrentTeam: (teamId: string) => Promise<void>
       nextTeam: () => Promise<void>
       prevTeam: () => Promise<void>

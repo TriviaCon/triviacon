@@ -241,6 +241,43 @@ describe('GameEngine', () => {
     })
   })
 
+  describe('startGame', () => {
+    beforeEach(() => {
+      engine.loadQuiz('/test.tcq', meta, categories, questionCategoryMap)
+    })
+
+    it('is not started on a fresh quiz', () => {
+      expect(engine.getState().gameStarted).toBe(false)
+    })
+
+    it('marks live, finalizes the roster, resets to round 1 at the first team', () => {
+      engine.addTeam('A')
+      engine.addTeam('B')
+      engine.addTeam('C')
+      const [a] = engine.getState().teams.map((t) => t.id)
+      engine.setTeamOrderLocked(true)
+      engine.nextTeam()
+      engine.nextTeam() // advance the current team and round bookkeeping
+      engine.setTeamOrderLocked(false)
+
+      engine.startGame()
+      const s = engine.getState()
+      expect(s.gameStarted).toBe(true)
+      expect(s.teamOrderLocked).toBe(true)
+      expect(s.round).toBe(1)
+      expect(s.currentTeamId).toBe(a)
+    })
+
+    it('gates nothing — round counting works from round 1 without a manual lock', () => {
+      engine.addTeam('A')
+      engine.addTeam('B')
+      engine.startGame()
+      engine.nextTeam() // A -> B
+      engine.nextTeam() // B -> A, full lap on the auto-locked roster
+      expect(engine.getState().round).toBe(2)
+    })
+  })
+
   describe('screen transitions', () => {
     beforeEach(() => {
       engine.loadQuiz('/test.tcq', meta, categories, questionCategoryMap)

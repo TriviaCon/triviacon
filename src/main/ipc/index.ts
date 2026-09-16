@@ -489,6 +489,11 @@ export function registerIpcHandlers(): void {
     persistTeams()
   })
 
+  ipcMain.handle(IPC.GAME_START, () => {
+    engine.startGame()
+    broadcastState()
+  })
+
   ipcMain.handle(IPC.GAME_SET_CURRENT_TEAM, (_, teamId: string) => {
     engine.setCurrentTeam(teamId)
     broadcastState()
