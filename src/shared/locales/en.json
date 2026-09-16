@@ -127,6 +127,7 @@
     "notesHint": "Visible to the host only — never shown on the game screen.",
     "questionLengthHint": "Character count. Long questions shrink to fit on the game screen.",
     "audioOnly": "Audio only (hide video on display)",
+    "noVideoTrack": "This file has no video track — it will show as an audio visualiser.",
     "loadingQuestion": "Loading question...",
     "dropMedia": "Drop media file here",
     "dropOneFileOnly": "Please drop only one file.",
