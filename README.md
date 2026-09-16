@@ -62,6 +62,12 @@ Grab the latest build for your platform from the [Releases page](https://github.
 
 No installation required. TriviaCON is fully portable — run it from a USB drive, a shared folder, or anywhere you like, and it leaves no trace on the host machine.
 
+## Try it out
+
+Want to see a finished quiz before writing your own? Grab the **[demo quiz](docs/demo/triviacon_demo_quiz.tcq?raw=1)** — 41 MB — and open it from the toolbar.
+
+It's a whole quiz night in one file: 15 questions across four categories, seven teams with scores already set for a staged ranking reveal, host-only notes, a splash screen, and every kind of media the app supports — images, audio, video, and video played audio-only so the footage never gives the answer away. All media is AI-generated and free to redistribute.
+
 ## Running a quiz night
 
 1. **Launch TriviaCON** — the control panel opens automatically.
