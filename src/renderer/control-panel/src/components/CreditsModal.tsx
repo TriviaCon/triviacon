@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { ExternalLink, Bug, Coffee } from 'lucide-react'
 import { Dialog, DialogContent } from '@renderer/components/ui/dialog'
 import Logo from './layout/Logo'
@@ -67,6 +68,8 @@ interface CreditsModalProps {
 }
 
 export const CreditsModal: React.FC<CreditsModalProps> = ({ show, onHide }) => {
+  const { t } = useTranslation()
+
   return (
     <Dialog open={show} onOpenChange={(open) => !open && onHide()}>
       <DialogContent className="max-w-sm p-0 overflow-hidden">
@@ -82,30 +85,27 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({ show, onHide }) => {
           {/* Author */}
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-2">
-              Developed by
+              {t('credits.developedBy')}
             </p>
             <div className="space-y-2">
               <div className="flex items-center gap-3">
                 <img src={a87Logo} alt="alucard87pl" className="h-5 w-auto opacity-90" />
-                <span className="text-xs text-muted-foreground">idea, code</span>
+                <span className="text-xs text-muted-foreground">{t('credits.authorRole')}</span>
               </div>
               <div className="flex items-start gap-2 rounded-md bg-muted/50 border border-border px-3 py-2">
                 <Coffee className="h-3.5 w-3.5 mt-0.5 shrink-0 text-amber-500" />
                 <p className="text-xs text-muted-foreground italic leading-relaxed">
-                  Heavily vibe-coded at ungodly hours, fueled by an unrelenting caffeine addiction
-                  and a stubborn belief that convention quizzing deserves better software.
+                  {t('credits.blurb')}
                 </p>
               </div>
-              <p className="text-xs text-muted-foreground italic">
-                ...and an extensive list of brave beta testers
-              </p>
+              <p className="text-xs text-muted-foreground italic">{t('credits.testers')}</p>
             </div>
           </div>
 
           {/* Tech stack */}
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-2">
-              Built with
+              {t('credits.builtWith')}
             </p>
             <div className="flex flex-wrap gap-1.5">
               {TECH_STACK.map(({ name, Icon, color, bg, border, url }) => (
@@ -125,13 +125,9 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({ show, onHide }) => {
           {/* Audio credits */}
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-2">
-              Sound
+              {t('credits.sound')}
             </p>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Ranking fanfares are the property of their respective owners and are not
-              covered by this app’s license: “Victory” (Final Fantasy V) © Square Enix ·
-              Pokémon Gen 1 © Nintendo / Game Freak · NFL on Fox theme © Fox.
-            </p>
+            <p className="text-xs text-muted-foreground leading-relaxed">{t('credits.soundNote')}</p>
           </div>
 
           {/* Footer */}
@@ -144,7 +140,7 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({ show, onHide }) => {
                 window.open('https://github.com/TriviaCon/triviacon/blob/main/LICENSE', '_blank')
               }}
             >
-              MIT License
+              {t('credits.license')}
             </a>
             <div className="flex items-center gap-3">
               <a
@@ -155,7 +151,7 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({ show, onHide }) => {
                   window.open('https://github.com/TriviaCon/triviacon', '_blank')
                 }}
               >
-                <ExternalLink className="h-3 w-3" /> GitHub
+                <ExternalLink className="h-3 w-3" /> {t('credits.github')}
               </a>
               <a
                 href="#"
@@ -165,7 +161,7 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({ show, onHide }) => {
                   window.open(buildIssueUrl(), '_blank')
                 }}
               >
-                <Bug className="h-3 w-3" /> Report issue
+                <Bug className="h-3 w-3" /> {t('credits.reportIssue')}
               </a>
             </div>
           </div>

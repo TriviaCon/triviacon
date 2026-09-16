@@ -1,6 +1,6 @@
 const Logo: React.FC = () => {
   return (
-    <h4 className="text-center mb-0 select-none">
+    <h4 className="text-center text-xl mb-0 select-none">
       <span className="text-foreground">Trivia</span>
       <span
         className="font-bold"

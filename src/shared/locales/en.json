@@ -4,6 +4,29 @@
     "waitingForData": "Waiting for game data..."
   },
 
+  "header": {
+    "feedback": "Feedback",
+    "reportBug": "Report a bug",
+    "suggestFeature": "Suggest a feature",
+    "credits": "About / Credits",
+    "issueVersion": "Version",
+    "issueSystem": "System",
+    "issueBodyHint": "<!-- Describe the bug below -->"
+  },
+
+  "credits": {
+    "developedBy": "Developed by",
+    "authorRole": "idea, code",
+    "blurb": "Heavily vibe-coded at ungodly hours, fueled by an unrelenting caffeine addiction and a stubborn belief that convention quizzing deserves better software.",
+    "testers": "...and an extensive list of brave beta testers",
+    "builtWith": "Built with",
+    "sound": "Sound",
+    "soundNote": "Ranking fanfares are the property of their respective owners and are not covered by this app’s license: “Victory” (Final Fantasy V) © Square Enix · Pokémon Gen 1 © Nintendo / Game Freak · NFL on Fox theme © Fox.",
+    "license": "MIT License",
+    "github": "GitHub",
+    "reportIssue": "Report issue"
+  },
+
   "tabs": {
     "builder": "Builder",
     "runner": "Game Runner",
