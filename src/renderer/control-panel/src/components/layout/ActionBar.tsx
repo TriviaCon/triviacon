@@ -88,88 +88,87 @@ const ActionBar: React.FC<ActionBarProps> = ({ activeTab }) => {
     <div className="flex gap-1 pt-2 px-0.5">
       {activeTab === 'builder' ? (
         <>
-          <Button onClick={() => setPending('new')}>
+          {/* Save is the action of the evening, so it carries the weight; New is
+              the rare, destructive one and stays quiet behind its confirm. */}
+          <div className="flex">
+            <Button
+              className="rounded-r-none bg-success text-success-foreground hover:bg-success/90"
+              disabled={!quizFilePath}
+              onClick={handleSave}
+            >
+              <Save className="mr-1 h-4 w-4" />
+              {t('actions.saveQuiz')}
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  size="icon"
+                  className="rounded-l-none border-l border-success-foreground/25 bg-success text-success-foreground hover:bg-success/90"
+                  disabled={!quizFilePath}
+                >
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={handleSaveAs}>
+                  <Save className="mr-2 h-4 w-4" /> {t('actions.saveAs')}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          <Separator orientation="vertical" className="mx-1 h-8" />
+
+          <Button variant="outline" onClick={() => setPending('new')}>
             <FilePlus className="mr-1 h-4 w-4" /> {t('actions.newQuiz')}
           </Button>
-          <Button variant="secondary" onClick={() => setPending('load')}>
+          <Button variant="outline" onClick={() => setPending('load')}>
             <Upload className="mr-1 h-4 w-4" /> {t('actions.loadQuiz')}
           </Button>
-
-          <div className="flex items-center gap-1.5">
-            <div className="flex">
-              <Button
-                variant="outline"
-                className="rounded-r-none border-r-0 text-green-600 border-green-600/50 hover:bg-green-600/10"
-                disabled={!quizFilePath}
-                onClick={handleSave}
-              >
-                <Save className="mr-1 h-4 w-4" />
-                {t('actions.saveQuiz')}
-              </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="rounded-l-none text-green-600 border-green-600/50 hover:bg-green-600/10"
-                    disabled={!quizFilePath}
-                  >
-                    <ChevronDown className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={handleSaveAs}>
-                    <Save className="mr-2 h-4 w-4" /> {t('actions.saveAs')}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-
-            <Separator orientation="vertical" className="mx-1 h-8" />
-          <Button variant="outline" onClick={() => setMetaOpen(true)}>
+          <Button variant="ghost" onClick={() => setMetaOpen(true)}>
             <Info className="mr-1 h-4 w-4" /> {t('builder.quizInfo')}
           </Button>
 
-          {/* Saving / dirty / saved pill */}
-            {quizFilePath && (
-              <span
-                className={cn(
-                  'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium transition-opacity duration-500',
-                  saving
-                    ? 'border-blue-500/50 bg-blue-500/10 text-blue-600 opacity-100'
-                    : savedFlash
-                      ? 'border-green-500/50 bg-green-500/10 text-green-600 opacity-100'
-                      : quizDirty
-                        ? 'border-red-500/50 bg-red-500/10 text-red-600 opacity-100'
-                        : 'opacity-0 pointer-events-none'
-                )}
-              >
-                {saving ? (
-                  <>
-                    <Loader2 className="h-3 w-3 animate-spin" />{' '}
-                    {t('actions.saving')} <span className="tabular-nums">{saving.files}/{saving.totalFiles}</span>
-                  </>
-                ) : savedFlash ? (
-                  <><Check className="h-3 w-3" /> {t('actions.saved')}</>
-                ) : (
-                  <><span className="h-1.5 w-1.5 rounded-full bg-red-500" /> {t('actions.unsaved')}</>
-                )}
-              </span>
-            )}
-          </div>
+          {/* File state — a status, not an action, so it sits out of the button
+              flow at the far end and wears no button chrome. */}
+          {quizFilePath && (
+            <span
+              className={cn(
+                'ml-auto self-center inline-flex items-center gap-1.5 pr-1 text-xs font-medium transition-opacity duration-500',
+                saving
+                  ? 'text-muted-foreground opacity-100'
+                  : savedFlash
+                    ? 'text-success opacity-100'
+                    : quizDirty
+                      ? 'text-warning opacity-100'
+                      : 'opacity-0 pointer-events-none'
+              )}
+            >
+              {saving ? (
+                <>
+                  <Loader2 className="h-3 w-3 animate-spin" />{' '}
+                  {t('actions.saving')} <span className="tabular-nums">{saving.files}/{saving.totalFiles}</span>
+                </>
+              ) : savedFlash ? (
+                <><Check className="h-3 w-3" /> {t('actions.saved')}</>
+              ) : (
+                <><span className="h-1.5 w-1.5 rounded-full bg-warning" /> {t('actions.unsaved')}</>
+              )}
+            </span>
+          )}
         </>
       ) : (
         <>
-          <Button variant="secondary" onClick={() => window.api.openGameScreen()}>
+          <Button variant="outline" onClick={() => window.api.openGameScreen()}>
             <Monitor className="mr-1 h-4 w-4" /> {t('actions.openScreen')}
           </Button>
           {gameStarted ? (
-            <span className="inline-flex items-center gap-1.5 rounded-md border border-emerald-500/50 bg-emerald-500/10 px-3 text-sm font-semibold text-emerald-600">
-              <span className="h-2 w-2 rounded-full bg-emerald-500" /> {t('runner.live')}
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-success/50 bg-success/10 px-3 text-sm font-semibold text-success">
+              <span className="h-2 w-2 rounded-full bg-success" /> {t('runner.live')}
             </span>
           ) : (
             <Button
-              className="bg-emerald-600 hover:bg-emerald-500 text-white"
+              className="bg-success text-success-foreground hover:bg-success/90"
               disabled={!quizFilePath}
               onClick={() => window.api.startGame()}
             >
