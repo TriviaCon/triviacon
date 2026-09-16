@@ -2,7 +2,13 @@ import React, { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { Team } from '@shared/types/quiz'
 import type { RankingMode } from '@shared/types/state'
-import { placementRows, totalRevealSteps, revealedGroups, type PlacementRow } from '@shared/ranking'
+import {
+  formatScore,
+  placementRows,
+  totalRevealSteps,
+  revealedGroups,
+  type PlacementRow
+} from '@shared/ranking'
 
 import fanfareFF5 from '../assets/FF5_Victory_(Fanfare).ogg'
 import fanfareNFL from '../assets/NFL_FOX.mp3'
@@ -45,13 +51,13 @@ interface Props {
 }
 
 const RankingScreen = ({ teams, mode, revealStep, tiebreakerTeamIds }: Props) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const pts = t('gameScreen.points')
 
   // A placement row: place + score anchor the first line; tied teams stack
   // beneath; a tiebroken row carries a badge so equal scores read intentionally.
   const renderRow = (row: PlacementRow, label: string, size: string, colorClass = '') => {
-    const scoreSuffix = `${row.score} ${pts}`
+    const scoreSuffix = `${formatScore(row.score, i18n.language)} ${pts}`
     const badge = row.tiebroken ? (
       <p className="text-[1.3rem] font-normal text-center opacity-70">
         ⚔️ {t('gameScreen.tiebreakerResolved')}

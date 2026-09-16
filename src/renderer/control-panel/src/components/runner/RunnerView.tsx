@@ -204,7 +204,7 @@ export const RunnerView = () => {
     <div className="w-full h-full flex flex-col gap-0 overflow-hidden">
       <div className="flex-1 min-h-0 flex overflow-hidden">
         {/* Teams */}
-        <div className="w-80 shrink-0 border-r border-border overflow-y-auto p-3">
+        <div className="w-112 shrink-0 border-r border-border overflow-y-auto p-3">
           <TeamTable />
         </div>
 

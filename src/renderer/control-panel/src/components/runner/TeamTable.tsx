@@ -30,6 +30,7 @@ import {
 import { useGameState } from '@renderer/hooks/useGameState'
 import { cn } from '@renderer/lib/utils'
 import type { Team } from '@shared/types/quiz'
+import { formatScore } from '@shared/ranking'
 
 // ── Sortable row ────────────────────────────────────────────────
 
@@ -58,6 +59,7 @@ function SortableTeamRow({
   onEditSave: () => void
   onDeleteRequest: () => void
 }) {
+  const { i18n } = useTranslation()
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: team.id,
     disabled: locked
@@ -111,9 +113,13 @@ function SortableTeamRow({
         )}
       </TableCell>
       <TableCell>
-        <div className="flex items-center justify-between gap-1">
+        <div className="flex items-center justify-between gap-0.5">
           <Button variant="outline" size="sm" className="h-6 w-8 text-xs" onClick={() => window.api.updateScore(team.id, -1)}>-1</Button>
-          <span className="font-medium tabular-nums">{team.score}</span>
+          <Button variant="outline" size="sm" className="h-6 w-7 text-xs" onClick={() => window.api.updateScore(team.id, -0.5)}>-½</Button>
+          <span className="min-w-9 text-center font-medium tabular-nums">
+            {formatScore(team.score, i18n.language)}
+          </span>
+          <Button variant="outline" size="sm" className="h-6 w-7 text-xs" onClick={() => window.api.updateScore(team.id, 0.5)}>+½</Button>
           <Button variant="outline" size="sm" className="h-6 w-8 text-xs" onClick={() => window.api.updateScore(team.id, 1)}>+1</Button>
         </div>
       </TableCell>

@@ -100,3 +100,12 @@ export function revealedGroups(groupCount: number, step: number): Set<number> {
 export function tieGroups(teams: Team[]): Team[][] {
   return placeGroups(teams).filter((group) => group.length >= 2)
 }
+
+/**
+ * Print a score. Hosts can award halves, and the decimal separator is a
+ * language matter (3,5 in Polish, 3.5 in English), so every place that shows a
+ * score goes through here rather than interpolating the raw number.
+ */
+export function formatScore(score: number, language = 'en'): string {
+  return new Intl.NumberFormat(language, { maximumFractionDigits: 1 }).format(score)
+}
