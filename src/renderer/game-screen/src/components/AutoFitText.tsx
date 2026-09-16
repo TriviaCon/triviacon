@@ -7,6 +7,11 @@ type AutoFitTextProps = {
   maxPx: number
   /** Readability floor in px — never shrinks below this. */
   minPx: number
+  /**
+   * Applied to the fitting box. Must set the box's height budget — `h-full`,
+   * `max-h-[45vh]`, etc. — since the box has no intrinsic height: a `max-h` lets
+   * the box shrink to short content yet cap (and scale) tall content.
+   */
   className?: string
   /** Re-fit when this value changes (e.g. the active question id). */
   resetKey?: unknown
@@ -62,7 +67,7 @@ export function AutoFitText({ children, maxPx, minPx, className, resetKey }: Aut
   return (
     <div
       ref={boxRef}
-      className={`flex h-full w-full items-center justify-center overflow-hidden ${className ?? ''}`}
+      className={`flex w-full items-center justify-center overflow-hidden ${className ?? ''}`}
     >
       <div ref={innerRef} style={{ fontSize: `${fontPx}px` }}>
         {children}
