@@ -19,6 +19,7 @@ import { useTranslation } from 'react-i18next'
 import { ChevronLeft, ChevronRight, GripVertical, Lock, Unlock, UserPlus, UserX } from 'lucide-react'
 import { Button } from '@renderer/components/ui/button'
 import { Input } from '@renderer/components/ui/input'
+import { TruncatedText } from '@renderer/components/ui/truncated-text'
 import {
   Table,
   TableBody,
@@ -93,7 +94,7 @@ function SortableTeamRow({
           </span>
         )}
       </TableCell>
-      <TableCell>
+      <TableCell className="min-w-0">
         {editing ? (
           <Input
             value={editingName}
@@ -107,9 +108,11 @@ function SortableTeamRow({
             className="h-7"
           />
         ) : (
-          <span className="cursor-pointer hover:underline" onClick={onEditStart}>
-            {team.name}
-          </span>
+          <TruncatedText
+            text={team.name}
+            className="cursor-pointer hover:underline"
+            onClick={onEditStart}
+          />
         )}
       </TableCell>
       <TableCell>
@@ -220,9 +223,13 @@ const TeamTable = () => {
         <Button variant="outline" size="sm" onClick={() => window.api.prevTeam()}>
           <ChevronLeft className="h-4 w-4" /> {t('actions.prev')}
         </Button>
-        <div className="text-center">
+        <div className="min-w-0 flex-1 px-2 text-center">
           <div className="text-xs text-muted-foreground">{t('runner.currentTeam')}</div>
-          <div className="font-semibold text-sm">{currentTeam?.name || t('runner.noTeamSelected')}</div>
+          {currentTeam ? (
+            <TruncatedText text={currentTeam.name} className="font-semibold text-sm" />
+          ) : (
+            <div className="font-semibold text-sm">{t('runner.noTeamSelected')}</div>
+          )}
         </div>
         <Button variant="outline" size="sm" onClick={() => window.api.nextTeam()}>
           {t('actions.next')} <ChevronRight className="h-4 w-4" />
@@ -232,12 +239,12 @@ const TeamTable = () => {
       {/* Team table with DnD */}
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={teams.map((tm) => tm.id)} strategy={verticalListSortingStrategy}>
-          <Table>
+          <Table className="table-fixed">
             <TableHeader>
               <TableRow>
                 <TableHead className="w-8">{teamOrderLocked ? '#' : ''}</TableHead>
                 <TableHead>{t('runner.teamName')}</TableHead>
-                <TableHead className="text-center">{t('runner.score')}</TableHead>
+                <TableHead className="w-44 text-center">{t('runner.score')}</TableHead>
                 <TableHead className="text-center w-12">{t('actions.delete')}</TableHead>
               </TableRow>
             </TableHeader>
