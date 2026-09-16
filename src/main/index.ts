@@ -8,7 +8,7 @@ import {
   getGameScreenWindow,
   toggleGameScreenFullscreen
 } from './windows'
-import { registerIpcHandlers, getEngine } from './ipc'
+import { registerIpcHandlers, getEngine, broadcastState } from './ipc'
 import { getControlPanelWindow } from './windows'
 import { IPC } from '@shared/types/ipc'
 import { GamePhase } from '@shared/types/state'
@@ -79,13 +79,22 @@ app.whenReady().then(async () => {
     }
 
     const win = createGameScreenWindow()
+    // A freshly opened window is never fullscreen, and a closed one can't be.
+    engine.setGameScreenFullscreen(false)
+    win.on('closed', () => {
+      engine.setGameScreenFullscreen(false)
+      broadcastState()
+    })
     win.webContents.once('did-finish-load', () => {
       if (!win.isDestroyed()) win.webContents.send(IPC.STATE_UPDATE, engine.getState())
     })
   })
 
   ipcMain.handle(IPC.DISPLAY_TOGGLE_FULLSCREEN, () => {
-    return toggleGameScreenFullscreen()
+    const next = toggleGameScreenFullscreen()
+    getEngine().setGameScreenFullscreen(next)
+    broadcastState()
+    return next
   })
 
   createControlPanelWindow()
