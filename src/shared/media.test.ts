@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest'
-import { sanitizeFilename, mediaDisplayName } from '@shared/media'
+import {
+  sanitizeFilename,
+  mediaDisplayName,
+  detectMediaType,
+  ALLOWED_MEDIA_EXTENSIONS,
+  type MediaType
+} from '@shared/media'
 
 describe('sanitizeFilename', () => {
   it('preserves normal ASCII filenames', () => {
@@ -73,5 +79,66 @@ describe('mediaDisplayName', () => {
   it('handles files without extension', () => {
     expect(mediaDisplayName('myfile-a3f2b1c4-5678-9abc-def0-1234567890ab'))
       .toBe('myfile')
+  })
+})
+
+describe('detectMediaType', () => {
+  // Pins the classification of every advertised extension. This table and
+  // ALLOWED_MEDIA_EXTENSIONS share one source of truth (MEDIA_TYPE_BY_EXT), so
+  // this guards against the kind of two-lists drift that made webm classify as
+  // audio (see #76).
+  const expected: Record<string, Exclude<MediaType, null>> = {
+    mp3: 'audio', wav: 'audio', ogg: 'audio', aac: 'audio', m4a: 'audio',
+    mp4: 'video', webm: 'video', mov: 'video',
+    png: 'image', jpg: 'image', jpeg: 'image', gif: 'image', webp: 'image'
+  }
+
+  it('classifies every allowed extension as its documented type', () => {
+    for (const ext of ALLOWED_MEDIA_EXTENSIONS) {
+      expect(detectMediaType(`clip.${ext}`), ext).toBe(expected[ext])
+    }
+  })
+
+  it('covers exactly the allowed set — no untested extension, no phantom', () => {
+    expect([...ALLOWED_MEDIA_EXTENSIONS].sort()).toEqual(Object.keys(expected).sort())
+  })
+
+  it('classifies webm as video, not audio', () => {
+    // Regression pin for #76: webm is the one ambiguous container, and it must
+    // resolve to video so its picture is shown and the audioOnly toggle appears.
+    expect(detectMediaType('intro.webm')).toBe('video')
+    expect(detectMediaType('clip-a3f2b1c4-5678-9abc-def0-1234567890ab.webm')).toBe('video')
+  })
+
+  it('is case-insensitive on the extension', () => {
+    expect(detectMediaType('PHOTO.PNG')).toBe('image')
+    expect(detectMediaType('Clip.WebM')).toBe('video')
+  })
+
+  it('strips query strings and fragments before classifying', () => {
+    expect(detectMediaType('song.mp3?v=2')).toBe('audio')
+    expect(detectMediaType('pic.jpg#anchor')).toBe('image')
+  })
+
+  it('reads the type from data URIs', () => {
+    expect(detectMediaType('data:image/png;base64,AAAA')).toBe('image')
+    expect(detectMediaType('data:audio/mp3;base64,AAAA')).toBe('audio')
+    expect(detectMediaType('data:video/mp4;base64,AAAA')).toBe('video')
+  })
+
+  it('returns null for empty, missing, or extensionless input', () => {
+    expect(detectMediaType(null)).toBeNull()
+    expect(detectMediaType(undefined)).toBeNull()
+    expect(detectMediaType('')).toBeNull()
+    expect(detectMediaType('noextension')).toBeNull()
+  })
+
+  it('returns null for unrecognised extensions instead of guessing image', () => {
+    // Containers the app does not accept must not be silently rendered — and
+    // must not be misclassified as audio/video as they once were.
+    for (const ext of ['flac', 'ogv', 'avi', 'mkv', 'txt', 'exe']) {
+      expect(detectMediaType(`file.${ext}`), ext).toBeNull()
+      expect(ALLOWED_MEDIA_EXTENSIONS, ext).not.toContain(ext)
+    }
   })
 })

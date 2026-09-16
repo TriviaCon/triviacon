@@ -35,13 +35,35 @@ export function mediaDisplayName(filename: string | null | undefined): string | 
 
 export type MediaType = 'image' | 'audio' | 'video' | null
 
-export const ALLOWED_MEDIA_EXTENSIONS = [
-  'mp3', 'wav', 'ogg', 'aac', 'm4a',
-  'mp4', 'webm', 'mov',
-  'png', 'jpg', 'jpeg', 'gif', 'webp'
-]
+/**
+ * Canonical extension → media type map: the single source of truth for both
+ * which files the app accepts (ALLOWED_MEDIA_EXTENSIONS) and how each one is
+ * presented. Every accepted extension appears exactly once, so a file's
+ * extension unambiguously selects the element it plays through — no extension is
+ * classified two ways, and nothing outside this table can be attached.
+ *
+ * `webm` is the one accepted extension that can carry audio-only *or* audio+video
+ * content, and it has no widely-emitted audio-only sibling (`.weba` exists on
+ * paper but tools don't produce it). We map it to `video` — the superset, since a
+ * <video> element also plays audio — and let the per-question `audioOnly` flag
+ * present it as a visualiser when the picture would give the answer away. The
+ * builder pre-sets that flag from the file's actual tracks at attach time; see
+ * probeVideoTrack() in the control-panel lib.
+ */
+const MEDIA_TYPE_BY_EXT: Record<string, Exclude<MediaType, null>> = {
+  mp3: 'audio', wav: 'audio', ogg: 'audio', aac: 'audio', m4a: 'audio',
+  mp4: 'video', webm: 'video', mov: 'video',
+  png: 'image', jpg: 'image', jpeg: 'image', gif: 'image', webp: 'image'
+}
 
-/** Detect media type from a data URI, URL, or file path. */
+export const ALLOWED_MEDIA_EXTENSIONS = Object.keys(MEDIA_TYPE_BY_EXT)
+
+/**
+ * Detect media type from a data URI, URL, or file path. Returns `null` for an
+ * empty src or an unrecognised extension — callers render nothing rather than a
+ * broken element, so a hand-edited or legacy file with an unsupported extension
+ * fails visibly-empty instead of silently misrendering.
+ */
 export function detectMediaType(src: string | null | undefined): MediaType {
   if (!src) return null
 
@@ -49,14 +71,8 @@ export function detectMediaType(src: string | null | undefined): MediaType {
   const dataMatch = src.match(/^data:(image|audio|video)\//)
   if (dataMatch) return dataMatch[1] as MediaType
 
-  // URLs / file paths: check extension
+  // URLs / file paths: classify by extension
   const ext = src.split(/[?#]/)[0].split('.').pop()?.toLowerCase()
-  if (!ext) return 'image' // fallback for unrecognized
-
-  const audioExts = ['mp3', 'wav', 'ogg', 'aac', 'flac', 'webm', 'm4a']
-  const videoExts = ['mp4', 'webm', 'ogv', 'mov', 'avi', 'mkv']
-
-  if (audioExts.includes(ext)) return 'audio'
-  if (videoExts.includes(ext)) return 'video'
-  return 'image'
+  if (!ext) return null
+  return MEDIA_TYPE_BY_EXT[ext] ?? null
 }

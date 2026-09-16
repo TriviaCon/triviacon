@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { ConfirmDialog } from '@renderer/components/ui/confirm-dialog'
 import { useTranslation } from 'react-i18next'
@@ -24,6 +24,8 @@ import { useDeleteQuestionMutation } from '@renderer/hooks/useDeleteQuestionMuta
 import { QueryLoading, QueryError } from '@renderer/components/ui/query-state'
 import { MediaPreview } from '@renderer/components/ui/media-preview'
 import { detectMediaType, mediaDisplayName } from '@shared/media'
+import { mediaUrl } from '@shared/mediaUrl'
+import { probeVideoTrack } from '@renderer/lib/mediaProbe'
 import { usePairQueryState } from '@renderer/hooks/usePairQueryState'
 import { useMediaDrop } from '@renderer/hooks/useMediaDrop'
 import keys from '@renderer/utils/keys'
@@ -162,8 +164,71 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
   const attachPrimary = useCallback((path: string) => window.api.mediaAttachFile(id, path), [id])
   const attachAnswer = useCallback((path: string) => window.api.answerMediaAttachFile(id, path), [id])
 
-  const primaryDrop = useMediaDrop(!!question.data?.media, attachPrimary, refetchQuestion)
-  const answerDrop = useMediaDrop(!!question.data?.answerMedia, attachAnswer, refetchQuestion)
+  // Layer 2 of the webm fix (#76): a container we classify as video (webm, mp4,
+  // mov) may actually hold audio only — webm most of all, since it shares one
+  // extension for both. On attach we probe the file's real tracks; a track-less
+  // file defaults to the audio-visualiser presentation, and a read-only hint
+  // mirrors that so the host can see why the picture is hidden.
+  const [noVideoTrack, setNoVideoTrack] = useState({ primary: false, answer: false })
+
+  const handleAttached = useCallback(
+    async (slot: 'primary' | 'answer') => {
+      const { data } = await question.refetch()
+      if (data?.categoryId !== undefined) {
+        qc.invalidateQueries({ queryKey: keys.questions(data.categoryId) })
+      }
+      const file = slot === 'primary' ? data?.media : data?.answerMedia
+      if (!file || detectMediaType(file) !== 'video') return
+      const url = mediaUrl(file)
+      if (!url) return
+      // Only act on a definite "no video track" — leave the presentation alone
+      // when the file has footage or the probe can't decide.
+      if ((await probeVideoTrack(url)) !== false) return
+      update(slot === 'primary' ? { audioOnly: true } : { answerMediaAudioOnly: true })
+    },
+    [question, qc, update]
+  )
+
+  const attachPrimaryDone = useCallback(() => handleAttached('primary'), [handleAttached])
+  const attachAnswerDone = useCallback(() => handleAttached('answer'), [handleAttached])
+
+  const primaryDrop = useMediaDrop(!!question.data?.media, attachPrimary, attachPrimaryDone)
+  const answerDrop = useMediaDrop(!!question.data?.answerMedia, attachAnswer, attachAnswerDone)
+
+  // Keep the "no video track" hint in sync with whatever is currently attached,
+  // including a file loaded from disk (which never goes through handleAttached).
+  const primaryMedia = question.data?.media ?? null
+  const answerMedia = question.data?.answerMedia ?? null
+
+  useEffect(() => {
+    const url = primaryMedia && detectMediaType(primaryMedia) === 'video' ? mediaUrl(primaryMedia) : null
+    if (!url) {
+      setNoVideoTrack((s) => (s.primary ? { ...s, primary: false } : s))
+      return
+    }
+    let cancelled = false
+    probeVideoTrack(url).then((hasVideo) => {
+      if (!cancelled) setNoVideoTrack((s) => ({ ...s, primary: hasVideo === false }))
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [primaryMedia])
+
+  useEffect(() => {
+    const url = answerMedia && detectMediaType(answerMedia) === 'video' ? mediaUrl(answerMedia) : null
+    if (!url) {
+      setNoVideoTrack((s) => (s.answer ? { ...s, answer: false } : s))
+      return
+    }
+    let cancelled = false
+    probeVideoTrack(url).then((hasVideo) => {
+      if (!cancelled) setNoVideoTrack((s) => ({ ...s, answer: hasVideo === false }))
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [answerMedia])
 
   const guard = usePairQueryState(question, answerOptions)
   if (!guard.ok) {
@@ -331,7 +396,7 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
                     variant="outline"
                     onClick={async () => {
                       const path = await window.api.mediaPickFile(id)
-                      if (path) refetchQuestion()
+                      if (path) handleAttached('primary')
                     }}
                   >
                     {t('actions.change')}
@@ -350,20 +415,27 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
                 </div>
               </div>
               {detectMediaType(question.data!.media) === 'video' && (
-                <div className="flex items-center gap-2">
-                  <Switch
-                    id={`audio-only-${id}`}
-                    checked={question.data!.audioOnly ?? false}
-                    onCheckedChange={(checked) => update({ audioOnly: checked })}
-                  />
-                  <Label
-                    htmlFor={`audio-only-${id}`}
-                    className="text-sm font-normal text-muted-foreground cursor-pointer"
-                  >
-                    <Volume2 className="h-4 w-4" />
-                    {t('builder.audioOnly')}
-                  </Label>
-                </div>
+                <>
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      id={`audio-only-${id}`}
+                      checked={question.data!.audioOnly ?? false}
+                      onCheckedChange={(checked) => update({ audioOnly: checked })}
+                    />
+                    <Label
+                      htmlFor={`audio-only-${id}`}
+                      className="text-sm font-normal text-muted-foreground cursor-pointer"
+                    >
+                      <Volume2 className="h-4 w-4" />
+                      {t('builder.audioOnly')}
+                    </Label>
+                  </div>
+                  {noVideoTrack.primary && (
+                    <p className="text-xs text-muted-foreground pl-1">
+                      {t('builder.noVideoTrack')}
+                    </p>
+                  )}
+                </>
               )}
             </>
           ) : (
@@ -372,7 +444,7 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
               className="w-full"
               onClick={async () => {
                 const path = await window.api.mediaPickFile(id)
-                if (path) refetchQuestion()
+                if (path) handleAttached('primary')
               }}
             >
               <CloudUpload className="mr-2 h-4 w-4" /> {t('builder.attachMedia')}
@@ -409,7 +481,7 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
                     variant="outline"
                     onClick={async () => {
                       const path = await window.api.answerMediaPickFile(id)
-                      if (path) refetchQuestion()
+                      if (path) handleAttached('answer')
                     }}
                   >
                     {t('actions.change')}
@@ -428,20 +500,27 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
                 </div>
               </div>
               {detectMediaType(question.data!.answerMedia) === 'video' && (
-                <div className="flex items-center gap-2">
-                  <Switch
-                    id={`answer-audio-only-${id}`}
-                    checked={question.data!.answerMediaAudioOnly ?? false}
-                    onCheckedChange={(checked) => update({ answerMediaAudioOnly: checked })}
-                  />
-                  <Label
-                    htmlFor={`answer-audio-only-${id}`}
-                    className="text-sm font-normal text-muted-foreground cursor-pointer"
-                  >
-                    <Volume2 className="h-4 w-4" />
-                    {t('builder.audioOnly')}
-                  </Label>
-                </div>
+                <>
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      id={`answer-audio-only-${id}`}
+                      checked={question.data!.answerMediaAudioOnly ?? false}
+                      onCheckedChange={(checked) => update({ answerMediaAudioOnly: checked })}
+                    />
+                    <Label
+                      htmlFor={`answer-audio-only-${id}`}
+                      className="text-sm font-normal text-muted-foreground cursor-pointer"
+                    >
+                      <Volume2 className="h-4 w-4" />
+                      {t('builder.audioOnly')}
+                    </Label>
+                  </div>
+                  {noVideoTrack.answer && (
+                    <p className="text-xs text-muted-foreground pl-1">
+                      {t('builder.noVideoTrack')}
+                    </p>
+                  )}
+                </>
               )}
             </>
           ) : (
@@ -450,7 +529,7 @@ const QuestionEditor = ({ id, onDelete }: { id: number; onDelete?: () => void })
               className="w-full"
               onClick={async () => {
                 const path = await window.api.answerMediaPickFile(id)
-                if (path) refetchQuestion()
+                if (path) handleAttached('answer')
               }}
             >
               <CloudUpload className="mr-2 h-4 w-4" /> {t('builder.attachAnswerMedia')}

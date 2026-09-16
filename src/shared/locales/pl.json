@@ -127,6 +127,7 @@
     "notesHint": "Widoczne tylko dla prowadzącego — nigdy na ekranie gry.",
     "questionLengthHint": "Liczba znaków. Długie pytania zmniejszą się, aby zmieścić się na ekranie gry.",
     "audioOnly": "Tylko audio (ukryj wideo na ekranie)",
+    "noVideoTrack": "Ten plik nie ma ścieżki wideo — zostanie pokazany jako wizualizacja dźwięku.",
     "loadingQuestion": "Wczytywanie pytania...",
     "dropMedia": "Upuść plik multimedialny tutaj",
     "dropOneFileOnly": "Upuść tylko jeden plik.",
