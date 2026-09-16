@@ -302,3 +302,36 @@
   user-select: none;
   overflow: hidden;
 }
+
+/* Wordmark rainbow. The gradient closes on its starting colour and is twice the
+   element wide, so sliding it by one full image width loops seamlessly. */
+.logo-rainbow {
+  background: linear-gradient(
+    to right,
+    red,
+    orange,
+    yellow,
+    green,
+    blue,
+    indigo,
+    violet,
+    red
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: logo-rainbow-shift 8s linear infinite;
+}
+
+@keyframes logo-rainbow-shift {
+  to {
+    background-position: -200% center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-rainbow {
+    animation: none;
+  }
+}

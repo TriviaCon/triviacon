@@ -15,12 +15,12 @@
   },
 
   "credits": {
+    "title": "O aplikacji TriviaCON",
     "developedBy": "Twórcy",
     "authorRole": "pomysł, kod",
     "blurb": "Tworzone na czuja o nieludzkich porach, napędzane nieustającym uzależnieniem od kofeiny i upartym przekonaniem, że konwentowe quizy zasługują na lepsze oprogramowanie.",
     "testers": "...oraz długa lista dzielnych beta testerów",
     "builtWith": "Zbudowane w oparciu o",
-    "sound": "Dźwięk",
     "soundNote": "Fanfary rankingowe są własnością odpowiednich właścicieli i nie są objęte licencją tej aplikacji: „Victory” (Final Fantasy V) © Square Enix · Pokémon Gen 1 © Nintendo / Game Freak · motyw NFL on Fox © Fox.",
     "license": "Licencja MIT",
     "github": "GitHub",

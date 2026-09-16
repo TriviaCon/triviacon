@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { ExternalLink, Bug, Coffee } from 'lucide-react'
-import { Dialog, DialogContent } from '@renderer/components/ui/dialog'
+import { Button } from '@renderer/components/ui/button'
+import { Dialog, DialogContent, DialogTitle } from '@renderer/components/ui/dialog'
 import Logo from './layout/Logo'
 import { buildIssueUrl } from '@renderer/utils/issueUrl'
 import a87Logo from '../assets/a87logo.png'
@@ -35,32 +36,16 @@ const TailwindIcon = () => (
   </svg>
 )
 
+// Brand colour rides on the glyph only — the chip itself stays neutral so the
+// stack doesn't outshout the wordmark, and so it works on light themes too.
 const TECH_STACK = [
-  {
-    name: 'Electron',
-    Icon: ElectronIcon,
-    color: '#9FEAF9',
-    bg: 'rgba(159,234,249,0.08)',
-    border: 'rgba(159,234,249,0.25)',
-    url: 'https://www.electronjs.org/'
-  },
-  {
-    name: 'React',
-    Icon: ReactIcon,
-    color: '#61DAFB',
-    bg: 'rgba(97,218,251,0.08)',
-    border: 'rgba(97,218,251,0.25)',
-    url: 'https://react.dev/'
-  },
-  {
-    name: 'Tailwind CSS',
-    Icon: TailwindIcon,
-    color: '#38BDF8',
-    bg: 'rgba(56,189,248,0.08)',
-    border: 'rgba(56,189,248,0.25)',
-    url: 'https://tailwindcss.com/'
-  }
+  { name: 'Electron', Icon: ElectronIcon, color: '#9FEAF9', url: 'https://www.electronjs.org/' },
+  { name: 'React', Icon: ReactIcon, color: '#61DAFB', url: 'https://react.dev/' },
+  { name: 'Tailwind CSS', Icon: TailwindIcon, color: '#38BDF8', url: 'https://tailwindcss.com/' }
 ]
+
+const GITHUB_URL = 'https://github.com/TriviaCon/triviacon'
+const LICENSE_URL = `${GITHUB_URL}/blob/main/LICENSE`
 
 interface CreditsModalProps {
   show: boolean
@@ -72,34 +57,36 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({ show, onHide }) => {
 
   return (
     <Dialog open={show} onOpenChange={(open) => !open && onHide()}>
-      <DialogContent className="max-w-sm p-0 overflow-hidden">
+      <DialogContent className="max-w-[26rem] sm:max-w-[26rem] p-0 gap-0 overflow-hidden">
+        <DialogTitle className="sr-only">{t('credits.title')}</DialogTitle>
+
         {/* Header band */}
         <div className="bg-gradient-to-br from-card via-muted/60 to-card px-6 py-5 flex items-center justify-center gap-2.5 border-b border-border">
-          <Logo />
-          <kbd className="rounded bg-background/60 border border-border px-2 py-0.5 text-[11px] font-mono text-muted-foreground">
+          <Logo size="lg" />
+          <span className="rounded-full border border-border px-2 py-0.5 text-[11px] font-mono text-muted-foreground">
             v{__APP_VERSION__}
-          </kbd>
+          </span>
         </div>
 
-        <div className="px-6 py-4 space-y-4">
+        <div className="px-6 py-4 space-y-5">
           {/* Author */}
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-2">
               {t('credits.developedBy')}
             </p>
-            <div className="space-y-2">
+            <div className="rounded-md bg-muted/50 border border-border px-3 py-2.5">
               <div className="flex items-center gap-3">
                 <img src={a87Logo} alt="alucard87pl" className="h-5 w-auto opacity-90" />
                 <span className="text-xs text-muted-foreground">{t('credits.authorRole')}</span>
               </div>
-              <div className="flex items-start gap-2 rounded-md bg-muted/50 border border-border px-3 py-2">
+              <div className="flex items-start gap-2 mt-2.5 pt-2.5 border-t border-border/60">
                 <Coffee className="h-3.5 w-3.5 mt-0.5 shrink-0 text-amber-500" />
                 <p className="text-xs text-muted-foreground italic leading-relaxed">
                   {t('credits.blurb')}
                 </p>
               </div>
-              <p className="text-xs text-muted-foreground italic">{t('credits.testers')}</p>
             </div>
+            <p className="text-xs text-muted-foreground italic mt-2">{t('credits.testers')}</p>
           </div>
 
           {/* Tech stack */}
@@ -108,62 +95,54 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({ show, onHide }) => {
               {t('credits.builtWith')}
             </p>
             <div className="flex flex-wrap gap-1.5">
-              {TECH_STACK.map(({ name, Icon, color, bg, border, url }) => (
+              {TECH_STACK.map(({ name, Icon, color, url }) => (
                 <button
                   key={name}
                   onClick={() => window.open(url, '_blank')}
-                  className="flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium transition-opacity hover:opacity-75 cursor-pointer border"
-                  style={{ color, backgroundColor: bg, borderColor: border }}
+                  className="flex items-center gap-1.5 rounded-full border border-border bg-muted/40 px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
                 >
-                  <Icon />
+                  <span className="flex" style={{ color }}>
+                    <Icon />
+                  </span>
                   {name}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Audio credits */}
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-2">
-              {t('credits.sound')}
-            </p>
-            <p className="text-xs text-muted-foreground leading-relaxed">{t('credits.soundNote')}</p>
-          </div>
-
-          {/* Footer */}
-          <div className="flex items-center justify-between pt-1 border-t border-border">
-            <a
-              href="#"
-              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-              onClick={(e) => {
-                e.preventDefault()
-                window.open('https://github.com/TriviaCon/triviacon/blob/main/LICENSE', '_blank')
-              }}
-            >
-              {t('credits.license')}
-            </a>
-            <div className="flex items-center gap-3">
-              <a
-                href="#"
-                className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
-                onClick={(e) => {
-                  e.preventDefault()
-                  window.open('https://github.com/TriviaCon/triviacon', '_blank')
-                }}
+          {/* Footer — links, then the fine print they govern */}
+          <div className="pt-3 border-t border-border space-y-2">
+            <div className="flex items-center justify-center gap-0.5 text-muted-foreground">
+              <Button
+                variant="ghost"
+                size="xs"
+                className="text-muted-foreground hover:text-foreground"
+                onClick={() => window.open(LICENSE_URL, '_blank')}
               >
-                <ExternalLink className="h-3 w-3" /> {t('credits.github')}
-              </a>
-              <a
-                href="#"
-                className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
-                onClick={(e) => {
-                  e.preventDefault()
-                  window.open(buildIssueUrl(), '_blank')
-                }}
+                {t('credits.license')}
+              </Button>
+              <span className="text-xs">·</span>
+              <Button
+                variant="ghost"
+                size="xs"
+                className="text-muted-foreground hover:text-foreground"
+                onClick={() => window.open(GITHUB_URL, '_blank')}
               >
-                <Bug className="h-3 w-3" /> {t('credits.reportIssue')}
-              </a>
+                <ExternalLink /> {t('credits.github')}
+              </Button>
+              <span className="text-xs">·</span>
+              <Button
+                variant="ghost"
+                size="xs"
+                className="text-muted-foreground hover:text-foreground"
+                onClick={() => window.open(buildIssueUrl(), '_blank')}
+              >
+                <Bug /> {t('credits.reportIssue')}
+              </Button>
             </div>
+            <p className="text-[11px] text-muted-foreground/80 leading-relaxed text-center">
+              {t('credits.soundNote')}
+            </p>
           </div>
         </div>
       </DialogContent>
