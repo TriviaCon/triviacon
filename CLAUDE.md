@@ -27,10 +27,13 @@ src/
 │   ├── state/GameEngine   # Game state machine (pure logic, no I/O)
 │   ├── windows.ts         # Window creation and management
 │   ├── settings.ts        # Portable settings (JSON next to exe)
+│   ├── portablePath.ts    # Resolves the portable root (AppImage/.app/exe dir)
+│   ├── dialogs.ts         # Native dialogs with remembered dirs (quiz vs media)
 │   └── mediaProtocol.ts   # Custom protocol for serving media from temp dir
 ├── data/
 │   ├── quizStore.ts       # In-memory quiz document (synchronous CRUD)
-│   └── quizFile.ts        # ZIP archive I/O, media file management
+│   ├── quizFile.ts        # ZIP archive I/O, media file management
+│   └── zipArchive.ts      # Streaming .tcq writer (Electron-free, testable)
 ├── preload/
 │   ├── controlPanel.ts    # Typed API exposed to control panel renderer
 │   └── gameScreen.ts      # Typed API exposed to game screen renderer
@@ -40,7 +43,9 @@ src/
 └── shared/
     ├── types/             # Quiz, IPC, and state type definitions
     ├── locales/           # i18n strings (pl.json, en.json)
-    └── ...                # Shared components (AudioVisualizer, RichText)
+    ├── hooks/             # Hooks both renderers use (useGameState, ...)
+    └── ...                # Shared components (AudioVisualizer, RichText) and
+                           # logic (ranking, media, mediaUrl, constants)
 ```
 
 ### Data flow
@@ -122,6 +127,11 @@ Conventional Commits style: `feat:`, `fix:`, `test:`, `chore:`, etc.
 
 ### Testing
 
-Focus tests on logic that's hard to verify by using the app: state machines, data transformations, file I/O edge cases. Not UI layout or component rendering. Currently: `GameEngine.test.ts` and `RichText.test.ts`.
+Focus tests on logic that's hard to verify by using the app: state machines, data transformations, file I/O edge cases. Not UI layout or component rendering. Currently:
+
+- `main/` — `GameEngine.test.ts`, `dialogs.test.ts`
+- `data/` — `quizStore.test.ts`, `zipArchive.test.ts`
+- `shared/` — `ranking.test.ts`, `media.test.ts`, `mediaUrl.test.ts`, `constants.test.ts`, `RichText.test.ts`
+- `renderer/control-panel/` — `runnerActions.test.ts`, `lib/theme.test.ts`
 
 When fixing bugs or adding features, include tests for affected logic by default.
