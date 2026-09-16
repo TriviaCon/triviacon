@@ -13,21 +13,22 @@ import {
   TableRow
 } from '@renderer/components/ui/table'
 import { useGameState } from '@renderer/hooks/useGameState'
-import { placeGroups, totalRevealSteps, revealedGroups } from '@shared/ranking'
+import { placeGroups, placementRows, totalRevealSteps, revealedGroups } from '@shared/ranking'
+import type { PlacementRow } from '@shared/ranking'
 import type { Team } from '@shared/types/quiz'
 
 const MEDALS = ['🥇', '🥈', '🥉']
 
 const groupNames = (group: Team[]): string => group.map((tm) => tm.name).join(', ')
 
-// ── Standings table (ties share a row) ──────────────────────────────
+// ── Standings table (below-podium ties share a row; resolved podium ties split) ──
 
 function StandingsTable({
-  groups,
+  rows,
   revealed,
   dimUnrevealed
 }: {
-  groups: Team[][]
+  rows: PlacementRow[]
   revealed: Set<number>
   dimUnrevealed: boolean
 }) {
@@ -42,27 +43,33 @@ function StandingsTable({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {groups.map((group, gi) => (
+        {rows.map((row, gi) => (
           <TableRow
-            key={group[0].id}
+            key={row.teams[0].id}
             className={cn(dimUnrevealed && !revealed.has(gi) && 'opacity-35')}
           >
             <TableCell className="font-semibold tabular-nums whitespace-nowrap">
-              {MEDALS[gi] ? `${MEDALS[gi]} ` : ''}
-              {gi + 1}
+              {MEDALS[row.place - 1] ? `${MEDALS[row.place - 1]} ` : ''}
+              {row.place}
             </TableCell>
             <TableCell className="font-medium">
-              {group.length === 1 ? (
-                group[0].name
+              {row.teams.length === 1 ? (
+                row.teams[0].name
               ) : (
                 <div className="flex flex-col gap-0.5">
-                  {group.map((tm) => (
+                  {row.teams.map((tm) => (
                     <span key={tm.id}>{tm.name}</span>
                   ))}
                 </div>
               )}
+              {row.tiebroken && (
+                <span className="mt-0.5 flex items-center gap-1 text-xs text-amber-600">
+                  <Swords className="h-3 w-3" />
+                  {t('runner.tiebreakerResolved')}
+                </span>
+              )}
             </TableCell>
-            <TableCell className="text-right tabular-nums">{group[0].score}</TableCell>
+            <TableCell className="text-right tabular-nums">{row.score}</TableCell>
           </TableRow>
         ))}
       </TableBody>
@@ -74,8 +81,8 @@ function StandingsTable({
 
 function TiebreakerPanel({ teams }: { teams: Team[] }) {
   const { t } = useTranslation()
-  const pts = t('gameScreen.points')
-  const sorted = [...teams].sort((a, b) => b.score - a.score)
+  // Ordered by the live sub-score so the current standing is obvious.
+  const sorted = [...teams].sort((a, b) => b.tiebreakScore - a.tiebreakScore)
 
   return (
     <div className="w-full rounded-lg border border-amber-500/40 bg-amber-500/5 p-4 space-y-3">
@@ -83,13 +90,29 @@ function TiebreakerPanel({ teams }: { teams: Team[] }) {
         <Swords className="h-5 w-5" />
         {t('runner.tiebreakerActive')}
       </div>
-      <ul className="space-y-1">
+      <ul className="space-y-1.5">
         {sorted.map((team) => (
-          <li key={team.id} className="flex items-center justify-between text-lg">
-            <span className="truncate">{team.name}</span>
-            <span className="tabular-nums font-semibold ml-3 shrink-0">
-              {team.score} {pts}
-            </span>
+          <li key={team.id} className="flex items-center justify-between gap-3">
+            <span className="truncate font-medium">{team.name}</span>
+            <div className="flex items-center gap-1 shrink-0">
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-6 w-8 text-xs"
+                onClick={() => window.api.updateTiebreakScore(team.id, -1)}
+              >
+                -1
+              </Button>
+              <span className="w-6 text-center tabular-nums font-semibold">{team.tiebreakScore}</span>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-6 w-8 text-xs"
+                onClick={() => window.api.updateTiebreakScore(team.id, 1)}
+              >
+                +1
+              </Button>
+            </div>
           </li>
         ))}
       </ul>
@@ -110,13 +133,13 @@ export function RankingModule() {
   const [finishConfirm, setFinishConfirm] = useState(false)
   const [winnerConfirm, setWinnerConfirm] = useState(false)
 
-  const groups = placeGroups(teams)
-  const total = totalRevealSteps(groups.length)
-  const revealed = revealedGroups(groups.length, rankingRevealStep)
+  const rows = placementRows(teams)
+  const total = totalRevealSteps(rows.length)
+  const revealed = revealedGroups(rows.length, rankingRevealStep)
   const isFinal = rankingMode === 'final'
 
   const tableBlock = (
-    <StandingsTable groups={groups} revealed={revealed} dimUnrevealed={isFinal} />
+    <StandingsTable rows={rows} revealed={revealed} dimUnrevealed={isFinal} />
   )
 
   // ── Regular mode: table + Finish gate ─────────────────────────────
@@ -154,8 +177,10 @@ export function RankingModule() {
   const nextIsWinner = rankingRevealStep === total - 1
   const allRevealed = rankingRevealStep >= total
 
-  // Tie tiers (2+ teams) with their place number.
-  const tieEntries = groups
+  // Score tiers shared by 2+ teams, with their place number — the ties a
+  // tiebreaker can resolve. Uses score tiers (not placement rows) so a tie the
+  // host hasn't resolved yet still shows up here.
+  const tieEntries = placeGroups(teams)
     .map((group, i) => ({ group, place: i + 1 }))
     .filter((e) => e.group.length >= 2)
 

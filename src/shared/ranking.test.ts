@@ -1,8 +1,20 @@
 import { describe, it, expect } from 'vitest'
-import { placeGroups, revealUnits, totalRevealSteps, revealedGroups, tieGroups } from './ranking'
+import {
+  placeGroups,
+  placementRows,
+  revealUnits,
+  totalRevealSteps,
+  revealedGroups,
+  tieGroups
+} from './ranking'
 import type { Team } from './types/quiz'
 
-const team = (id: string, score: number): Team => ({ id, name: id, score })
+const team = (id: string, score: number, tiebreakScore = 0): Team => ({
+  id,
+  name: id,
+  score,
+  tiebreakScore
+})
 
 describe('placeGroups', () => {
   it('returns nothing for no teams', () => {
@@ -25,6 +37,71 @@ describe('placeGroups', () => {
     ])
     expect(groups.map((g) => g.length)).toEqual([2, 1, 2])
     expect(groups.map((g) => g[0].score)).toEqual([50, 40, 25])
+  })
+
+  it('orders within a tier by tiebreak sub-score, best first', () => {
+    const groups = placeGroups([team('a', 50, 1), team('b', 50, 3), team('c', 50, 2)])
+    expect(groups[0].map((t) => t.id)).toEqual(['b', 'c', 'a'])
+  })
+})
+
+describe('placementRows', () => {
+  const shape = (rows: ReturnType<typeof placementRows>) =>
+    rows.map((r) => ({ place: r.place, teams: r.teams.map((t) => t.id), tiebroken: r.tiebroken }))
+
+  it('gives each distinct score its own place', () => {
+    expect(shape(placementRows([team('a', 50), team('b', 40), team('c', 25)]))).toEqual([
+      { place: 1, teams: ['a'], tiebroken: false },
+      { place: 2, teams: ['b'], tiebroken: false },
+      { place: 3, teams: ['c'], tiebroken: false }
+    ])
+  })
+
+  it('shares a row for an unresolved tie (equal sub-scores)', () => {
+    expect(shape(placementRows([team('a', 50), team('b', 40), team('c', 40)]))).toEqual([
+      { place: 1, teams: ['a'], tiebroken: false },
+      { place: 2, teams: ['b', 'c'], tiebroken: false }
+    ])
+  })
+
+  it('splits a resolved podium tie into distinct places, pushing lower teams down', () => {
+    expect(
+      shape(placementRows([team('a', 50), team('b', 40, 1), team('c', 40, 0), team('d', 25)]))
+    ).toEqual([
+      { place: 1, teams: ['a'], tiebroken: false },
+      { place: 2, teams: ['b'], tiebroken: true },
+      { place: 3, teams: ['c'], tiebroken: true },
+      { place: 4, teams: ['d'], tiebroken: false }
+    ])
+  })
+
+  it('splits a tie for first — the tiebreaker crowns a single winner', () => {
+    expect(shape(placementRows([team('a', 50, 2), team('b', 50, 1)]))).toEqual([
+      { place: 1, teams: ['a'], tiebroken: true },
+      { place: 2, teams: ['b'], tiebroken: true }
+    ])
+  })
+
+  it('keeps a below-podium tie shared even when a tiebreaker ordered it', () => {
+    const rows = placementRows([
+      team('a', 90),
+      team('b', 80),
+      team('c', 70),
+      team('d', 20, 1),
+      team('e', 20, 0)
+    ])
+    expect(shape(rows)[3]).toEqual({ place: 4, teams: ['d', 'e'], tiebroken: true })
+    expect(rows).toHaveLength(4)
+  })
+
+  it('partially splits a podium tier: sub-score ties share, the rest split', () => {
+    expect(
+      shape(placementRows([team('a', 50), team('b', 40, 2), team('c', 40, 2), team('d', 40, 1)]))
+    ).toEqual([
+      { place: 1, teams: ['a'], tiebroken: false },
+      { place: 2, teams: ['b', 'c'], tiebroken: true },
+      { place: 3, teams: ['d'], tiebroken: true }
+    ])
   })
 })
 

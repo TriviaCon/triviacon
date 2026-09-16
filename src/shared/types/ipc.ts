@@ -65,6 +65,7 @@ export const IPC = {
   GAME_REMOVE_TEAM: 'game:removeTeam',
   GAME_RENAME_TEAM: 'game:renameTeam',
   GAME_UPDATE_SCORE: 'game:updateScore',
+  GAME_UPDATE_TIEBREAK_SCORE: 'game:updateTiebreakScore',
   GAME_SET_CURRENT_TEAM: 'game:setCurrentTeam',
   GAME_NEXT_TEAM: 'game:nextTeam',
   GAME_PREV_TEAM: 'game:prevTeam',

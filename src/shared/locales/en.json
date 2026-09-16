@@ -184,8 +184,9 @@
     "tiedForPlace": "Tie for place {{place}}",
     "runTiebreaker": "Tiebreaker",
     "tiebreakerActive": "Tiebreaker in progress",
-    "tiebreakerHint": "Switch to Categories / Questions to play it out and award points — the round counter is frozen.",
+    "tiebreakerHint": "Award tiebreaker points below as you play it out — this orders the tied teams without touching their scores.",
     "tiebreakerDone": "Finish tiebreaker",
+    "tiebreakerResolved": "tie broken",
     "revealNext": "Reveal next",
     "stepBack": "Step back",
     "revealWinnerTitle": "Reveal the winner?",
@@ -204,6 +205,7 @@
     "ranking": "RANKING",
     "finalResults": "FINAL RESULTS",
     "tiebreaker": "TIEBREAKER",
+    "tiebreakerResolved": "decided by tiebreaker",
     "noTeams": "No teams in ranking.",
     "points": "points",
     "byAuthor": "by {{author}}"
