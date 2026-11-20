@@ -15,6 +15,7 @@ pnpm lint             # eslint with autofix
 pnpm build:linux      # AppImage
 pnpm build:win        # Windows zip
 pnpm build:mac        # macOS zip (x64 + arm64)
+pnpm site:build       # regenerate the GitHub Pages site into docs/
 ```
 
 ## Architecture
@@ -68,6 +69,10 @@ These are **display states, not a progression**. The host can jump freely betwee
 
 Entirely manual. The host awards or deducts points per team. The app never auto-scores.
 
+## Website
+
+The GitHub Pages site is served from `docs/` on `main`. `docs/index.html` (English, the default) and `docs/pl/index.html` are **generated** — edit `site/template.html` and `site/locales/*.json`, then run `pnpm site:build` and commit the output. A test fails if the committed pages drift from the source. `docs/style.css`, screenshots and the demo quiz are edited in place. Adding a site language means a new locale file plus an entry in `LOCALES` in `site/build.ts`.
+
 ## Quiz file format
 
 `.tcq` files are ZIP archives containing:
@@ -104,7 +109,7 @@ Supported formats: mp3, wav, ogg, aac, m4a, mp4, webm, mov, png, jpg, jpeg, gif,
 
 ## Languages
 
-The app is fully localizable — a new language is just another locale file, and translation contributions are welcome. It currently ships **Polish** and **English**. When adding or changing UI strings, update every existing locale (`pl.json`, `en.json`) so none fall behind. Polish is the maintainer's working language, so in practice it's usually the most complete — but that's a working reality, not a limit on what the app can speak.
+The app is fully localizable — a new language is just another locale file, and translation contributions are welcome. It currently ships **Polish** and **English**. When adding or changing UI strings, update every existing locale (`pl.json`, `en.json`) so none fall behind. The same goes for the website's `site/locales/`. Polish is the maintainer's working language, so in practice it's usually the most complete — but that's a working reality, not a limit on what the app can speak.
 
 **Development language is English**: code, comments, commit messages, documentation.
 
@@ -140,5 +145,6 @@ Focus tests on logic that's hard to verify by using the app: state machines, dat
 - `data/` — `quizStore.test.ts`, `zipArchive.test.ts`
 - `shared/` — `ranking.test.ts`, `media.test.ts`, `mediaUrl.test.ts`, `constants.test.ts`, `RichText.test.ts`
 - `renderer/control-panel/` — `runnerActions.test.ts`, `lib/theme.test.ts`
+- `site/` — `build.test.ts` (locales in sync, committed `docs/` pages match a fresh build)
 
 When fixing bugs or adding features, include tests for affected logic by default.

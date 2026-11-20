@@ -12,7 +12,7 @@
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
     "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
     "typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false",
-    "typecheck": "tsc --noEmit -p tsconfig.node.json --composite false && tsc --noEmit -p tsconfig.web.json --composite false",
+    "typecheck": "tsc --noEmit -p tsconfig.node.json --composite false && tsc --noEmit -p tsconfig.web.json --composite false && tsc -p site/tsconfig.json",
     "//electron-binary": "Electron >=42 ships no postinstall and fetches its binary on first run of its own CLI. electron-vite resolves the binary path directly, so it never triggers that — without this prefix a fresh clone fails with 'Error: Electron uninstall'. It is a ~0.7s no-op once installed. Not in postinstall: CI only lints/tests/builds, and electron-builder downloads its own dist, so no CI job needs the binary.",
     "start": "install-electron && electron-vite preview",
     "dev": "install-electron && electron-vite dev",
@@ -22,7 +22,8 @@
     "build:win": "pnpm run build && electron-builder --win",
     "build:mac": "electron-vite build && electron-builder --mac",
     "build:linux": "electron-vite build && electron-builder --linux",
-    "test": "vitest run"
+    "test": "vitest run",
+    "site:build": "node site/build.ts"
   },
   "packageManager": "pnpm@10.33.0",
   "//engines.node": "Mirrors jsdom@30's supported range, which is the strictest floor in the tree. Electron 43 needs >=22.12. The <26 ceiling from PR #70 is gone: it existed because electron@35's postinstall (extract-zip@2.0.1) hung unpacking its binary on Node 26+, and Electron dropped that postinstall entirely in v42.",
