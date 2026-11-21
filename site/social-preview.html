@@ -1,0 +1,45 @@
+<!doctype html>
+<!--
+  Source for docs/social-preview.png (1280×640, GitHub's social preview size).
+  Re-render after editing:
+    google-chrome --headless=new --hide-scrollbars --window-size=1280,640 \
+      --screenshot=docs/social-preview.png site/social-preview.html
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@800&display=block" rel="stylesheet" />
+<style>
+  :root { --bg: #0d0f16; --line: #262b3b; --text: #eceef5; --accent: #7b93ff; --accent-2: #f2a65a; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1280px; height: 640px; overflow: hidden; }
+  body {
+    font-family: Inter, sans-serif; color: var(--text); position: relative;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background:
+      radial-gradient(620px 380px at 22% 18%, rgb(123 147 255 / .26), transparent 70%),
+      radial-gradient(620px 380px at 80% 92%, rgb(242 166 90 / .20), transparent 70%),
+      var(--bg);
+  }
+  body::before {
+    content: ""; position: absolute; inset: 0; z-index: -1;
+    background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 40px 40px; opacity: .3;
+    mask-image: radial-gradient(760px 420px at 50% 50%, #000, transparent 75%);
+  }
+  .brand { display: flex; align-items: center; gap: 36px; }
+  .brand img { width: 200px; height: 200px; filter: drop-shadow(0 18px 40px rgb(0 0 0 / .55)); }
+  .brand span { font-size: 128px; font-weight: 800; letter-spacing: -.04em; line-height: 1; }
+  p {
+    margin-top: 48px; font-size: 56px; font-weight: 800; letter-spacing: -.03em;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+</style>
+</head>
+<body>
+  <div class="brand"><img src="../docs/icon.png" alt="" /><span>Triviacon</span></div>
+  <p>Run the quiz night. Not the tech.</p>
+</body>
+</html>
