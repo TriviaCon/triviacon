@@ -71,7 +71,7 @@ Entirely manual. The host awards or deducts points per team. The app never auto-
 
 ## Website
 
-The GitHub Pages site is served from `docs/` on `main`. `docs/index.html` (English, the default) and `docs/pl/index.html` are **generated** — edit `site/template.html` and `site/locales/*.json`, then run `pnpm site:build` and commit the output. A test fails if the committed pages drift from the source. `docs/style.css`, screenshots and the demo quiz are edited in place. Adding a site language means a new locale file plus an entry in `LOCALES` in `site/build.ts`.
+The GitHub Pages site is served from `docs/` on `main`. `docs/index.html` (English, the default) and `docs/pl/index.html` are **generated** — edit `site/template.html` and `site/locales/*.json`, then run `pnpm site:build` and commit the output. A test fails if the committed pages drift from the source. `docs/style.css`, screenshots and the demo quiz are edited in place. `docs/social-preview.png` (the 1280×640 link preview, also uploaded as the repo's social preview) is rendered from `site/social-preview.html` with headless Chrome — the command is in that file's header. Adding a site language means a new locale file plus an entry in `LOCALES` in `site/build.ts`.
 
 ## Quiz file format
 
